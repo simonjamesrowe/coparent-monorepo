@@ -17,14 +17,7 @@ vi.mock('@tanstack/react-router', () => ({
   Link: ({ to, children }: any) => <a href={to}>{children}</a>,
 }))
 
-// Mock Auth0
-vi.mock('@auth0/auth0-react', () => ({
-  useAuth0: () => ({
-    isAuthenticated: true,
-    user: { email: 'coparent@example.com' },
-    loginWithRedirect: vi.fn(),
-  }),
-}))
+// Auth0 is mocked globally in setup.ts
 
 describe('Invitation Flow Integration', () => {
   it('should display invitation preview without authentication', async () => {

@@ -10,24 +10,7 @@ import { Auth0Provider } from '@auth0/auth0-react'
 import { AuthCallback } from '@/components/auth/AuthCallback'
 import { apiClient } from '@/lib/api-client'
 
-// Mock Auth0
-vi.mock('@auth0/auth0-react', async () => {
-  const actual = await vi.importActual('@auth0/auth0-react')
-  return {
-    ...actual,
-    useAuth0: () => ({
-      isAuthenticated: true,
-      user: {
-        sub: 'auth0|507f1f77bcf86cd799439011',
-        email: 'test@example.com',
-        name: 'Test User',
-        picture: 'https://example.com/avatar.jpg',
-      },
-      getAccessTokenSilently: vi.fn().mockResolvedValue('test-token'),
-      logout: vi.fn(),
-    }),
-  }
-})
+// Auth0 is mocked globally in setup.ts
 
 describe('Signup Flow Integration', () => {
   it('should create user record after Auth0 signup', async () => {
