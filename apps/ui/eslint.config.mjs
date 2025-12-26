@@ -71,6 +71,6 @@ export default [
     }
   },
   {
-    ignores: ['node_modules', 'dist', 'build', 'coverage']
+    ignores: ['node_modules', 'dist', 'build', 'coverage', 'postcss.config.js', 'tailwind.config.js']
   }
 ];
