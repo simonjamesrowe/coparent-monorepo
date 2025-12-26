@@ -13,23 +13,8 @@ on:
       - 'packages/**'
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:15-alpine
-        env:
-          POSTGRES_DB: coparent_test
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
 
     steps:
       - uses: actions/checkout@v4
@@ -47,21 +32,10 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: pnpm --filter api lint
+        run: pnpm --filter coparent-api lint
 
       - name: Type check
-        run: pnpm --filter api type-check
+        run: pnpm --filter coparent-api type-check
 
       - name: Build
-        run: pnpm --filter api build
-
-  docker:
-    runs-on: ubuntu-latest
-    needs: test
-    if: github.ref == 'refs/heads/main'
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build Docker image
-        run: docker build -f apps/api/Dockerfile -t coparent-api:${{ github.sha }} .
+        run: pnpm --filter coparent-api build

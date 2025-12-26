@@ -1,5 +1,6 @@
 ## UI component best practices
 
+- **Stack Alignment**: Prefer shadcn/ui components and Radix UI primitives for accessible, consistent building blocks
 - **Single Responsibility**: Each component should have one clear purpose and do it well
 - **Reusability**: Design components to be reused across different contexts with configurable props
 - **Composability**: Build complex UIs by combining smaller, simpler components rather than monolithic structures

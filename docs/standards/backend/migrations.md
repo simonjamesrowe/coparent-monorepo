@@ -1,5 +1,6 @@
 ## Database migration best practices
 
+- **Tooling Alignment**: Use migrate-mongo for MongoDB migrations and Prisma Migrate (or Drizzle/Knex) for SQL databases
 - **Reversible Migrations**: Always implement rollback/down methods to enable safe migration reversals
 - **Small, Focused Changes**: Keep each migration focused on a single logical change for clarity and easier troubleshooting
 - **Zero-Downtime Deployments**: Consider deployment order and backwards compatibility for high-availability systems

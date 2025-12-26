@@ -235,12 +235,34 @@ Enable CoParent to serve as a secure, collaborative platform for separated/co-pa
 
 ### System Overview
 
+### Tech Stack Alignment (Authoritative)
+
+This spec follows the technology choices defined in `docs/standards/`. When in doubt, the standards directory is the source of truth.
+
+**Backend (per standards)**
+- NestJS + TypeScript with Express under the hood
+- Auth0 (OIDC/OAuth2) with Passport + JWT validation
+- MongoDB (Mongoose)
+- OpenAPI via @nestjs/swagger
+- Logging: Pino (nestjs-pino)
+- Observability: OpenTelemetry
+- Testing: Vitest + Supertest + Testcontainers
+
+**Frontend (per standards)**
+- React + Vite + TypeScript
+- Routing: React Router v6+
+- UI: shadcn/ui + Radix UI + Tailwind CSS
+- State: TanStack Query + Zustand
+- PWA: vite-plugin-pwa + Workbox + IndexedDB (idb/localforage)
+- Auth: @auth0/auth0-react
+- Testing: Vitest + Testing Library + MSW
+
 CoParent's authentication and multi-tenant system consists of:
 
 1. **Auth0 Cloud** (External): OIDC provider, JWT issuance, role management, email verification, password reset
-2. **Frontend Application** (Next.js/React): Handles Auth0 redirects, JWT storage, route guards, family context management
-3. **Backend API** (Node.js/Express or similar): Validates JWTs, enforces RBAC, applies tenant isolation
-4. **Database** (PostgreSQL): Stores Users, Families, Parents, Invitations, Children, Expenses with family_id partitioning
+2. **Frontend Application** (React + Vite): Handles Auth0 redirects, JWT storage, route guards, family context management
+3. **Backend API** (NestJS (Node.js/TypeScript)): Validates JWTs, enforces RBAC, applies tenant isolation
+4. **Database** (MongoDB): Stores Users, Families, Parents, Invitations, Children, Expenses with family_id partitioning
 5. **Email Service** (SendGrid/SES): Sends invitation emails and password reset emails (Auth0 integration)
 
 ### Auth0 Integration Points
@@ -342,7 +364,7 @@ Parent
   |       |
   |       +---> GET /api/v1/users/me (with JWT)
   |
-  +---> Backend API (Express/Node)
+  +---> Backend API (NestJS)
   |       |
   |       +---> Validates JWT signature
   |       |
@@ -352,7 +374,7 @@ Parent
   |       |
   |       +---> Logs all cross-family access attempts
   |
-  +---> Database (PostgreSQL)
+  +---> Database (MongoDB via Mongoose)
         |
         +---> User records (auth0_id, email, name)
         +---> Family records (name, created_by_user_id)
@@ -1557,7 +1579,7 @@ AUTH0_MANAGEMENT_API_CLIENT_SECRET=your_management_client_secret
 FRONTEND_URL=https://coparent.app (for Auth0 callback redirects)
 
 # Database Configuration
-DATABASE_URL=postgresql://user:password@localhost:5432/coparent
+MONGODB_URI=mongodb://localhost:27017/coparent
 DATABASE_POOL_SIZE=20
 
 # Email Service Configuration
@@ -1576,27 +1598,27 @@ SENTRY_DSN=https://your-sentry-dsn
 NODE_ENV=production
 ```
 
-**Frontend (.env.local file)**
+**Frontend (.env file)**
 
 ```env
 # Auth0 Configuration
-NEXT_PUBLIC_AUTH0_DOMAIN=your-tenant.auth0.com
-NEXT_PUBLIC_AUTH0_CLIENT_ID=your_client_id
-NEXT_PUBLIC_AUTH0_REDIRECT_URI=https://coparent.app/auth/callback
+VITE_AUTH0_DOMAIN=your-tenant.auth0.com
+VITE_AUTH0_CLIENT_ID=your_client_id
+VITE_AUTH0_REDIRECT_URI=https://coparent.app/auth/callback
 
 # API Configuration
-NEXT_PUBLIC_API_URL=https://api.coparent.app
+VITE_API_URL=https://api.coparent.app
 
 # Monitoring
-NEXT_PUBLIC_SENTRY_DSN=https://your-sentry-dsn
+VITE_SENTRY_DSN=https://your-sentry-dsn
 ```
 
 ### Auth0 Setup Checklist
 
 - [ ] Create Auth0 application (type: Single Page Application)
-- [ ] Configure callback URLs: `https://coparent.app/auth/callback`, `http://localhost:3000/auth/callback` (dev)
-- [ ] Configure logout URL: `https://coparent.app/logout`, `http://localhost:3000/logout` (dev)
-- [ ] Configure allowed web origins: `https://coparent.app`, `http://localhost:3000` (dev)
+- [ ] Configure callback URLs: `https://coparent.app/auth/callback`, `http://localhost:5173/auth/callback` (dev)
+- [ ] Configure logout URL: `https://coparent.app/logout`, `http://localhost:5173/logout` (dev)
+- [ ] Configure allowed web origins: `https://coparent.app`, `http://localhost:5173` (dev)
 - [ ] Enable Google social connection
 - [ ] Create two custom roles: ADMIN_PARENT, CO_PARENT
 - [ ] Create custom claims (optional): Add family_id to JWT token
@@ -1609,115 +1631,117 @@ NEXT_PUBLIC_SENTRY_DSN=https://your-sentry-dsn
 
 ### Database Migrations
 
-**Migration: Create users table**
-```sql
-CREATE TABLE users (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  auth0_id VARCHAR(255) UNIQUE NOT NULL,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  name VARCHAR(255) NOT NULL,
-  phone VARCHAR(20),
-  avatar_url TEXT,
-  is_active BOOLEAN DEFAULT true,
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW(),
-  deleted_at TIMESTAMP
-);
+Migrations should be authored and applied via `migrate-mongo`. Below are illustrative Mongoose schema sketches to document collection structure.
 
-CREATE INDEX idx_users_auth0_id ON users(auth0_id);
-CREATE INDEX idx_users_email ON users(email);
+**User Schema (Mongoose)**
+```ts
+import { Schema } from 'mongoose';
+
+export const UserSchema = new Schema(
+  {
+    auth0Id: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
+    phone: { type: String },
+    avatarUrl: { type: String },
+    isActive: { type: Boolean, default: true }
+  },
+  { timestamps: true }
+);
 ```
 
-**Migration: Create families table**
-```sql
-CREATE TABLE families (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name VARCHAR(255) NOT NULL,
-  created_by_user_id UUID NOT NULL REFERENCES users(id),
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
-);
+**Family Schema (Mongoose)**
+```ts
+import { Schema, Types } from 'mongoose';
 
-CREATE INDEX idx_families_created_by ON families(created_by_user_id);
+export const FamilySchema = new Schema(
+  {
+    name: { type: String, required: true },
+    createdByUserId: { type: Types.ObjectId, required: true }
+  },
+  { timestamps: true }
+);
 ```
 
-**Migration: Create parents table**
-```sql
-CREATE TABLE parents (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID NOT NULL REFERENCES users(id),
-  family_id UUID NOT NULL REFERENCES families(id),
-  role VARCHAR(50) NOT NULL CHECK (role IN ('ADMIN_PARENT', 'CO_PARENT')),
-  joined_at TIMESTAMP,
-  invited_at TIMESTAMP,
-  invited_by_user_id UUID REFERENCES users(id),
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW(),
-  UNIQUE(user_id, family_id)
+**Parent Schema (Mongoose)**
+```ts
+import { Schema, Types } from 'mongoose';
+
+export const ParentSchema = new Schema(
+  {
+    userId: { type: Types.ObjectId, required: true },
+    familyId: { type: Types.ObjectId, required: true },
+    role: { type: String, enum: ['ADMIN_PARENT', 'CO_PARENT'], required: true },
+    joinedAt: { type: Date },
+    invitedAt: { type: Date },
+    invitedByUserId: { type: Types.ObjectId }
+  },
+  { timestamps: true }
 );
 
-CREATE INDEX idx_parents_family_id ON parents(family_id);
-CREATE INDEX idx_parents_user_id ON parents(user_id);
-CREATE INDEX idx_parents_family_role ON parents(family_id, role);
-CREATE INDEX idx_parents_family_user ON parents(family_id, user_id);
+ParentSchema.index({ familyId: 1, userId: 1 }, { unique: true });
+ParentSchema.index({ familyId: 1, role: 1 });
 ```
 
-**Migration: Create invitations table**
-```sql
-CREATE TABLE invitations (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  family_id UUID NOT NULL REFERENCES families(id),
-  inviting_parent_id UUID NOT NULL REFERENCES parents(id),
-  email VARCHAR(255) NOT NULL,
-  token VARCHAR(255) UNIQUE NOT NULL,
-  status VARCHAR(50) NOT NULL CHECK (status IN ('PENDING', 'ACCEPTED', 'EXPIRED', 'REVOKED')),
-  expires_at TIMESTAMP NOT NULL,
-  accepted_at TIMESTAMP,
-  accepted_by_user_id UUID REFERENCES users(id),
-  resent_at TIMESTAMP,
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
+**Invitation Schema (Mongoose)**
+```ts
+import { Schema, Types } from 'mongoose';
+
+export const InvitationSchema = new Schema(
+  {
+    familyId: { type: Types.ObjectId, required: true },
+    invitingParentId: { type: Types.ObjectId, required: true },
+    email: { type: String, required: true },
+    token: { type: String, required: true, unique: true },
+    status: { type: String, enum: ['PENDING', 'ACCEPTED', 'EXPIRED', 'REVOKED'], required: true },
+    expiresAt: { type: Date, required: true },
+    acceptedAt: { type: Date },
+    acceptedByUserId: { type: Types.ObjectId },
+    resentAt: { type: Date }
+  },
+  { timestamps: true }
 );
 
-CREATE INDEX idx_invitations_token ON invitations(token);
-CREATE INDEX idx_invitations_expires_at ON invitations(expires_at);
-CREATE INDEX idx_invitations_status ON invitations(status);
-CREATE INDEX idx_invitations_family_email ON invitations(family_id, email);
+InvitationSchema.index({ familyId: 1, email: 1 });
+InvitationSchema.index({ familyId: 1, status: 1 });
 ```
 
-**Migration: Create children table**
-```sql
-CREATE TABLE children (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  family_id UUID NOT NULL REFERENCES families(id),
-  name VARCHAR(255) NOT NULL,
-  date_of_birth DATE NOT NULL,
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
+**Child Schema (Mongoose)**
+```ts
+import { Schema, Types } from 'mongoose';
+
+export const ChildSchema = new Schema(
+  {
+    familyId: { type: Types.ObjectId, required: true },
+    name: { type: String, required: true },
+    dateOfBirth: { type: Date, required: true }
+  },
+  { timestamps: true }
 );
 
-CREATE INDEX idx_children_family_id ON children(family_id);
+ChildSchema.index({ familyId: 1, name: 1 });
 ```
 
-**Migration: Create expenses table**
-```sql
-CREATE TABLE expenses (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  family_id UUID NOT NULL REFERENCES families(id),
-  created_by_user_id UUID NOT NULL REFERENCES users(id),
-  amount DECIMAL(10,2) NOT NULL,
-  category VARCHAR(255) NOT NULL,
-  date DATE NOT NULL,
-  description TEXT,
-  receipt_url TEXT,
-  privacy_mode VARCHAR(50) NOT NULL CHECK (privacy_mode IN ('PRIVATE', 'AMOUNT_ONLY', 'FULL_SHARED')),
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
+**Expense Schema (Mongoose)**
+```ts
+import { Schema, Types } from 'mongoose';
+
+export const ExpenseSchema = new Schema(
+  {
+    familyId: { type: Types.ObjectId, required: true },
+    createdByUserId: { type: Types.ObjectId, required: true },
+    amount: { type: Number, required: true },
+    category: { type: String, required: true },
+    date: { type: Date, required: true },
+    description: { type: String },
+    receiptUrl: { type: String },
+    privacyMode: { type: String, enum: ['PRIVATE', 'AMOUNT_ONLY', 'FULL_SHARED'], required: true }
+  },
+  { timestamps: true }
 );
 
-CREATE INDEX idx_expenses_family_id ON expenses(family_id);
-CREATE INDEX idx_expenses_created_by ON expenses(created_by_user_id);
-CREATE INDEX idx_expenses_family_date ON expenses(family_id, date);
+ExpenseSchema.index({ familyId: 1, date: 1 });
+ExpenseSchema.index({ familyId: 1, createdByUserId: 1 });
 ```
 
 ### Email Service Setup
@@ -1921,11 +1945,11 @@ CREATE INDEX idx_expenses_family_date ON expenses(family_id, date);
   - Have fallback email provider (setup SES in parallel with SendGrid)
 - **Fallback:** Admin can manually resend invitations
 
-**Database (PostgreSQL)**
+**Database (MongoDB via Mongoose)**
 - **Dependency:** Store users, families, parents, invitations, children, expenses
 - **Risk:** Database outage or performance degradation
 - **Mitigation:**
-  - Implement connection pooling (PgBouncer or similar)
+  - Implement connection pooling (ProxySQL (or managed connection pooling) or similar)
   - Use read replicas for non-critical queries
   - Implement query caching for frequently accessed data
   - Monitor slow query log and optimize indexes

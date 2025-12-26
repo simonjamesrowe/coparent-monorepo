@@ -1,6 +1,7 @@
 ## UI accessibility best practices
 
 - **Semantic HTML**: Use appropriate HTML elements (nav, main, button, etc.) that convey meaning to assistive technologies
+- **Accessible Primitives**: Prefer Radix UI primitives and shadcn/ui components for built-in accessibility
 - **Keyboard Navigation**: Ensure all interactive elements are accessible via keyboard with visible focus indicators
 - **Color Contrast**: Maintain sufficient contrast ratios (4.5:1 for normal text) and don't rely solely on color to convey information
 - **Alternative Text**: Provide descriptive alt text for images and meaningful labels for all form inputs

@@ -4,46 +4,27 @@ A unified monorepo for the CoParent application, containing backend API, fronten
 
 ## Structure
 
-- **apps/api** - Express.js backend API
-- **apps/ui** - React frontend application
+- **apps/api** - NestJS backend API
+- **apps/ui** - React + Vite frontend
 - **packages/shared-types** - Shared TypeScript types
 - **packages/eslint-config** - Shared ESLint configuration
-- **docs/** - Product documentation and specifications
+- **docs/** - Product documentation and standards
 
 ## Prerequisites
 
 - Node.js 18+
 - pnpm 8.12.0+
-- Docker & Docker Compose (optional, for containerized development)
+- Docker & Docker Compose (optional, database services only)
 
 ## Quick Start
 
-### Initial Setup
-
 ```bash
-# Run setup script
-./scripts/setup.sh
-
-# Or manually
 pnpm install
 cp apps/api/.env.example apps/api/.env
 cp apps/ui/.env.example apps/ui/.env
 ```
 
 ### Development
-
-#### Using Docker (Recommended)
-
-```bash
-pnpm docker:dev
-```
-
-Access the services:
-- UI: http://localhost:3000
-- API: http://localhost:5000
-- Database: localhost:5432
-
-#### Without Docker
 
 ```bash
 # Terminal 1 - API
@@ -53,182 +34,56 @@ pnpm dev:api
 pnpm dev:ui
 ```
 
+Access the services:
+- UI: http://localhost:5173
+- API: http://localhost:3000
+- API Docs: http://localhost:3000/api/docs
+
+### Database (Optional)
+
+```bash
+pnpm docker:dev
+# or
+docker-compose -f docker/docker-compose.yml up
+```
+
+This starts MongoDB.
+
 ## Available Commands
 
 - `pnpm dev` - Start all apps in development mode
 - `pnpm dev:api` - Start API in development mode
 - `pnpm dev:ui` - Start UI in development mode
 - `pnpm build` - Build all apps
-- `pnpm build:api` - Build API only
-- `pnpm build:ui` - Build UI only
 - `pnpm test` - Run tests for all apps
 - `pnpm lint` - Lint all apps
 - `pnpm format` - Format all code
-- `pnpm clean` - Clean build artifacts and node_modules
-- `pnpm docker:dev` - Start Docker development environment
-- `pnpm docker:build:api` - Build API Docker image
-- `pnpm docker:build:ui` - Build UI Docker image
-
-## Project Documentation
-
-See the `docs/` directory for:
-- **product/** - Mission, tech-stack, and roadmap
-- **standards/** - Coding standards for frontend, backend, testing
-- **specs/** - Feature specifications
-- **designs/** - Design mockups
-- **implementation-reports/** - Implementation and progress reports
-
-## Development Workflow
-
-### API Development
-
-```bash
-# Start API in development mode
-pnpm dev:api
-
-# Run API tests
-pnpm --filter api test
-
-# Lint API code
-pnpm --filter api lint
-
-# Type check API
-pnpm --filter api type-check
-```
-
-### UI Development
-
-```bash
-# Start UI in development mode
-pnpm dev:ui
-
-# Run UI tests
-pnpm --filter ui test
-
-# Lint UI code
-pnpm --filter ui lint
-```
-
-### Shared Packages
-
-```bash
-# Build shared-types package
-pnpm --filter @coparent/shared-types build
-
-# Clean shared packages
-pnpm --filter @coparent/shared-types clean
-```
-
-## Git Workflow
-
-This monorepo consolidates three repositories using git subtree:
-
-- **apps/api** - migrated from coparent-api with full git history
-- **apps/ui** - migrated from coparent-ui with full git history
-- **docs/** - content from coparent-specs
-
-To update API or UI from original repositories (if maintaining git subtree links):
-
-```bash
-# Update API from original
-git subtree pull --prefix apps/api api-origin main --squash
-
-# Update UI from original
-git subtree pull --prefix apps/ui ui-origin main --squash
-```
-
-## Deployment
-
-### Docker Build
-
-```bash
-# Build API image
-pnpm docker:build:api
-
-# Build UI image
-pnpm docker:build:ui
-
-# Or build both
-docker-compose -f docker/docker-compose.yml build
-```
-
-### Production Deployment
-
-For Docker Compose production deployment, use:
-
-```bash
-docker-compose -f docker/docker-compose.prod.yml up -d
-```
+- `pnpm docker:dev` - Start database services via Docker
 
 ## Environment Configuration
 
-### API (.env.example)
+### API (`apps/api/.env.example`)
 
 ```env
-DATABASE_URL=postgresql://user:password@localhost:5432/coparent
-NODE_ENV=development
-PORT=5000
-AUTH0_DOMAIN=your-domain.auth0.com
-AUTH0_CLIENT_ID=your-client-id
-AUTH0_CLIENT_SECRET=your-client-secret
+PORT=3000
+AUTH0_DOMAIN=your-tenant.auth0.com
+AUTH0_AUDIENCE=https://api.example.com
+AUTH0_ISSUER=https://your-tenant.auth0.com/
+MONGODB_URI=mongodb://localhost:27017/coparent
 ```
 
-### UI (.env.example)
+### UI (`apps/ui/.env.example`)
 
 ```env
-VITE_AUTH0_DOMAIN=your-domain.auth0.com
-VITE_AUTH0_CLIENT_ID=your-client-id
-VITE_AUTH0_REDIRECT_URI=http://localhost:3000/auth/callback
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=http://localhost:3000
+VITE_AUTH0_DOMAIN=your-tenant.auth0.com
+VITE_AUTH0_CLIENT_ID=your_client_id
+VITE_AUTH0_REDIRECT_URI=http://localhost:5173/auth/callback
 ```
 
-## Troubleshooting
+## Standards
 
-### Clean installation
-
-```bash
-# Remove all build artifacts and dependencies
-pnpm clean
-
-# Reinstall
-pnpm install
-
-# Rebuild shared packages
-pnpm --filter @coparent/shared-types build
-```
-
-### Docker issues
-
-```bash
-# Remove all containers and volumes
-docker-compose -f docker/docker-compose.yml down -v
-
-# Rebuild from scratch
-docker-compose -f docker/docker-compose.yml up --build
-```
-
-### Port conflicts
-
-If ports 3000, 5000, or 5432 are already in use, update docker/docker-compose.yml:
-
-```yaml
-services:
-  api:
-    ports:
-      - "5001:5000"  # Change external port
-
-  ui:
-    ports:
-      - "3001:3000"  # Change external port
-
-  postgres:
-    ports:
-      - "5433:5432"  # Change external port
-```
-
-## Contributors
-
-Team using Claude Code for AI-assisted development.
+See `docs/standards/` for the authoritative tech stack and coding practices.
 
 ## License
 
