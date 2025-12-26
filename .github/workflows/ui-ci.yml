@@ -1,0 +1,52 @@
+name: UI CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'apps/ui/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+  pull_request:
+    paths:
+      - 'apps/ui/**'
+      - 'packages/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8.12.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm --filter ui lint
+
+      - name: Test
+        run: pnpm --filter ui test
+
+      - name: Build
+        run: pnpm --filter ui build
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -f apps/ui/Dockerfile -t coparent-ui:${{ github.sha }} .
