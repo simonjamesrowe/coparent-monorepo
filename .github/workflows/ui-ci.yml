@@ -36,7 +36,7 @@ jobs:
 
       - name: Test
         run: pnpm --filter ui test -- --run --reporter=verbose --no-coverage
-        timeout-minutes: 10
+        timeout-minutes: 5
 
       - name: Build
         run: pnpm --filter ui build
