@@ -18,7 +18,7 @@ interface CoParent {
 
 export function TransferAdmin() {
   const navigate = useNavigate()
-  const { family, setRole } = useFamily()
+  const { family } = useFamily()
   const [coParents, setCoParents] = useState<CoParent[]>([])
   const [selectedCoParent, setSelectedCoParent] = useState<CoParent | null>(null)
   const [showConfirmation, setShowConfirmation] = useState(false)
@@ -41,10 +41,7 @@ export function TransferAdmin() {
         { target_user_id: selectedCoParent.id }
       )
 
-      // Update store - current user is now CO_PARENT
-      setRole('CO_PARENT')
-
-      // Show success and redirect
+      // Show success and redirect (role will update on next fetch from /me endpoint)
       setShowConfirmation(false)
       navigate({ to: '/dashboard' })
     } catch (err) {

@@ -4,6 +4,8 @@
  * All authenticated endpoints require JWT in Authorization: Bearer {token}
  */
 
+/// <reference types="vite/client" />
+
 import axios, { AxiosInstance, AxiosError, AxiosResponse } from 'axios'
 import { ApiError } from '@/types'
 

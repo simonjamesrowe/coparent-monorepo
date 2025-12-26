@@ -18,17 +18,19 @@ export async function verifyFamilyAccess(req: Request, res: Response, next: Next
   try {
     const userContext = (req as any).user as UserContext;
     if (!userContext) {
-      return res.status(401).json({ error: 'unauthorized', message: 'No user context' });
+      res.status(401).json({ error: 'unauthorized', message: 'No user context' });
+      return;
     }
 
     // Extract family_id from params or body
     const family_id = req.params.family_id || req.body?.family_id;
 
     if (!family_id) {
-      return res.status(400).json({
+      res.status(400).json({
         error: 'bad_request',
         message: 'family_id is required',
       });
+      return;
     }
 
     // Import User model here to avoid circular dependency
@@ -37,10 +39,11 @@ export async function verifyFamilyAccess(req: Request, res: Response, next: Next
     // Get user from database
     const user = await UserModel.findByAuth0Id(userContext.auth0_id);
     if (!user) {
-      return res.status(401).json({
+      res.status(401).json({
         error: 'unauthorized',
         message: 'User not found',
       });
+      return;
     }
 
     // Verify parent belongs to this family
@@ -57,10 +60,11 @@ export async function verifyFamilyAccess(req: Request, res: Response, next: Next
         ip: req.ip,
       });
 
-      return res.status(403).json({
+      res.status(403).json({
         error: 'forbidden',
         message: 'You do not have access to this family',
       });
+      return;
     }
 
     // Attach family context to request
@@ -76,7 +80,7 @@ export async function verifyFamilyAccess(req: Request, res: Response, next: Next
     next();
   } catch (error) {
     logger.error('Family access verification failed', { error });
-    return res.status(500).json({
+    res.status(500).json({
       error: 'internal_server_error',
       message: 'Failed to verify family access',
     });
@@ -93,10 +97,11 @@ export async function verifyAdminAccess(req: Request, res: Response, next: NextF
     const parent = (req as any).parent;
 
     if (!parent) {
-      return res.status(500).json({
+      res.status(500).json({
         error: 'internal_server_error',
         message: 'Parent context not found',
       });
+      return;
     }
 
     if (parent.role !== 'ADMIN_PARENT') {
@@ -109,16 +114,17 @@ export async function verifyAdminAccess(req: Request, res: Response, next: NextF
         actual_role: parent.role,
       });
 
-      return res.status(403).json({
+      res.status(403).json({
         error: 'forbidden',
         message: 'Only admin parents can perform this action',
       });
+      return;
     }
 
     next();
   } catch (error) {
     logger.error('Admin access verification failed', { error });
-    return res.status(500).json({
+    res.status(500).json({
       error: 'internal_server_error',
       message: 'Failed to verify admin access',
     });
@@ -141,16 +147,17 @@ export async function ensureActiveUser(req: Request, res: Response, next: NextFu
         auth0_id: userContext.auth0_id,
       });
 
-      return res.status(401).json({
+      res.status(401).json({
         error: 'unauthorized',
         message: 'User account is inactive',
       });
+      return;
     }
 
     next();
   } catch (error) {
     logger.error('User status verification failed', { error });
-    return res.status(500).json({
+    res.status(500).json({
       error: 'internal_server_error',
       message: 'Failed to verify user status',
     });

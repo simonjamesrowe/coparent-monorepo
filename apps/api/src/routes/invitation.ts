@@ -20,7 +20,7 @@ import { EmailService } from '../services/EmailService';
 import { auth0ManagementAPI } from '../services/Auth0ManagementAPI';
 import logger from '../utils/logger';
 
-const router = Router();
+const router: Router = Router();
 
 /**
  * POST /api/v1/invitations

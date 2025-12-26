@@ -88,10 +88,11 @@ export async function validateJWT(req: Request, res: Response, next: NextFunctio
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({
+      res.status(401).json({
         error: 'unauthorized',
         message: 'Missing or invalid Authorization header',
       });
+      return;
     }
 
     const token = authHeader.substring(7);
@@ -131,20 +132,22 @@ export async function validateJWT(req: Request, res: Response, next: NextFunctio
     });
 
     if (error instanceof jwt.TokenExpiredError) {
-      return res.status(401).json({
+      res.status(401).json({
         error: 'token_expired',
         message: 'Token has expired',
       });
+      return;
     }
 
     if (error instanceof jwt.JsonWebTokenError) {
-      return res.status(401).json({
+      res.status(401).json({
         error: 'invalid_token',
         message: 'Invalid token',
       });
+      return;
     }
 
-    return res.status(401).json({
+    res.status(401).json({
       error: 'unauthorized',
       message: 'Invalid credentials',
     });

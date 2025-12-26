@@ -13,7 +13,7 @@ import { ParentModel } from '../models/Parent';
 import { ChildModel } from '../models/Child';
 import logger from '../utils/logger';
 
-const router = Router();
+const router: Router = Router();
 
 /**
  * POST /api/v1/users/register

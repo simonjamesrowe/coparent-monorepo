@@ -104,8 +104,8 @@ export class ExpenseModel {
 
       // Apply privacy filtering to each expense
       return result.rows
-        .map((expense) => this.applyPrivacyFilter(expense, requesting_user_id))
-        .filter((expense) => expense !== null);
+        .map((expense: any) => this.applyPrivacyFilter(expense, requesting_user_id))
+        .filter((expense: any) => expense !== null);
     } catch (error) {
       logger.error('Failed to get expenses by family', { error, family_id });
       throw error;
