@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: coparent-db
+    environment:
+      POSTGRES_DB: coparent_dev
+      POSTGRES_USER: coparent
+      POSTGRES_PASSWORD: devpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U coparent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+      target: base
+    container_name: coparent-api
+    command: sh -c "cd /app && pnpm --filter api dev"
+    environment:
+      DATABASE_URL: postgresql://coparent:devpassword@postgres:5432/coparent_dev
+      NODE_ENV: development
+      PORT: 5000
+    ports:
+      - "5000:5000"
+    volumes:
+      - ../apps/api:/app/apps/api
+      - ../packages:/app/packages
+      - /app/node_modules
+      - /app/apps/api/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  ui:
+    build:
+      context: ..
+      dockerfile: apps/ui/Dockerfile
+      target: base
+    container_name: coparent-ui
+    command: sh -c "cd /app && pnpm --filter ui dev"
+    environment:
+      VITE_API_URL: http://localhost:5000/api
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../apps/ui:/app/apps/ui
+      - ../packages:/app/packages
+      - /app/node_modules
+      - /app/apps/ui/node_modules
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
