@@ -19,6 +19,10 @@ export default [
         sourceType: 'module',
         ecmaFeatures: { jsx: true },
         project: './tsconfig.json'
+      },
+      globals: {
+        document: 'readonly',
+        window: 'readonly'
       }
     },
     plugins: {
@@ -31,6 +35,8 @@ export default [
       'testing-library': testingLibrary
     },
     rules: {
+      'no-undef': 'off',
+      'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/no-explicit-any': 'warn',
@@ -52,6 +58,16 @@ export default [
     },
     settings: {
       react: { version: 'detect' }
+    }
+  },
+  {
+    files: ['vite.config.ts', 'vitest.config.ts'],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        project: './tsconfig.node.json',
+        sourceType: 'module'
+      }
     }
   },
   {

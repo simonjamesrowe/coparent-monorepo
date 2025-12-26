@@ -15,7 +15,7 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-      transform: true
+      transform: true,
     }),
   );
 
@@ -23,15 +23,12 @@ async function bootstrap() {
     .setTitle('CoParent API')
     .setDescription('CoParent backend API documentation')
     .setVersion('1.0.0')
-    .addBearerAuth(
-      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-      'JWT-auth',
-    )
+    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'JWT-auth')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document, {
-    swaggerOptions: { persistAuthorization: true }
+    swaggerOptions: { persistAuthorization: true },
   });
 
   const port = Number(process.env.PORT ?? 3000);

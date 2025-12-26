@@ -11,13 +11,13 @@ const serviceName = process.env.OTEL_SERVICE_NAME ?? 'coparent-api';
 if (otlpEndpoint) {
   const sdk = new NodeSDK({
     resource: new Resource({
-      [ATTR_SERVICE_NAME]: serviceName
+      [ATTR_SERVICE_NAME]: serviceName,
     }),
     traceExporter: new OTLPTraceExporter({
-      url: otlpEndpoint
+      url: otlpEndpoint,
     }),
     metricReader: new PrometheusExporter({ port: 9464 }),
-    instrumentations: [getNodeAutoInstrumentations()]
+    instrumentations: [getNodeAutoInstrumentations()],
   });
 
   sdk.start();

@@ -13,6 +13,9 @@ export default [
       parser: typescriptParser,
       parserOptions: {
         project: './tsconfig.json'
+      },
+      globals: {
+        process: 'readonly'
       }
     },
     plugins: {
@@ -22,6 +25,8 @@ export default [
       sonarjs
     },
     rules: {
+      'no-undef': 'off',
+      'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-extraneous-class': 'off',

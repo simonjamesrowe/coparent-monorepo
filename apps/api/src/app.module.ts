@@ -16,19 +16,19 @@ import { HealthModule } from './health/health.module';
             ? { target: 'pino-pretty', options: { colorize: true } }
             : undefined,
         formatters: {
-          level: (label) => ({ level: label })
+          level: (label) => ({ level: label }),
         },
         customProps: () => ({
           service: 'coparent-api',
-          environment: process.env.NODE_ENV ?? 'development'
+          environment: process.env.NODE_ENV ?? 'development',
         }),
-        redact: ['req.headers.authorization']
-      }
+        redact: ['req.headers.authorization'],
+      },
     }),
     AuthModule,
-    HealthModule
+    HealthModule,
   ],
   controllers: [AppController],
-  providers: [AppService]
+  providers: [AppService],
 })
 export class AppModule {}
