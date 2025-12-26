@@ -32,7 +32,7 @@ The implementation follows a security-first approach with query-time isolation, 
 - Automatic updated_at trigger on all tables
 
 **Database Connection & Migration Runner**
-- PostgreSQL connection pooling with configurable pool size
+- MongoDB connection pooling with configurable pool size
 - Migration version tracking table
 - Safe migration runner with rollback support
 - Comprehensive logging of migration execution
@@ -72,7 +72,7 @@ The implementation follows a security-first approach with query-time isolation, 
 - Invitation preview: 30 requests/minute per IP (public)
 
 **Audit Logging**
-- Structured Winston logger with JSON output
+- Structured Pino logger with JSON output
 - All authentication events logged
 - JWT validation failures tracked
 - Role changes recorded
@@ -322,7 +322,7 @@ The implementation follows a security-first approach with query-time isolation, 
 - General API: 100/minute per IP
 
 **HTTPS Enforcement**
-- Express middleware configuration added
+- NestJS middleware configuration added
 - Production environment enforces HTTPS only
 - Redirect HTTP to HTTPS
 - HSTS headers configured
@@ -424,7 +424,7 @@ All endpoints fully implemented with proper validation, error handling, and logg
 
 - **Partition Key:** family_id on all family-scoped tables enables query-time isolation
 - **Soft Delete:** User.is_active + deleted_at for compliance
-- **Role Enum:** PostgreSQL enum for type safety
+- **Role Enum:** Mongoose enum for type safety (MongoDB)
 - **Composite Indexes:** (family_id, key) for optimal query performance
 - **Updated_at Trigger:** Automatic timestamp updates on all tables
 - **Unique Constraints:** Prevent duplicates (users.auth0_id, users.email, parents.(user_id, family_id), invitations.token)
@@ -463,7 +463,7 @@ coparent-api/
 │   │   └── index.ts              # TypeScript type definitions
 │   ├── utils/
 │   │   └── logger.ts             # Structured logging
-│   └── index.ts                  # Express app entry point
+│   └── main.ts                   # NestJS app entry point
 ├── package.json                  # Dependencies & scripts
 ├── tsconfig.json                 # TypeScript configuration
 ├── .env.example                  # Environment template
@@ -495,7 +495,7 @@ coparent-api/
 - Google social connection enabled
 
 **Database:**
-- PostgreSQL 12+ installed
+- MongoDB 7+ installed
 - Connection string in DATABASE_URL environment variable
 - Migrations runnable via `npm run migrate`
 

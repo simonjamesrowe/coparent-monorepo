@@ -1,5 +1,6 @@
 ## API endpoint standards and conventions
 
+- **Framework Assumption**: Implement endpoints using NestJS controllers, DTOs, and pipes
 - **RESTful Design**: Follow REST principles with clear resource-based URLs and appropriate HTTP methods (GET, POST, PUT, PATCH, DELETE)
 - **Consistent Naming**: Use consistent, lowercase, hyphenated or underscored naming conventions for endpoints across the API
 - **Versioning**: Implement API versioning strategy (URL path or headers) to manage breaking changes without disrupting existing clients
@@ -8,3 +9,5 @@
 - **Query Parameters**: Use query parameters for filtering, sorting, pagination, and search rather than creating separate endpoints
 - **HTTP Status Codes**: Return appropriate, consistent HTTP status codes that accurately reflect the response (200, 201, 400, 404, 500, etc.)
 - **Rate Limiting Headers**: Include rate limit information in response headers to help clients manage their usage
+- **API Documentation**: Document endpoints using @nestjs/swagger decorators to keep OpenAPI in sync
+- **Auth Conventions**: Use Auth0-issued JWTs and Passport guards for protected routes

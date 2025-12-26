@@ -59,7 +59,7 @@ The entire CoParent API backend has been implemented with production-grade secur
 
 ### Database Schema (6 tables)
 
-Complete PostgreSQL schema with:
+Complete MongoDB schema (Mongoose) with:
 - Users (auth0_id linking, soft delete)
 - Families (tenant boundary)
 - Parents (RBAC with roles)
@@ -154,7 +154,7 @@ All endpoints include proper error handling, validation, logging, and rate limit
 ## Deployment Checklist
 
 ### Prerequisites Setup
-- PostgreSQL 12+ database
+- MongoDB 7+ database
 - Auth0 account with application created
 - SendGrid account with API key
 - Environment variables configured
@@ -277,7 +277,7 @@ All endpoints include proper error handling, validation, logging, and rate limit
 ## Recommendations for Next Phase
 
 ### Immediate (Frontend Development)
-1. Set up Next.js frontend with Auth0 React SDK
+1. Set up React + Vite frontend with Auth0 React SDK
 2. Implement authentication UI components
 3. Build family setup and invitation flows
 4. Create Zustand store for state management

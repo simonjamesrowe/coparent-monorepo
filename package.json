@@ -16,9 +16,7 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "clean": "turbo run clean && rm -rf node_modules",
-    "docker:dev": "docker-compose -f docker/docker-compose.yml up",
-    "docker:build:api": "docker build -f apps/api/Dockerfile -t coparent-api:latest .",
-    "docker:build:ui": "docker build -f apps/ui/Dockerfile -t coparent-ui:latest ."
+    "docker:dev": "docker-compose -f docker/docker-compose.yml up"
   },
   "devDependencies": {
     "turbo": "^1.11.0",
