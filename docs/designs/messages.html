@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Messages - CoParent</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0D9488;
+      --primary-light: #CCFBF1;
+      --primary-dark: #0F766E;
+      --secondary: #F97066;
+      --secondary-light: #FEE2E2;
+      --accent: #F59E0B;
+      --accent-light: #FEF3C7;
+      --background: #F8FAFB;
+      --surface: #FFFFFF;
+      --text-primary: #1E293B;
+      --text-secondary: #64748B;
+      --border: #E2E8F0;
+      --success: #10B981;
+      --success-light: #D1FAE5;
+      --warning: #FBBF24;
+      --error: #E11D48;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--background);
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 12px 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    .nav-section { margin-bottom: 32px; }
+    .nav-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      padding: 0 12px;
+      margin-bottom: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      margin-bottom: 4px;
+    }
+
+    .nav-item:hover { background: var(--primary-light); color: var(--primary); }
+    .nav-item.active { background: var(--primary-light); color: var(--primary); }
+    .nav-item svg { width: 20px; height: 20px; }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--secondary);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .user-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--background);
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .user-info { flex: 1; }
+    .user-name { font-weight: 600; font-size: 14px; }
+    .user-role { font-size: 12px; color: var(--text-secondary); }
+
+    /* Messages Layout */
+    .messages-container {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Thread List */
+    .thread-list {
+      width: 360px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .thread-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .thread-header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .thread-search {
+      position: relative;
+    }
+
+    .thread-search input {
+      width: 100%;
+      padding: 10px 16px 10px 40px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      background: var(--background);
+    }
+
+    .thread-search input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .thread-search svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      color: var(--text-secondary);
+    }
+
+    .thread-tabs {
+      display: flex;
+      padding: 12px 24px;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .thread-tab {
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-secondary);
+    }
+
+    .thread-tab.active {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .thread-tab:hover:not(.active) {
+      background: var(--background);
+    }
+
+    .threads {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .thread-item {
+      display: flex;
+      gap: 12px;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .thread-item:hover {
+      background: var(--background);
+    }
+
+    .thread-item.active {
+      background: var(--primary-light);
+    }
+
+    .thread-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--secondary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--secondary);
+      flex-shrink: 0;
+    }
+
+    .thread-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .thread-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .thread-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .thread-time {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .thread-preview {
+      font-size: 13px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .thread-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .thread-tag {
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .thread-tag.medical {
+      background: #FCE7F3;
+      color: #9D174D;
+    }
+
+    .thread-tag.school {
+      background: #DBEAFE;
+      color: #1E40AF;
+    }
+
+    .thread-tag.general {
+      background: var(--background);
+      color: var(--text-secondary);
+    }
+
+    .thread-tag.schedule {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    .thread-unread {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+
+    /* Chat Area */
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--background);
+    }
+
+    .chat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .chat-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .chat-header-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--secondary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: var(--secondary);
+    }
+
+    .chat-header-info h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .chat-header-info p {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .chat-header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .header-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-secondary);
+    }
+
+    .header-btn:hover {
+      background: var(--background);
+      color: var(--text-primary);
+    }
+
+    /* Messages */
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .message-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .message-date {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-secondary);
+      padding: 8px 0;
+    }
+
+    .message-date span {
+      background: var(--background);
+      padding: 4px 12px;
+      border-radius: 12px;
+    }
+
+    .message {
+      display: flex;
+      gap: 12px;
+      max-width: 70%;
+    }
+
+    .message.sent {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .message.received .message-avatar {
+      background: var(--secondary-light);
+      color: var(--secondary);
+    }
+
+    .message.sent .message-avatar {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .message-content {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .message-bubble {
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .message.received .message-bubble {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+
+    .message.sent .message-bubble {
+      background: var(--primary);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message-time {
+      font-size: 11px;
+      color: var(--text-secondary);
+      padding: 0 4px;
+    }
+
+    .message.sent .message-time {
+      text-align: right;
+    }
+
+    .message-status {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      justify-content: flex-end;
+    }
+
+    .message-status svg {
+      width: 14px;
+      height: 14px;
+      color: var(--primary);
+    }
+
+    /* Typing Indicator */
+    .typing-indicator {
+      display: flex;
+      gap: 12px;
+      max-width: 70%;
+    }
+
+    .typing-dots {
+      display: flex;
+      gap: 4px;
+      padding: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      border-bottom-left-radius: 4px;
+    }
+
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-secondary);
+      animation: typing 1.4s infinite;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typing {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-4px); opacity: 1; }
+    }
+
+    /* Chat Input */
+    .chat-input-area {
+      padding: 20px 24px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+
+    .chat-input-container {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    .chat-input-wrapper {
+      flex: 1;
+      background: var(--background);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .chat-input-wrapper:focus-within {
+      border-color: var(--primary);
+    }
+
+    .chat-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      resize: none;
+      outline: none;
+      font-family: inherit;
+      line-height: 1.5;
+    }
+
+    .input-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .input-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+
+    .input-btn:hover {
+      background: var(--surface);
+      color: var(--text-primary);
+    }
+
+    .send-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      border: none;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .send-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Notice Banner */
+    .notice-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--primary-light);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      font-size: 13px;
+    }
+
+    .notice-banner svg {
+      width: 20px;
+      height: 20px;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .notice-banner p {
+      color: var(--primary-dark);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">CP</div>
+        <span class="logo-text">CoParent</span>
+      </div>
+
+      <nav class="nav-section">
+        <div class="nav-label">Main</div>
+        <a href="#" class="nav-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+          Dashboard
+        </a>
+        <a href="#" class="nav-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          Calendar
+        </a>
+        <a href="#" class="nav-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          Children
+        </a>
+        <a href="#" class="nav-item active">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+          Messages
+          <span class="nav-badge">3</span>
+        </a>
+      </nav>
+
+      <nav class="nav-section">
+        <div class="nav-label">Finance</div>
+        <a href="#" class="nav-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Expenses
+        </a>
+        <a href="#" class="nav-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          Reports
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar">SJ</div>
+          <div class="user-info">
+            <div class="user-name">Sarah Johnson</div>
+            <div class="user-role">Parent</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Messages Container -->
+    <div class="messages-container">
+      <!-- Thread List -->
+      <div class="thread-list">
+        <div class="thread-header">
+          <h1>Messages</h1>
+          <div class="thread-search">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input type="text" placeholder="Search messages...">
+          </div>
+        </div>
+        <div class="thread-tabs">
+          <button class="thread-tab active">All</button>
+          <button class="thread-tab">Unread</button>
+          <button class="thread-tab">Flagged</button>
+        </div>
+        <div class="threads">
+          <div class="thread-item active">
+            <div class="thread-avatar">MJ</div>
+            <div class="thread-content">
+              <div class="thread-top">
+                <span class="thread-name">Michael Johnson</span>
+                <span class="thread-time">10:32 AM</span>
+              </div>
+              <div class="thread-preview">Sure, I can pick them up at 6pm on Friday...</div>
+              <div class="thread-meta">
+                <span class="thread-tag schedule">Schedule</span>
+              </div>
+            </div>
+          </div>
+          <div class="thread-item">
+            <div class="thread-avatar">MJ</div>
+            <div class="thread-content">
+              <div class="thread-top">
+                <span class="thread-name">Michael Johnson</span>
+                <span class="thread-time">Yesterday</span>
+              </div>
+              <div class="thread-preview">The dentist said Liam needs to come back next month...</div>
+              <div class="thread-meta">
+                <span class="thread-tag medical">Medical</span>
+              </div>
+            </div>
+            <div class="thread-unread"></div>
+          </div>
+          <div class="thread-item">
+            <div class="thread-avatar">MJ</div>
+            <div class="thread-content">
+              <div class="thread-top">
+                <span class="thread-name">Michael Johnson</span>
+                <span class="thread-time">Dec 8</span>
+              </div>
+              <div class="thread-preview">Emma's teacher wants to schedule a parent-teacher...</div>
+              <div class="thread-meta">
+                <span class="thread-tag school">School</span>
+              </div>
+            </div>
+            <div class="thread-unread"></div>
+          </div>
+          <div class="thread-item">
+            <div class="thread-avatar">MJ</div>
+            <div class="thread-content">
+              <div class="thread-top">
+                <span class="thread-name">Michael Johnson</span>
+                <span class="thread-time">Dec 5</span>
+              </div>
+              <div class="thread-preview">I submitted the winter coat expense for Emma...</div>
+              <div class="thread-meta">
+                <span class="thread-tag general">General</span>
+              </div>
+            </div>
+          </div>
+          <div class="thread-item">
+            <div class="thread-avatar">MJ</div>
+            <div class="thread-content">
+              <div class="thread-top">
+                <span class="thread-name">Michael Johnson</span>
+                <span class="thread-time">Dec 1</span>
+              </div>
+              <div class="thread-preview">Can we talk about the holiday schedule?</div>
+              <div class="thread-meta">
+                <span class="thread-tag schedule">Schedule</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Area -->
+      <div class="chat-area">
+        <div class="chat-header">
+          <div class="chat-header-left">
+            <div class="chat-header-avatar">MJ</div>
+            <div class="chat-header-info">
+              <h2>Michael Johnson</h2>
+              <p>Schedule Discussion</p>
+            </div>
+          </div>
+          <div class="chat-header-actions">
+            <button class="header-btn">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+              </svg>
+            </button>
+            <button class="header-btn">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+              </svg>
+            </button>
+            <button class="header-btn">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="chat-messages">
+          <div class="message-date"><span>December 11, 2025</span></div>
+
+          <div class="message received">
+            <div class="message-avatar">MJ</div>
+            <div class="message-content">
+              <div class="message-bubble">
+                Hey Sarah, I wanted to check in about Friday. Can I pick up the kids at 6pm instead of 5pm? I have a meeting that's running late.
+              </div>
+              <div class="message-time">9:45 AM</div>
+            </div>
+          </div>
+
+          <div class="message sent">
+            <div class="message-avatar">SJ</div>
+            <div class="message-content">
+              <div class="message-bubble">
+                Hi Michael. That should be fine - Emma has soccer practice until 5:30 anyway. Just want to confirm: you'll have them for the whole weekend?
+              </div>
+              <div class="message-time">10:12 AM</div>
+            </div>
+          </div>
+
+          <div class="message received">
+            <div class="message-avatar">MJ</div>
+            <div class="message-content">
+              <div class="message-bubble">
+                Yes, Friday 6pm to Sunday 6pm as usual. I'll bring them back before dinner on Sunday.
+              </div>
+              <div class="message-time">10:25 AM</div>
+            </div>
+          </div>
+
+          <div class="message sent">
+            <div class="message-avatar">SJ</div>
+            <div class="message-content">
+              <div class="message-bubble">
+                Perfect. Also, don't forget Liam needs to take his allergy medicine in the morning. I'll pack it in his bag.
+              </div>
+              <div class="message-time">10:28 AM</div>
+            </div>
+          </div>
+
+          <div class="message received">
+            <div class="message-avatar">MJ</div>
+            <div class="message-content">
+              <div class="message-bubble">
+                Sure, I can pick them up at 6pm on Friday. Thanks for the reminder about the medicine - I've set an alarm so I won't forget 👍
+              </div>
+              <div class="message-time">10:32 AM</div>
+            </div>
+          </div>
+
+          <div class="typing-indicator">
+            <div class="message-avatar" style="background: var(--secondary-light); color: var(--secondary);">MJ</div>
+            <div class="typing-dots">
+              <div class="typing-dot"></div>
+              <div class="typing-dot"></div>
+              <div class="typing-dot"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-input-area">
+          <div class="notice-banner">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p>All messages are saved and timestamped for your records.</p>
+          </div>
+          <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+              <textarea class="chat-input" placeholder="Type a message..." rows="1"></textarea>
+              <div class="input-actions">
+                <button class="input-btn">
+                  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                  </svg>
+                </button>
+                <button class="input-btn">
+                  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <button class="send-btn">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

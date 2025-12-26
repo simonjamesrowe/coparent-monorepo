@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendar - CoParent</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0D9488;
+      --primary-light: #CCFBF1;
+      --primary-dark: #0F766E;
+      --secondary: #F97066;
+      --secondary-light: #FEE2E2;
+      --accent: #F59E0B;
+      --accent-light: #FEF3C7;
+      --background: #F8FAFB;
+      --surface: #FFFFFF;
+      --text-primary: #1E293B;
+      --text-secondary: #64748B;
+      --border: #E2E8F0;
+      --success: #10B981;
+      --warning: #FBBF24;
+      --error: #E11D48;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--background);
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar - simplified for this template */
+    .sidebar {
+      width: 260px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 12px 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--text-primary);
+    }
+
+    .nav-section {
+      margin-bottom: 32px;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      padding: 0 12px;
+      margin-bottom: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      margin-bottom: 4px;
+    }
+
+    .nav-item:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .nav-item.active {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .nav-item svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .user-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--background);
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .user-info { flex: 1; }
+    .user-name { font-weight: 600; font-size: 14px; }
+    .user-role { font-size: 12px; color: var(--text-secondary); }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .header-left h1 {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-icon {
+      padding: 10px;
+    }
+
+    /* Calendar Controls */
+    .calendar-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .calendar-nav {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .calendar-nav-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .calendar-nav-btn:hover {
+      background: var(--background);
+    }
+
+    .calendar-month {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .calendar-view-toggle {
+      display: flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .view-btn {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-secondary);
+    }
+
+    .view-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .view-btn:hover:not(.active) {
+      background: var(--background);
+    }
+
+    /* Legend */
+    .calendar-legend {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+
+    .legend-dot.you { background: var(--primary); }
+    .legend-dot.coparent { background: var(--secondary); }
+    .legend-dot.activity { background: var(--accent); }
+    .legend-dot.medical { background: #8B5CF6; }
+
+    /* Calendar Grid */
+    .calendar-container {
+      background: var(--surface);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .calendar-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      background: var(--background);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .calendar-header-cell {
+      padding: 16px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+    }
+
+    .calendar-cell {
+      min-height: 120px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 8px;
+    }
+
+    .calendar-cell:nth-child(7n) {
+      border-right: none;
+    }
+
+    .calendar-cell:nth-last-child(-n+7) {
+      border-bottom: none;
+    }
+
+    .calendar-cell.other-month {
+      background: var(--background);
+    }
+
+    .calendar-cell.other-month .cell-date {
+      color: var(--text-secondary);
+      opacity: 0.5;
+    }
+
+    .calendar-cell.today {
+      background: var(--primary-light);
+    }
+
+    .calendar-cell.today .cell-date {
+      background: var(--primary);
+      color: white;
+    }
+
+    .cell-date {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 50%;
+      margin-bottom: 8px;
+    }
+
+    .cell-events {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .cell-event {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .cell-event:hover {
+      transform: scale(1.02);
+    }
+
+    .cell-event.custody-you {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    .cell-event.custody-other {
+      background: var(--secondary-light);
+      color: #B91C1C;
+    }
+
+    .cell-event.activity {
+      background: var(--accent-light);
+      color: #92400E;
+    }
+
+    .cell-event.medical {
+      background: #EDE9FE;
+      color: #6D28D9;
+    }
+
+    .cell-more {
+      font-size: 11px;
+      color: var(--text-secondary);
+      padding: 2px 8px;
+      cursor: pointer;
+    }
+
+    .cell-more:hover {
+      color: var(--primary);
+    }
+
+    /* Side Panel */
+    .calendar-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+    }
+
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .panel-card {
+      background: var(--surface);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 20px;
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    /* Mini Calendar */
+    .mini-calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .mini-calendar-month {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .mini-calendar-nav {
+      display: flex;
+      gap: 4px;
+    }
+
+    .mini-nav-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+    }
+
+    .mini-nav-btn:hover {
+      background: var(--background);
+    }
+
+    .mini-calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+    }
+
+    .mini-day-header {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      padding: 4px;
+    }
+
+    .mini-day {
+      text-align: center;
+      font-size: 12px;
+      padding: 6px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .mini-day:hover {
+      background: var(--background);
+    }
+
+    .mini-day.other-month {
+      color: var(--text-secondary);
+      opacity: 0.4;
+    }
+
+    .mini-day.today {
+      background: var(--primary);
+      color: white;
+    }
+
+    .mini-day.selected {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .mini-day.has-event {
+      position: relative;
+    }
+
+    .mini-day.has-event::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+
+    /* Upcoming Events */
+    .upcoming-event {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .upcoming-event:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .upcoming-event:first-child {
+      padding-top: 0;
+    }
+
+    .event-date-badge {
+      text-align: center;
+      min-width: 44px;
+    }
+
+    .event-date-badge .day {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .event-date-badge .month {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+    }
+
+    .event-details {
+      flex: 1;
+    }
+
+    .event-title {
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .event-meta {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .event-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    .event-tag.custody {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .event-tag.activity {
+      background: var(--accent-light);
+      color: #92400E;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">CP</div>
+        <span class="logo-text">CoParent</span>
+      </div>
+
+      <nav class="nav-section">
+        <div class="nav-label">Main</div>
+        <a href="#" class="nav-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+          Dashboard
+        </a>
+        <a href="#" class="nav-item active">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          Calendar
+        </a>
+        <a href="#" class="nav-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          Children
+        </a>
+        <a href="#" class="nav-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+          Messages
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar">SJ</div>
+          <div class="user-info">
+            <div class="user-name">Sarah Johnson</div>
+            <div class="user-role">Parent</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="header">
+        <div class="header-left">
+          <h1>Calendar</h1>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-secondary btn-icon">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+            </svg>
+          </button>
+          <button class="btn btn-primary">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+            Add Event
+          </button>
+        </div>
+      </header>
+
+      <!-- Calendar Controls -->
+      <div class="calendar-controls">
+        <div class="calendar-nav">
+          <button class="calendar-nav-btn">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </button>
+          <span class="calendar-month">December 2025</span>
+          <button class="calendar-nav-btn">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+        <div class="calendar-view-toggle">
+          <button class="view-btn active">Month</button>
+          <button class="view-btn">Week</button>
+          <button class="view-btn">Day</button>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="calendar-legend">
+        <div class="legend-item">
+          <div class="legend-dot you"></div>
+          <span>Kids with you</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot coparent"></div>
+          <span>Kids with Michael</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot activity"></div>
+          <span>Activities</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot medical"></div>
+          <span>Medical</span>
+        </div>
+      </div>
+
+      <div class="calendar-layout">
+        <!-- Calendar Grid -->
+        <div class="calendar-container">
+          <div class="calendar-header">
+            <div class="calendar-header-cell">Sun</div>
+            <div class="calendar-header-cell">Mon</div>
+            <div class="calendar-header-cell">Tue</div>
+            <div class="calendar-header-cell">Wed</div>
+            <div class="calendar-header-cell">Thu</div>
+            <div class="calendar-header-cell">Fri</div>
+            <div class="calendar-header-cell">Sat</div>
+          </div>
+          <div class="calendar-grid">
+            <!-- Week 1 -->
+            <div class="calendar-cell other-month">
+              <div class="cell-date">30</div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">1</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Kids with you</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">2</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Kids with you</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">3</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Kids with you</div>
+                <div class="cell-event activity">Soccer Practice</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">4</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Kids with you</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">5</div>
+              <div class="cell-events">
+                <div class="cell-event custody-other">Kids with Michael</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">6</div>
+              <div class="cell-events">
+                <div class="cell-event custody-other">Kids with Michael</div>
+              </div>
+            </div>
+            <!-- Week 2 -->
+            <div class="calendar-cell">
+              <div class="cell-date">7</div>
+              <div class="cell-events">
+                <div class="cell-event custody-other">Kids with Michael</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">8</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Kids with you</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">9</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Kids with you</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">10</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Kids with you</div>
+                <div class="cell-event activity">Soccer Practice</div>
+              </div>
+            </div>
+            <div class="calendar-cell today">
+              <div class="cell-date">11</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Kids with you</div>
+                <div class="cell-event activity">Piano Lesson</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">12</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Kids with you</div>
+                <div class="cell-event medical">Dentist - Liam</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">13</div>
+              <div class="cell-events">
+                <div class="cell-event custody-other">Kids with Michael</div>
+              </div>
+            </div>
+            <!-- Week 3 -->
+            <div class="calendar-cell">
+              <div class="cell-date">14</div>
+              <div class="cell-events">
+                <div class="cell-event custody-other">Kids with Michael</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">15</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Kids with you</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">16</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Kids with you</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">17</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Kids with you</div>
+                <div class="cell-event activity">Soccer Practice</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">18</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Kids with you</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">19</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Kids with you</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">20</div>
+              <div class="cell-events">
+                <div class="cell-event custody-other">Kids with Michael</div>
+                <div class="cell-event activity">Ski Trip</div>
+              </div>
+            </div>
+            <!-- Week 4 -->
+            <div class="calendar-cell">
+              <div class="cell-date">21</div>
+              <div class="cell-events">
+                <div class="cell-event custody-other">Kids with Michael</div>
+                <div class="cell-event activity">Ski Trip</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">22</div>
+              <div class="cell-events">
+                <div class="cell-event custody-other">Kids with Michael</div>
+                <div class="cell-event activity">Ski Trip</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">23</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Kids with you</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">24</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Christmas Eve</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">25</div>
+              <div class="cell-events">
+                <div class="cell-event custody-other">Christmas Day</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">26</div>
+              <div class="cell-events">
+                <div class="cell-event custody-other">Kids with Michael</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">27</div>
+              <div class="cell-events">
+                <div class="cell-event custody-other">Kids with Michael</div>
+              </div>
+            </div>
+            <!-- Week 5 -->
+            <div class="calendar-cell">
+              <div class="cell-date">28</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Kids with you</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">29</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Kids with you</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">30</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">Kids with you</div>
+              </div>
+            </div>
+            <div class="calendar-cell">
+              <div class="cell-date">31</div>
+              <div class="cell-events">
+                <div class="cell-event custody-you">New Year's Eve</div>
+              </div>
+            </div>
+            <div class="calendar-cell other-month">
+              <div class="cell-date">1</div>
+            </div>
+            <div class="calendar-cell other-month">
+              <div class="cell-date">2</div>
+            </div>
+            <div class="calendar-cell other-month">
+              <div class="cell-date">3</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Side Panel -->
+        <div class="side-panel">
+          <div class="panel-card">
+            <div class="panel-title">Upcoming Events</div>
+            <div class="upcoming-event">
+              <div class="event-date-badge">
+                <div class="day">11</div>
+                <div class="month">Dec</div>
+              </div>
+              <div class="event-details">
+                <div class="event-title">Emma's Piano Lesson</div>
+                <div class="event-meta">4:00 PM - 5:00 PM</div>
+                <div class="event-tag activity">Activity</div>
+              </div>
+            </div>
+            <div class="upcoming-event">
+              <div class="event-date-badge">
+                <div class="day">12</div>
+                <div class="month">Dec</div>
+              </div>
+              <div class="event-details">
+                <div class="event-title">Liam's Dentist</div>
+                <div class="event-meta">10:00 AM - 11:00 AM</div>
+                <div class="event-tag" style="background: #EDE9FE; color: #6D28D9;">Medical</div>
+              </div>
+            </div>
+            <div class="upcoming-event">
+              <div class="event-date-badge">
+                <div class="day">13</div>
+                <div class="month">Dec</div>
+              </div>
+              <div class="event-details">
+                <div class="event-title">Custody Handoff</div>
+                <div class="event-meta">6:00 PM</div>
+                <div class="event-tag custody">Custody</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="mini-calendar-header">
+              <span class="mini-calendar-month">December 2025</span>
+              <div class="mini-calendar-nav">
+                <button class="mini-nav-btn">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                  </svg>
+                </button>
+                <button class="mini-nav-btn">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="mini-calendar-grid">
+              <div class="mini-day-header">S</div>
+              <div class="mini-day-header">M</div>
+              <div class="mini-day-header">T</div>
+              <div class="mini-day-header">W</div>
+              <div class="mini-day-header">T</div>
+              <div class="mini-day-header">F</div>
+              <div class="mini-day-header">S</div>
+              <div class="mini-day other-month">30</div>
+              <div class="mini-day has-event">1</div>
+              <div class="mini-day">2</div>
+              <div class="mini-day has-event">3</div>
+              <div class="mini-day">4</div>
+              <div class="mini-day">5</div>
+              <div class="mini-day">6</div>
+              <div class="mini-day">7</div>
+              <div class="mini-day">8</div>
+              <div class="mini-day">9</div>
+              <div class="mini-day has-event">10</div>
+              <div class="mini-day today">11</div>
+              <div class="mini-day has-event">12</div>
+              <div class="mini-day">13</div>
+              <div class="mini-day">14</div>
+              <div class="mini-day">15</div>
+              <div class="mini-day">16</div>
+              <div class="mini-day has-event">17</div>
+              <div class="mini-day">18</div>
+              <div class="mini-day">19</div>
+              <div class="mini-day has-event">20</div>
+              <div class="mini-day has-event">21</div>
+              <div class="mini-day has-event">22</div>
+              <div class="mini-day">23</div>
+              <div class="mini-day">24</div>
+              <div class="mini-day">25</div>
+              <div class="mini-day">26</div>
+              <div class="mini-day">27</div>
+              <div class="mini-day">28</div>
+              <div class="mini-day">29</div>
+              <div class="mini-day">30</div>
+              <div class="mini-day">31</div>
+              <div class="mini-day other-month">1</div>
+              <div class="mini-day other-month">2</div>
+              <div class="mini-day other-month">3</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emma's Profile - CoParent</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0D9488;
+      --primary-light: #CCFBF1;
+      --primary-dark: #0F766E;
+      --secondary: #F97066;
+      --secondary-light: #FEE2E2;
+      --accent: #F59E0B;
+      --accent-light: #FEF3C7;
+      --background: #F8FAFB;
+      --surface: #FFFFFF;
+      --text-primary: #1E293B;
+      --text-secondary: #64748B;
+      --border: #E2E8F0;
+      --success: #10B981;
+      --success-light: #D1FAE5;
+      --warning: #FBBF24;
+      --error: #E11D48;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--background);
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 12px 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .logo-text { font-weight: 700; font-size: 20px; }
+
+    .nav-section { margin-bottom: 32px; }
+    .nav-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      padding: 0 12px;
+      margin-bottom: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      margin-bottom: 4px;
+    }
+
+    .nav-item:hover { background: var(--primary-light); color: var(--primary); }
+    .nav-item.active { background: var(--primary-light); color: var(--primary); }
+    .nav-item svg { width: 20px; height: 20px; }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .user-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--background);
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .user-info { flex: 1; }
+    .user-name { font-weight: 600; font-size: 14px; }
+    .user-role { font-size: 12px; color: var(--text-secondary); }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .breadcrumb a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--primary);
+    }
+
+    .breadcrumb span {
+      color: var(--text-secondary);
+    }
+
+    .breadcrumb-current {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    /* Profile Header */
+    .profile-header {
+      background: var(--surface);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .profile-header-content {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-light), #E0F2FE);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 56px;
+      flex-shrink: 0;
+    }
+
+    .profile-info {
+      flex: 1;
+    }
+
+    .profile-name {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .profile-meta {
+      display: flex;
+      gap: 24px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .profile-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .profile-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--primary-light);
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--primary);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-secondary { background: var(--surface); color: var(--text-primary); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: var(--background); }
+
+    /* Content Grid */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .card-action {
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .card-action:hover {
+      text-decoration: underline;
+    }
+
+    .card-body {
+      padding: 24px;
+    }
+
+    /* Info Grid */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .info-item {
+      padding: 16px;
+      background: var(--background);
+      border-radius: 10px;
+    }
+
+    .info-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .info-value {
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .info-item.full-width {
+      grid-column: span 2;
+    }
+
+    /* Emergency Contacts */
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .contact-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .contact-item:first-child {
+      padding-top: 0;
+    }
+
+    .contact-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .contact-avatar.primary {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .contact-avatar.secondary {
+      background: var(--secondary-light);
+      color: var(--secondary);
+    }
+
+    .contact-avatar.other {
+      background: var(--accent-light);
+      color: #92400E;
+    }
+
+    .contact-info {
+      flex: 1;
+    }
+
+    .contact-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .contact-relation {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .contact-phone {
+      font-size: 14px;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    /* Medical Info */
+    .medical-section {
+      margin-bottom: 24px;
+    }
+
+    .medical-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .medical-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .tag.allergy {
+      background: var(--secondary-light);
+      color: #991B1B;
+    }
+
+    .tag.condition {
+      background: var(--accent-light);
+      color: #92400E;
+    }
+
+    .tag.medication {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    .medication-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--background);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .medication-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .medication-name {
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .medication-dose {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* School Info */
+    .school-header {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .school-logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #DBEAFE, #E0E7FF);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .school-name {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .school-grade {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .school-detail {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .school-detail:last-child {
+      border-bottom: none;
+    }
+
+    .school-detail-label {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .school-detail-value {
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    /* Upcoming Events */
+    .event-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .event-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .event-item:first-child {
+      padding-top: 0;
+    }
+
+    .event-date {
+      text-align: center;
+      min-width: 48px;
+    }
+
+    .event-date-day {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .event-date-month {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+    }
+
+    .event-info {
+      flex: 1;
+    }
+
+    .event-title {
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .event-time {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .event-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    .event-tag.activity {
+      background: var(--accent-light);
+      color: #92400E;
+    }
+
+    .event-tag.medical {
+      background: #FCE7F3;
+      color: #9D174D;
+    }
+
+    /* Recent Photos */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .photo-item {
+      aspect-ratio: 1;
+      background: var(--background);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .photo-item:hover {
+      transform: scale(1.05);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--background);
+    }
+
+    .tab {
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-secondary);
+    }
+
+    .tab.active {
+      background: var(--surface);
+      color: var(--primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .tab:hover:not(.active) {
+      color: var(--text-primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">CP</div>
+        <span class="logo-text">CoParent</span>
+      </div>
+
+      <nav class="nav-section">
+        <div class="nav-label">Main</div>
+        <a href="#" class="nav-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+          Dashboard
+        </a>
+        <a href="#" class="nav-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          Calendar
+        </a>
+        <a href="#" class="nav-item active">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          Children
+        </a>
+        <a href="#" class="nav-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+          Messages
+        </a>
+      </nav>
+
+      <nav class="nav-section">
+        <div class="nav-label">Finance</div>
+        <a href="#" class="nav-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Expenses
+        </a>
+        <a href="#" class="nav-item">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          Reports
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar">SJ</div>
+          <div class="user-info">
+            <div class="user-name">Sarah Johnson</div>
+            <div class="user-role">Parent</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb">
+        <a href="#">Children</a>
+        <span>›</span>
+        <span class="breadcrumb-current">Emma Johnson</span>
+      </nav>
+
+      <!-- Profile Header -->
+      <div class="profile-header">
+        <div class="profile-header-content">
+          <div class="profile-avatar">👧</div>
+          <div class="profile-info">
+            <h1 class="profile-name">Emma Johnson</h1>
+            <div class="profile-meta">
+              <div class="profile-meta-item">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                8 years old
+              </div>
+              <div class="profile-meta-item">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18z"/>
+                </svg>
+                March 15, 2017
+              </div>
+              <div class="profile-meta-item">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+                3rd Grade
+              </div>
+            </div>
+            <div class="profile-status">
+              <div class="status-dot"></div>
+              Currently with you
+            </div>
+          </div>
+          <div class="profile-actions">
+            <button class="btn btn-secondary">
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+              </svg>
+              Edit Profile
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Grid -->
+      <div class="content-grid">
+        <div class="left-column" style="display: flex; flex-direction: column; gap: 24px;">
+          <!-- Basic Info -->
+          <div class="card">
+            <div class="tabs">
+              <button class="tab active">Basic Info</button>
+              <button class="tab">Medical</button>
+              <button class="tab">School</button>
+              <button class="tab">Documents</button>
+            </div>
+            <div class="card-body">
+              <div class="info-grid">
+                <div class="info-item">
+                  <div class="info-label">Full Name</div>
+                  <div class="info-value">Emma Rose Johnson</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Nickname</div>
+                  <div class="info-value">Em</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Date of Birth</div>
+                  <div class="info-value">March 15, 2017</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Blood Type</div>
+                  <div class="info-value">A+</div>
+                </div>
+                <div class="info-item full-width">
+                  <div class="info-label">Primary Address</div>
+                  <div class="info-value">123 Maple Street, Apt 4B, Brooklyn, NY 11201</div>
+                </div>
+                <div class="info-item full-width">
+                  <div class="info-label">Notes</div>
+                  <div class="info-value">Loves reading, especially fantasy books. Currently taking piano lessons on Thursdays.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Medical Information -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Medical Information</h2>
+              <span class="card-action">Edit</span>
+            </div>
+            <div class="card-body">
+              <div class="medical-section">
+                <div class="medical-label">Allergies</div>
+                <div class="tag-list">
+                  <span class="tag allergy">Peanuts (severe)</span>
+                  <span class="tag allergy">Tree nuts</span>
+                </div>
+              </div>
+              <div class="medical-section">
+                <div class="medical-label">Current Medications</div>
+                <div class="medication-item">
+                  <div>
+                    <div class="medication-name">Zyrtec (Cetirizine)</div>
+                    <div class="medication-dose">5mg daily for seasonal allergies</div>
+                  </div>
+                </div>
+              </div>
+              <div class="medical-section">
+                <div class="medical-label">Doctor Information</div>
+                <div class="info-grid">
+                  <div class="info-item">
+                    <div class="info-label">Pediatrician</div>
+                    <div class="info-value">Dr. Sarah Chen</div>
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Phone</div>
+                    <div class="info-value">(555) 123-4567</div>
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Dentist</div>
+                    <div class="info-value">Dr. Michael Park</div>
+                  </div>
+                  <div class="info-item">
+                    <div class="info-label">Phone</div>
+                    <div class="info-value">(555) 234-5678</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- School Information -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">School Information</h2>
+              <span class="card-action">Edit</span>
+            </div>
+            <div class="card-body">
+              <div class="school-header">
+                <div class="school-logo">🏫</div>
+                <div>
+                  <div class="school-name">Brooklyn Heights Elementary</div>
+                  <div class="school-grade">3rd Grade • Mrs. Thompson's Class</div>
+                </div>
+              </div>
+              <div class="school-detail">
+                <span class="school-detail-label">School Address</span>
+                <span class="school-detail-value">456 Education Lane, Brooklyn, NY</span>
+              </div>
+              <div class="school-detail">
+                <span class="school-detail-label">Main Office</span>
+                <span class="school-detail-value">(555) 987-6543</span>
+              </div>
+              <div class="school-detail">
+                <span class="school-detail-label">Teacher Email</span>
+                <span class="school-detail-value">thompson@bhes.edu</span>
+              </div>
+              <div class="school-detail">
+                <span class="school-detail-label">School Hours</span>
+                <span class="school-detail-value">8:30 AM - 3:00 PM</span>
+              </div>
+              <div class="school-detail">
+                <span class="school-detail-label">Bus Number</span>
+                <span class="school-detail-value">42</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="right-column" style="display: flex; flex-direction: column; gap: 24px;">
+          <!-- Emergency Contacts -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Emergency Contacts</h2>
+              <span class="card-action">Edit</span>
+            </div>
+            <div class="card-body">
+              <div class="contact-item">
+                <div class="contact-avatar primary">SJ</div>
+                <div class="contact-info">
+                  <div class="contact-name">Sarah Johnson</div>
+                  <div class="contact-relation">Mother</div>
+                </div>
+                <div class="contact-phone">(555) 111-2222</div>
+              </div>
+              <div class="contact-item">
+                <div class="contact-avatar secondary">MJ</div>
+                <div class="contact-info">
+                  <div class="contact-name">Michael Johnson</div>
+                  <div class="contact-relation">Father</div>
+                </div>
+                <div class="contact-phone">(555) 333-4444</div>
+              </div>
+              <div class="contact-item">
+                <div class="contact-avatar other">RJ</div>
+                <div class="contact-info">
+                  <div class="contact-name">Ruth Johnson</div>
+                  <div class="contact-relation">Grandmother</div>
+                </div>
+                <div class="contact-phone">(555) 555-6666</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upcoming Events -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Upcoming Events</h2>
+              <span class="card-action">View All</span>
+            </div>
+            <div class="card-body">
+              <div class="event-item">
+                <div class="event-date">
+                  <div class="event-date-day">11</div>
+                  <div class="event-date-month">Dec</div>
+                </div>
+                <div class="event-info">
+                  <div class="event-title">Piano Lesson</div>
+                  <div class="event-time">4:00 PM - 5:00 PM</div>
+                  <div class="event-tag activity">Activity</div>
+                </div>
+              </div>
+              <div class="event-item">
+                <div class="event-date">
+                  <div class="event-date-day">14</div>
+                  <div class="event-date-month">Dec</div>
+                </div>
+                <div class="event-info">
+                  <div class="event-title">Soccer Practice</div>
+                  <div class="event-time">10:00 AM - 11:30 AM</div>
+                  <div class="event-tag activity">Activity</div>
+                </div>
+              </div>
+              <div class="event-item">
+                <div class="event-date">
+                  <div class="event-date-day">20</div>
+                  <div class="event-date-month">Dec</div>
+                </div>
+                <div class="event-info">
+                  <div class="event-title">School Ski Trip</div>
+                  <div class="event-time">Dec 20-22</div>
+                  <div class="event-tag activity">Activity</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Photos -->
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Recent Photos</h2>
+              <span class="card-action">View All</span>
+            </div>
+            <div class="card-body">
+              <div class="photo-grid">
+                <div class="photo-item">⚽</div>
+                <div class="photo-item">🎹</div>
+                <div class="photo-item">📚</div>
+                <div class="photo-item">🎨</div>
+                <div class="photo-item">🎂</div>
+                <div class="photo-item">🏃‍♀️</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
