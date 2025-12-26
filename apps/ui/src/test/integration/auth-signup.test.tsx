@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { AuthCallback } from '@/components/auth/AuthCallback'
 import { apiClient } from '@/lib/api-client'

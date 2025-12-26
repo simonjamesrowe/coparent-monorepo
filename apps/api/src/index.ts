@@ -6,8 +6,6 @@
 import express from 'express';
 import { runMigrations } from './db/migrate';
 import logger from './utils/logger';
-import { validateJWT } from './middleware/jwt';
-import { ensureActiveUser } from './middleware/tenantIsolation';
 import { registerLimiter, generalLimiter } from './middleware/rateLimiter';
 
 // Import route handlers
@@ -46,7 +44,7 @@ app.post('/api/v1/invitations/:token/accept', invitationRoutes);
 app.post('/api/v1/invitations/:invitation_id/resend', invitationRoutes);
 
 // Error handling middleware
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: any, req: express.Request, res: express.Response) => {
   logger.error('Unhandled error', {
     error: err.message,
     stack: err.stack,

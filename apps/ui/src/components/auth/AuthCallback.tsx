@@ -9,7 +9,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { useNavigate } from '@tanstack/react-router'
 import { apiClient } from '@/lib/api-client'
 import { useFamilyStore } from '@/stores/familyStore'
-import { MeResponse, RegisterResponse } from '@/types'
+import { RegisterResponse } from '@/types'
 
 export function AuthCallback() {
   const { isAuthenticated, user, getAccessTokenSilently, logout } = useAuth0()

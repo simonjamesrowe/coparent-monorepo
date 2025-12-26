@@ -19,7 +19,7 @@ interface CoParent {
 export function TransferAdmin() {
   const navigate = useNavigate()
   const { family } = useFamily()
-  const [coParents, setCoParents] = useState<CoParent[]>([])
+  const [coParents] = useState<CoParent[]>([])
   const [selectedCoParent, setSelectedCoParent] = useState<CoParent | null>(null)
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [isTransferring, setIsTransferring] = useState(false)
@@ -36,7 +36,7 @@ export function TransferAdmin() {
     setError(null)
 
     try {
-      const response = await apiClient.put<TransferAdminResponse>(
+      await apiClient.put<TransferAdminResponse>(
         `/v1/families/${family.id}/transfer-admin`,
         { target_user_id: selectedCoParent.id }
       )

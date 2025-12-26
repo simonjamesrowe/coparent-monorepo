@@ -5,7 +5,7 @@
  */
 
 import { create } from 'zustand'
-import { User, Family, Parent } from '@/types'
+import { User, Family } from '@/types'
 
 export interface FamilyStore {
   // User context

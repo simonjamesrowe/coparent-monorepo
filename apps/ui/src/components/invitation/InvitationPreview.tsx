@@ -5,7 +5,7 @@
  */
 
 import { useEffect, useState } from 'react'
-import { useSearch, Link, useNavigate } from '@tanstack/react-router'
+import { useSearch, Link } from '@tanstack/react-router'
 import { apiClient } from '@/lib/api-client'
 import { InvitationPreviewResponse } from '@/types'
 
@@ -14,7 +14,6 @@ interface InviteSearch {
 }
 
 export function InvitationPreview() {
-  const navigate = useNavigate()
   const search = useSearch({ from: '/invite/$token' }) as InviteSearch
   const [invitationData, setInvitationData] = useState<InvitationPreviewResponse | null>(null)
   const [error, setError] = useState<string | null>(null)

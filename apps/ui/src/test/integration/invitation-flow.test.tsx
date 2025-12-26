@@ -6,7 +6,6 @@
 
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { InvitationPreview } from '@/components/invitation/InvitationPreview'
 import { InvitationAccept } from '@/components/invitation/InvitationAccept'
 import { apiClient } from '@/lib/api-client'
@@ -66,7 +65,6 @@ describe('Invitation Flow Integration', () => {
   })
 
   it('should show invitation creation confirmation', async () => {
-    const user = userEvent.setup()
     const createSpy = vi.spyOn(apiClient, 'post')
 
     // This would test InviteCoParent component

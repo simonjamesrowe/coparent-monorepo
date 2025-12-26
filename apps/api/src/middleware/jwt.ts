@@ -14,7 +14,7 @@ interface CachedPublicKey {
   expires_at: number;
 }
 
-let publicKeyCache: Map<string, CachedPublicKey> = new Map();
+const publicKeyCache: Map<string, CachedPublicKey> = new Map();
 const PUBLIC_KEY_TTL = 30 * 60 * 1000; // 30 minutes
 
 /**

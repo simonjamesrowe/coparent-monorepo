@@ -10,7 +10,6 @@ import { registerLimiter } from '../middleware/rateLimiter';
 import { UserModel } from '../models/User';
 import { FamilyModel } from '../models/Family';
 import { ParentModel } from '../models/Parent';
-import { ChildModel } from '../models/Child';
 import logger from '../utils/logger';
 
 const router: Router = Router();

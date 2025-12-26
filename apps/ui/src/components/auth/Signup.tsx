@@ -4,7 +4,7 @@
  * See: spec.md "Signup Component" (lines 1091-1096)
  */
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useSearch, Link } from '@tanstack/react-router'
 

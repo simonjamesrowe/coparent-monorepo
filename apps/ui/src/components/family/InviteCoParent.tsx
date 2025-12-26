@@ -74,9 +74,9 @@ export function InviteCoParent() {
     }
   }
 
-  const handleResend = async (invitationId: string) => {
+  const handleResend = async () => {
     try {
-      // TODO: Implement resend endpoint
+      // TODO: Implement resend endpoint with invitationId parameter
       setSuccessMessage('Invitation resent!')
     } catch (err) {
       setSubmitError(apiClient.getErrorMessage(err))
@@ -159,7 +159,7 @@ export function InviteCoParent() {
                       </div>
                       {invitation.status === 'EXPIRED' && (
                         <button
-                          onClick={() => handleResend(invitation.id)}
+                          onClick={() => handleResend()}
                           className="px-4 py-2 text-sm font-medium text-harbor-600 hover:bg-harbor-50 rounded transition"
                         >
                           Resend
