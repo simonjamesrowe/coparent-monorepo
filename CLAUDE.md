@@ -121,6 +121,36 @@ docker-compose -f docker/docker-compose.yml up
 - **`.github/workflows/api-ci.yml`** - Lint → type-check → build for API
 - **`.github/workflows/ui-ci.yml`** - Lint → test → build for UI
 
-## Standards
+## Documentation
 
-Follow the tech stack and practices defined in `docs/standards/`. These are the source of truth for architectural decisions, tooling, and code style.
+### Product
+- [Mission & Vision](docs/product/mission.md)
+- [Roadmap](docs/product/roadmap.md)
+- [Tech Stack Overview](docs/product/tech-stack.md)
+
+### Standards
+
+Follow the standards in `docs/standards/` for architectural decisions, tooling, and code style:
+
+**Global**
+- [Tech Stack](docs/standards/global/tech-stack.md)
+- [Coding Style](docs/standards/global/coding-style.md)
+- [Conventions](docs/standards/global/conventions.md)
+- [Error Handling](docs/standards/global/error-handling.md)
+- [Validation](docs/standards/global/validation.md)
+- [Commenting](docs/standards/global/commenting.md)
+
+**Backend**
+- [API Design](docs/standards/backend/api.md)
+- [Models](docs/standards/backend/models.md)
+- [Queries](docs/standards/backend/queries.md)
+- [Migrations](docs/standards/backend/migrations.md)
+
+**Frontend**
+- [Components](docs/standards/frontend/components.md)
+- [CSS](docs/standards/frontend/css.md)
+- [Responsive Design](docs/standards/frontend/responsive.md)
+- [Accessibility](docs/standards/frontend/accessibility.md)
+
+**Testing**
+- [Test Writing](docs/standards/testing/test-writing.md)
