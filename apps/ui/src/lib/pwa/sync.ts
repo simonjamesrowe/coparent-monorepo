@@ -7,33 +7,33 @@ import {
   removeFromOfflineQueue,
   incrementOfflineQueueRetries,
   addToOfflineQueue,
-} from './db'
+} from './db';
 
-const MAX_RETRIES = 3
+const MAX_RETRIES = 3;
 
 /**
  * Process the offline queue when back online
  */
 export async function processOfflineQueue(): Promise<void> {
-  const queue = await getOfflineQueue()
+  const queue = await getOfflineQueue();
 
   for (const item of queue) {
     try {
       // Process the queued action
-      await processQueueItem(item)
+      await processQueueItem(item);
 
       // Remove from queue on success
-      await removeFromOfflineQueue(item.id)
+      await removeFromOfflineQueue(item.id);
     } catch (error) {
-      console.error(`Failed to process queue item ${item.id}:`, error)
+      console.error(`Failed to process queue item ${item.id}:`, error);
 
       // Increment retries
       if (item.retries < MAX_RETRIES) {
-        await incrementOfflineQueueRetries(item.id)
+        await incrementOfflineQueueRetries(item.id);
       } else {
         // Remove after max retries
-        console.warn(`Removing item ${item.id} after ${MAX_RETRIES} failed attempts`)
-        await removeFromOfflineQueue(item.id)
+        console.warn(`Removing item ${item.id} after ${MAX_RETRIES} failed attempts`);
+        await removeFromOfflineQueue(item.id);
       }
     }
   }
@@ -43,17 +43,17 @@ export async function processOfflineQueue(): Promise<void> {
  * Process a single queue item
  */
 async function processQueueItem(item: {
-  id: string
-  action: string
-  data: unknown
-  timestamp: number
-  retries: number
+  id: string;
+  action: string;
+  data: unknown;
+  timestamp: number;
+  retries: number;
 }): Promise<void> {
   // Parse action type
-  const [method, endpoint] = item.action.split(':')
+  const [method, endpoint] = item.action.split(':');
 
   if (!method || !endpoint) {
-    throw new Error(`Invalid action format: ${item.action}`)
+    throw new Error(`Invalid action format: ${item.action}`);
   }
 
   // Make API request
@@ -63,10 +63,10 @@ async function processQueueItem(item: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(item.data),
-  })
+  });
 
   if (!response.ok) {
-    throw new Error(`API request failed: ${response.statusText}`)
+    throw new Error(`API request failed: ${response.statusText}`);
   }
 }
 
@@ -76,10 +76,10 @@ async function processQueueItem(item: {
 export async function queueOfflineAction(
   method: string,
   endpoint: string,
-  data: unknown
+  data: unknown,
 ): Promise<void> {
-  const action = `${method}:${endpoint}`
-  await addToOfflineQueue(action, data)
+  const action = `${method}:${endpoint}`;
+  await addToOfflineQueue(action, data);
 }
 
 /**
@@ -87,28 +87,30 @@ export async function queueOfflineAction(
  */
 export function initSync(): void {
   if (typeof window === 'undefined') {
-    return
+    return;
   }
 
   // Process queue when coming back online
   window.addEventListener('online', () => {
-    console.log('Back online - processing offline queue')
+    console.log('Back online - processing offline queue');
     processOfflineQueue().catch((error) => {
-      console.error('Failed to process offline queue:', error)
-    })
-  })
+      console.error('Failed to process offline queue:', error);
+    });
+  });
 
   // Register background sync if supported
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if ('serviceWorker' in navigator && 'sync' in (ServiceWorkerRegistration.prototype as any)) {
     navigator.serviceWorker.ready
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then((registration: any) => {
         if (registration.sync) {
-          return registration.sync.register('sync-offline-queue')
+          return registration.sync.register('sync-offline-queue');
         }
       })
       .catch((error) => {
-        console.error('Background sync registration failed:', error)
-      })
+        console.error('Background sync registration failed:', error);
+      });
   }
 }
 
@@ -117,9 +119,9 @@ export function initSync(): void {
  */
 export async function isSynced(): Promise<boolean> {
   if (!navigator.onLine) {
-    return false
+    return false;
   }
 
-  const queue = await getOfflineQueue()
-  return queue.length === 0
+  const queue = await getOfflineQueue();
+  return queue.length === 0;
 }

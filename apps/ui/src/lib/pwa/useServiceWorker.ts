@@ -2,62 +2,63 @@
  * Hook to manage service worker updates
  */
 
-import { useState, useEffect } from 'react'
-import { Workbox } from 'workbox-window'
+import { useState, useEffect } from 'react';
+import { Workbox } from 'workbox-window';
 
 export function useServiceWorker() {
-  const [wb, setWb] = useState<Workbox | null>(null)
-  const [updateAvailable, setUpdateAvailable] = useState(false)
-  const [isRegistering, setIsRegistering] = useState(false)
+  const [wb, setWb] = useState<Workbox | null>(null);
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
 
   useEffect(() => {
     if (
       typeof window === 'undefined' ||
       !('serviceWorker' in navigator) ||
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (import.meta as any).env?.DEV
     ) {
-      return
+      return;
     }
 
-    const workbox = new Workbox('/sw.js')
+    const workbox = new Workbox('/sw.js');
 
     workbox.addEventListener('installed', (event) => {
       if (event.isUpdate) {
-        setUpdateAvailable(true)
+        setUpdateAvailable(true);
       }
-    })
+    });
 
     workbox.addEventListener('waiting', () => {
-      setUpdateAvailable(true)
-    })
+      setUpdateAvailable(true);
+    });
 
     workbox.addEventListener('controlling', () => {
-      window.location.reload()
-    })
+      window.location.reload();
+    });
 
-    setWb(workbox)
-    setIsRegistering(true)
+    setWb(workbox);
+    setIsRegistering(true);
 
     workbox
       .register()
       .then(() => {
-        setIsRegistering(false)
+        setIsRegistering(false);
       })
       .catch((error) => {
-        console.error('Service worker registration failed:', error)
-        setIsRegistering(false)
-      })
-  }, [])
+        console.error('Service worker registration failed:', error);
+        setIsRegistering(false);
+      });
+  }, []);
 
   const skipWaiting = () => {
     if (wb) {
-      wb.messageSkipWaiting()
+      wb.messageSkipWaiting();
     }
-  }
+  };
 
   return {
     updateAvailable,
     isRegistering,
     skipWaiting,
-  }
+  };
 }

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-undef */
 
 /**
  * Simple script to generate placeholder PWA icons using SVG
@@ -7,8 +8,8 @@
  * For production, replace these with professional icon designs
  */
 
-const fs = require('fs')
-const path = require('path')
+const fs = require('fs');
+const path = require('path');
 
 const sizes = [192, 512]
 const publicDir = path.join(__dirname, '../public')

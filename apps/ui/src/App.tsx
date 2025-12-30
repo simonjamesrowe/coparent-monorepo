@@ -1,5 +1,3 @@
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
 import {
   LayoutDashboard,
   Calendar,
@@ -7,100 +5,99 @@ import {
   DollarSign,
   FileText,
   Image,
-  Settings
-} from 'lucide-react'
+  Settings,
+} from 'lucide-react';
+import { useEffect } from 'react';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
-import { AppShell, NavigationItem } from './components/shell'
-import {
-  UpdateNotification,
-  OfflineIndicator,
-  InstallPrompt,
-} from './components/pwa'
-import { initDB, initSync } from './lib/pwa'
-import DashboardPage from './pages/DashboardPage'
-import CalendarPage from './pages/CalendarPage'
-import MessagesPage from './pages/MessagesPage'
-import ExpensesPage from './pages/ExpensesPage'
-import DocumentsPage from './pages/DocumentsPage'
-import TimelinePage from './pages/TimelinePage'
-import SettingsPage from './pages/SettingsPage'
-import OnboardingPage from './pages/OnboardingPage'
-import FamilySetupPage from './pages/FamilySetupPage'
+import { UpdateNotification, OfflineIndicator, InstallPrompt } from './components/pwa';
+import type { NavigationItem } from './components/shell';
+import { AppShell } from './components/shell';
+import { initDB, initSync } from './lib/pwa';
+import CalendarPage from './pages/CalendarPage';
+import DashboardPage from './pages/DashboardPage';
+import DocumentsPage from './pages/DocumentsPage';
+import ExpensesPage from './pages/ExpensesPage';
+import FamilySetupPage from './pages/FamilySetupPage';
+import MessagesPage from './pages/MessagesPage';
+import OnboardingPage from './pages/OnboardingPage';
+import SettingsPage from './pages/SettingsPage';
+import TimelinePage from './pages/TimelinePage';
 
 const App = () => {
-  const location = useLocation()
-  const navigate = useNavigate()
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // Initialize PWA features
   useEffect(() => {
     // Initialize IndexedDB
     initDB().catch((error) => {
-      console.error('Failed to initialize IndexedDB:', error)
-    })
+      console.error('Failed to initialize IndexedDB:', error);
+    });
 
     // Initialize background sync
-    initSync()
-  }, [])
+    initSync();
+  }, []);
 
   // Mock user data - this will be replaced with real Auth0 data later
   const user = {
     name: 'Demo Parent',
     avatarUrl: undefined,
-  }
+  };
 
   const handleLogout = () => {
-    console.log('Logout clicked')
+    console.log('Logout clicked');
     // Auth0 logout will be implemented later
-  }
+  };
 
   const handleNavigate = (href: string) => {
-    navigate(href)
-  }
+    navigate(href);
+  };
 
   const navigationItems: NavigationItem[] = [
     {
       label: 'Dashboard',
       href: '/dashboard',
-      icon: <LayoutDashboard className="w-5 h-5" />,
+      icon: <LayoutDashboard className="h-5 w-5" />,
       isActive: location.pathname === '/dashboard' || location.pathname === '/',
     },
     {
       label: 'Calendar',
       href: '/calendar',
-      icon: <Calendar className="w-5 h-5" />,
+      icon: <Calendar className="h-5 w-5" />,
       isActive: location.pathname === '/calendar',
     },
     {
       label: 'Messages',
       href: '/messages',
-      icon: <MessageSquare className="w-5 h-5" />,
+      icon: <MessageSquare className="h-5 w-5" />,
       isActive: location.pathname === '/messages',
     },
     {
       label: 'Expenses',
       href: '/expenses',
-      icon: <DollarSign className="w-5 h-5" />,
+      icon: <DollarSign className="h-5 w-5" />,
       isActive: location.pathname === '/expenses',
     },
     {
       label: 'Documents',
       href: '/documents',
-      icon: <FileText className="w-5 h-5" />,
+      icon: <FileText className="h-5 w-5" />,
       isActive: location.pathname === '/documents',
     },
     {
       label: 'Timeline',
       href: '/timeline',
-      icon: <Image className="w-5 h-5" />,
+      icon: <Image className="h-5 w-5" />,
       isActive: location.pathname === '/timeline',
     },
     {
       label: 'Settings',
       href: '/settings',
-      icon: <Settings className="w-5 h-5" />,
+      icon: <Settings className="h-5 w-5" />,
       isActive: location.pathname === '/settings',
     },
-  ]
+  ];
 
   return (
     <>
@@ -129,7 +126,7 @@ const App = () => {
       <OfflineIndicator />
       <InstallPrompt />
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;

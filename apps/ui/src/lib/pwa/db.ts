@@ -3,60 +3,61 @@
  * Provides type-safe wrapper around idb for PWA offline functionality
  */
 
-import { openDB, DBSchema, IDBPDatabase } from 'idb'
+import type { DBSchema, IDBPDatabase } from 'idb';
+import { openDB } from 'idb';
 
 // Database schema definition
 interface CoParentDB extends DBSchema {
   // Offline queue for actions to sync when back online
   'offline-queue': {
-    key: string
+    key: string;
     value: {
-      id: string
-      action: string
-      data: unknown
-      timestamp: number
-      retries: number
-    }
-  }
+      id: string;
+      action: string;
+      data: unknown;
+      timestamp: number;
+      retries: number;
+    };
+  };
   // Cache for API responses
   'api-cache': {
-    key: string
+    key: string;
     value: {
-      url: string
-      data: unknown
-      timestamp: number
-      expiresAt: number
-    }
-  }
+      url: string;
+      data: unknown;
+      timestamp: number;
+      expiresAt: number;
+    };
+  };
   // User preferences and settings
-  'preferences': {
-    key: string
-    value: unknown
-  }
+  preferences: {
+    key: string;
+    value: unknown;
+  };
   // Draft messages and unsent data
-  'drafts': {
-    key: string
+  drafts: {
+    key: string;
     value: {
-      id: string
-      type: string
-      data: unknown
-      createdAt: number
-      updatedAt: number
-    }
-  }
+      id: string;
+      type: string;
+      data: unknown;
+      createdAt: number;
+      updatedAt: number;
+    };
+  };
 }
 
-const DB_NAME = 'coparent-db'
-const DB_VERSION = 1
+const DB_NAME = 'coparent-db';
+const DB_VERSION = 1;
 
-let dbInstance: IDBPDatabase<CoParentDB> | null = null
+let dbInstance: IDBPDatabase<CoParentDB> | null = null;
 
 /**
  * Initialize the IndexedDB database
  */
 export async function initDB(): Promise<IDBPDatabase<CoParentDB>> {
   if (dbInstance) {
-    return dbInstance
+    return dbInstance;
   }
 
   dbInstance = await openDB<CoParentDB>(DB_NAME, DB_VERSION, {
@@ -65,39 +66,39 @@ export async function initDB(): Promise<IDBPDatabase<CoParentDB>> {
       if (!db.objectStoreNames.contains('offline-queue')) {
         const offlineStore = db.createObjectStore('offline-queue', {
           keyPath: 'id',
-        })
+        });
         // @ts-ignore - idb type inference issue with createIndex
-        offlineStore.createIndex('timestamp', 'timestamp')
+        offlineStore.createIndex('timestamp', 'timestamp');
       }
 
       // Create API cache store
       if (!db.objectStoreNames.contains('api-cache')) {
         const cacheStore = db.createObjectStore('api-cache', {
           keyPath: 'url',
-        })
+        });
         // @ts-ignore - idb type inference issue with createIndex
-        cacheStore.createIndex('expiresAt', 'expiresAt')
+        cacheStore.createIndex('expiresAt', 'expiresAt');
       }
 
       // Create preferences store
       if (!db.objectStoreNames.contains('preferences')) {
-        db.createObjectStore('preferences')
+        db.createObjectStore('preferences');
       }
 
       // Create drafts store
       if (!db.objectStoreNames.contains('drafts')) {
         const draftsStore = db.createObjectStore('drafts', {
           keyPath: 'id',
-        })
+        });
         // @ts-ignore - idb type inference issue with createIndex
-        draftsStore.createIndex('type', 'type')
+        draftsStore.createIndex('type', 'type');
         // @ts-ignore - idb type inference issue with createIndex
-        draftsStore.createIndex('updatedAt', 'updatedAt')
+        draftsStore.createIndex('updatedAt', 'updatedAt');
       }
     },
-  })
+  });
 
-  return dbInstance
+  return dbInstance;
 }
 
 /**
@@ -105,21 +106,18 @@ export async function initDB(): Promise<IDBPDatabase<CoParentDB>> {
  */
 export async function getDB(): Promise<IDBPDatabase<CoParentDB>> {
   if (!dbInstance) {
-    return initDB()
+    return initDB();
   }
-  return dbInstance
+  return dbInstance;
 }
 
 // =============================================================================
 // Offline Queue Operations
 // =============================================================================
 
-export async function addToOfflineQueue(
-  action: string,
-  data: unknown
-): Promise<void> {
-  const db = await getDB()
-  const id = `${action}-${Date.now()}-${Math.random()}`
+export async function addToOfflineQueue(action: string, data: unknown): Promise<void> {
+  const db = await getDB();
+  const id = `${action}-${Date.now()}-${Math.random()}`;
 
   await db.add('offline-queue', {
     id,
@@ -127,31 +125,31 @@ export async function addToOfflineQueue(
     data,
     timestamp: Date.now(),
     retries: 0,
-  })
+  });
 }
 
 export async function getOfflineQueue() {
-  const db = await getDB()
-  return db.getAll('offline-queue')
+  const db = await getDB();
+  return db.getAll('offline-queue');
 }
 
 export async function removeFromOfflineQueue(id: string): Promise<void> {
-  const db = await getDB()
-  await db.delete('offline-queue', id)
+  const db = await getDB();
+  await db.delete('offline-queue', id);
 }
 
 export async function incrementOfflineQueueRetries(id: string): Promise<void> {
-  const db = await getDB()
-  const item = await db.get('offline-queue', id)
+  const db = await getDB();
+  const item = await db.get('offline-queue', id);
   if (item) {
-    item.retries++
-    await db.put('offline-queue', item)
+    item.retries++;
+    await db.put('offline-queue', item);
   }
 }
 
 export async function clearOfflineQueue(): Promise<void> {
-  const db = await getDB()
-  await db.clear('offline-queue')
+  const db = await getDB();
+  await db.clear('offline-queue');
 }
 
 // =============================================================================
@@ -161,44 +159,44 @@ export async function clearOfflineQueue(): Promise<void> {
 export async function cacheAPIResponse(
   url: string,
   data: unknown,
-  ttlSeconds: number = 3600
+  ttlSeconds: number = 3600,
 ): Promise<void> {
-  const db = await getDB()
-  const now = Date.now()
+  const db = await getDB();
+  const now = Date.now();
 
   await db.put('api-cache', {
     url,
     data,
     timestamp: now,
     expiresAt: now + ttlSeconds * 1000,
-  })
+  });
 }
 
 export async function getCachedAPIResponse(url: string): Promise<unknown | null> {
-  const db = await getDB()
-  const cached = await db.get('api-cache', url)
+  const db = await getDB();
+  const cached = await db.get('api-cache', url);
 
   if (!cached) {
-    return null
+    return null;
   }
 
   // Check if expired
   if (Date.now() > cached.expiresAt) {
-    await db.delete('api-cache', url)
-    return null
+    await db.delete('api-cache', url);
+    return null;
   }
 
-  return cached.data
+  return cached.data;
 }
 
 export async function clearExpiredCache(): Promise<void> {
-  const db = await getDB()
-  const all = await db.getAll('api-cache')
-  const now = Date.now()
+  const db = await getDB();
+  const all = await db.getAll('api-cache');
+  const now = Date.now();
 
   for (const item of all) {
     if (now > item.expiresAt) {
-      await db.delete('api-cache', item.url)
+      await db.delete('api-cache', item.url);
     }
   }
 }
@@ -208,34 +206,30 @@ export async function clearExpiredCache(): Promise<void> {
 // =============================================================================
 
 export async function setPreference(key: string, value: unknown): Promise<void> {
-  const db = await getDB()
-  await db.put('preferences', value, key)
+  const db = await getDB();
+  await db.put('preferences', value, key);
 }
 
 export async function getPreference<T = unknown>(key: string): Promise<T | null> {
-  const db = await getDB()
-  const value = await db.get('preferences', key)
-  return (value as T) ?? null
+  const db = await getDB();
+  const value = await db.get('preferences', key);
+  return (value as T) ?? null;
 }
 
 export async function removePreference(key: string): Promise<void> {
-  const db = await getDB()
-  await db.delete('preferences', key)
+  const db = await getDB();
+  await db.delete('preferences', key);
 }
 
 // =============================================================================
 // Drafts Operations
 // =============================================================================
 
-export async function saveDraft(
-  id: string,
-  type: string,
-  data: unknown
-): Promise<void> {
-  const db = await getDB()
-  const now = Date.now()
+export async function saveDraft(id: string, type: string, data: unknown): Promise<void> {
+  const db = await getDB();
+  const now = Date.now();
 
-  const existing = await db.get('drafts', id)
+  const existing = await db.get('drafts', id);
 
   await db.put('drafts', {
     id,
@@ -243,40 +237,40 @@ export async function saveDraft(
     data,
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
-  })
+  });
 }
 
 export async function getDraft(id: string) {
-  const db = await getDB()
-  return db.get('drafts', id)
+  const db = await getDB();
+  return db.get('drafts', id);
 }
 
 export async function getAllDrafts(type?: string) {
-  const db = await getDB()
+  const db = await getDB();
 
   if (type) {
     // @ts-ignore - idb type inference issue with index
-    const index = db.transaction('drafts').store.index('type')
+    const index = db.transaction('drafts').store.index('type');
     // @ts-ignore - idb type inference issue with getAll parameter
-    return index.getAll(type)
+    return index.getAll(type);
   }
 
-  return db.getAll('drafts')
+  return db.getAll('drafts');
 }
 
 export async function deleteDraft(id: string): Promise<void> {
-  const db = await getDB()
-  await db.delete('drafts', id)
+  const db = await getDB();
+  await db.delete('drafts', id);
 }
 
 export async function clearOldDrafts(daysOld: number = 30): Promise<void> {
-  const db = await getDB()
-  const cutoff = Date.now() - daysOld * 24 * 60 * 60 * 1000
-  const allDrafts = await db.getAll('drafts')
+  const db = await getDB();
+  const cutoff = Date.now() - daysOld * 24 * 60 * 60 * 1000;
+  const allDrafts = await db.getAll('drafts');
 
   for (const draft of allDrafts) {
     if (draft.updatedAt < cutoff) {
-      await db.delete('drafts', draft.id)
+      await db.delete('drafts', draft.id);
     }
   }
 }

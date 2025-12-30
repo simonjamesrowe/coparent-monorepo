@@ -11,7 +11,8 @@ export default defineConfig({
       manifest: {
         name: 'CoParent - Co-Parenting Platform',
         short_name: 'CoParent',
-        description: 'A unified digital platform for separated and divorced parents to coordinate parenting responsibilities',
+        description:
+          'A unified digital platform for separated and divorced parents to coordinate parenting responsibilities',
         theme_color: '#14b8a6',
         background_color: '#ffffff',
         display: 'standalone',
@@ -23,13 +24,13 @@ export default defineConfig({
             src: 'pwa-192x192.svg',
             sizes: '192x192',
             type: 'image/svg+xml',
-            purpose: 'any maskable'
+            purpose: 'any maskable',
           },
           {
             src: 'pwa-512x512.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
-            purpose: 'any maskable'
+            purpose: 'any maskable',
           },
         ],
         categories: ['lifestyle', 'productivity'],

@@ -3,12 +3,12 @@
  */
 
 // Database
-export * from './db'
+export * from './db';
 
 // Hooks
-export { useOnlineStatus } from './useOnlineStatus'
-export { usePWAInstall } from './usePWAInstall'
-export { useServiceWorker } from './useServiceWorker'
+export { useOnlineStatus } from './useOnlineStatus';
+export { usePWAInstall } from './usePWAInstall';
+export { useServiceWorker } from './useServiceWorker';
 
 // Sync
-export * from './sync'
+export * from './sync';
