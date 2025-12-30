@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Design Tokens for CoParent */
 :root {
-  font-family: 'Space Grotesk', system-ui, sans-serif;
+  /* Colors */
+  --color-primary: teal;
+  --color-secondary: rose;
+  --color-neutral: slate;
+
+  /* Typography */
+  --font-heading: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  font-family: 'Inter', sans-serif;
 }

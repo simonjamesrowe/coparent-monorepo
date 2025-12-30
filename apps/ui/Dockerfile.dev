@@ -1,0 +1,27 @@
+FROM node:18-alpine
+
+# Install pnpm
+RUN npm install -g pnpm@8.12.0
+
+WORKDIR /app
+
+# Copy workspace root files
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml tsconfig.base.json ./
+
+# Copy all workspace packages
+COPY packages ./packages
+COPY apps/ui ./apps/ui
+
+# Install all dependencies (including dev dependencies)
+RUN pnpm install --frozen-lockfile
+
+# Build shared types
+RUN pnpm --filter @coparent/shared-types build
+
+WORKDIR /app/apps/ui
+
+# Expose port
+EXPOSE 5173
+
+# Start in development mode with host exposed
+CMD ["pnpm", "dev", "--host", "0.0.0.0"]
