@@ -85,14 +85,29 @@ pnpm lint
 pnpm format
 ```
 
-### Docker (Database Only)
+### Docker
 
 ```bash
-# Start MongoDB
-pnpm docker:dev
-# Or:
+# Start full stack (MongoDB + API + UI)
 docker-compose -f docker/docker-compose.yml up
+
+# Start in background
+docker-compose -f docker/docker-compose.yml up -d
+
+# Start MongoDB only (for local development)
+pnpm docker:dev
+
+# Stop all services
+docker-compose -f docker/docker-compose.yml down
+
+# View logs
+docker-compose -f docker/docker-compose.yml logs -f
+
+# Rebuild containers
+docker-compose -f docker/docker-compose.yml up --build
 ```
+
+**Note:** Before running Docker Compose, copy `docker/.env.example` to `docker/.env` and configure your Auth0 credentials.
 
 ## Architecture Overview
 
