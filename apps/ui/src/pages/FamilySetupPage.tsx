@@ -1,11 +1,112 @@
+import { useEffect, useState } from 'react';
+
+import { FamilySetupHub } from '../components/family/FamilySetupHub';
+import {
+  useFamilies,
+  useParents,
+  useChildren,
+  useInvitations,
+  useCreateChild,
+  useUpdateChild,
+  useUpdateFamily,
+  useCreateInvitation,
+  useResendInvitation,
+  useCancelInvitation,
+  useUpdateParentRole,
+} from '../hooks/api';
+
 const FamilySetupPage = () => {
+  const { data: families = [], isLoading: familiesLoading } = useFamilies();
+  const [activeFamilyId, setActiveFamilyId] = useState<string | undefined>();
+
+  const { data: parents = [] } = useParents(activeFamilyId);
+  const { data: children = [] } = useChildren(activeFamilyId);
+  const { data: invitations = [] } = useInvitations(activeFamilyId);
+
+  const createChild = useCreateChild();
+  const updateChild = useUpdateChild();
+  const updateFamily = useUpdateFamily();
+  const createInvitation = useCreateInvitation();
+  const resendInvitation = useResendInvitation();
+  const cancelInvitation = useCancelInvitation();
+  const updateParentRole = useUpdateParentRole();
+
+  useEffect(() => {
+    if (!activeFamilyId && families.length > 0) {
+      setActiveFamilyId(families[0].id);
+    }
+  }, [activeFamilyId, families]);
+
+  const handleAddChild = async (child: {
+    fullName: string;
+    dateOfBirth: string;
+    school?: string;
+    medicalNotes?: string;
+  }) => {
+    if (!activeFamilyId) return;
+    await createChild.mutateAsync({ familyId: activeFamilyId, ...child });
+  };
+
+  const handleUpdateChild = async (
+    childId: string,
+    updates: Partial<{
+      fullName: string;
+      dateOfBirth: string;
+      school?: string;
+      medicalNotes?: string;
+    }>,
+  ) => {
+    if (!updates || Object.keys(updates).length === 0) return;
+    await updateChild.mutateAsync({ id: childId, ...updates });
+  };
+
+  const handleUpdateFamily = async (id: string, updates: Partial<{ name: string; timeZone: string }>) => {
+    if (!updates || Object.keys(updates).length === 0) return;
+    await updateFamily.mutateAsync({ id, ...updates });
+  };
+
+  const handleInvite = async (familyId: string, email: string, role: 'primary' | 'co-parent') => {
+    await createInvitation.mutateAsync({ familyId, email, role });
+  };
+
+  const handleResend = async (invitationId: string) => {
+    if (!activeFamilyId) return;
+    await resendInvitation.mutateAsync({ id: invitationId, familyId: activeFamilyId });
+  };
+
+  const handleCancel = async (invitationId: string) => {
+    if (!activeFamilyId) return;
+    await cancelInvitation.mutateAsync({ id: invitationId, familyId: activeFamilyId });
+  };
+
+  const handleAssignRole = async (parentId: string, role: 'primary' | 'co-parent') => {
+    if (!activeFamilyId) return;
+    await updateParentRole.mutateAsync({ id: parentId, familyId: activeFamilyId, role });
+  };
+
+  if (familiesLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
+        <p className="text-slate-500 dark:text-slate-400">Loading family setup...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="p-8">
-      <h1 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white">Family Setup</h1>
-      <p className="text-slate-600 dark:text-slate-400">
-        Family setup hub for managing children and co-parent invitations.
-      </p>
-    </div>
+    <FamilySetupHub
+      families={families}
+      parents={parents}
+      children={children}
+      invitations={invitations}
+      activeFamilyId={activeFamilyId}
+      onUpdateFamily={handleUpdateFamily}
+      onAddChild={handleAddChild}
+      onUpdateChild={handleUpdateChild}
+      onInviteCoParent={handleInvite}
+      onResendInvite={handleResend}
+      onCancelInvite={handleCancel}
+      onAssignRole={handleAssignRole}
+    />
   );
 };
 

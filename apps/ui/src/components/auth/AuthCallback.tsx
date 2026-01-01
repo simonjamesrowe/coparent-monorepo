@@ -1,0 +1,82 @@
+import { useAuth0 } from '@auth0/auth0-react';
+import { useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+
+export function AuthCallback() {
+  const { isAuthenticated, isLoading, error } = useAuth0();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (error) {
+        console.error('Auth0 callback error:', error);
+        navigate('/login', { replace: true });
+      } else if (isAuthenticated) {
+        // Get the return URL from state or default to dashboard
+        const state = location.state as { from?: { pathname: string } } | null;
+        const returnTo = state?.from?.pathname || '/dashboard';
+        navigate(returnTo, { replace: true });
+      }
+    }
+  }, [isAuthenticated, isLoading, error, navigate, location.state]);
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-teal-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-teal-950/20">
+        <div className="text-center max-w-md mx-auto p-8">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-rose-100 dark:bg-rose-900/20 flex items-center justify-center">
+            <svg
+              className="w-8 h-8 text-rose-600 dark:text-rose-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={1.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+              />
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
+            Authentication Error
+          </h2>
+          <p className="text-slate-500 dark:text-slate-400 mb-6">
+            {error.message || 'An error occurred during authentication'}
+          </p>
+          <button
+            onClick={() => navigate('/login', { replace: true })}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl shadow-lg shadow-teal-500/25 transition-all"
+          >
+            Return to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-teal-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-teal-950/20">
+      <div className="text-center">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 shadow-xl shadow-teal-500/30 flex items-center justify-center animate-pulse">
+          <svg
+            className="w-8 h-8 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={1.5}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
+            />
+          </svg>
+        </div>
+        <p className="text-slate-500 dark:text-slate-400">Completing authentication...</p>
+      </div>
+    </div>
+  );
+}
