@@ -26,11 +26,11 @@ const LoginPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-teal-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-teal-950/20">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-teal-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-teal-950/20">
         <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 shadow-xl shadow-teal-500/30 flex items-center justify-center animate-pulse">
+          <div className="mx-auto mb-4 flex h-16 w-16 animate-pulse items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 shadow-xl shadow-teal-500/30">
             <svg
-              className="w-8 h-8 text-white"
+              className="h-8 w-8 text-white"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -53,25 +53,24 @@ const LoginPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-teal-950/20">
       {/* Decorative background pattern */}
       <div
-        className="fixed inset-0 opacity-[0.015] dark:opacity-[0.025] pointer-events-none"
+        className="pointer-events-none fixed inset-0 opacity-[0.015] dark:opacity-[0.025]"
         style={{
-          backgroundImage:
-            'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)',
+          backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)',
           backgroundSize: '32px 32px',
         }}
       />
 
       {/* Floating decorative shapes */}
-      <div className="fixed top-20 right-10 w-64 h-64 bg-teal-400/10 dark:bg-teal-500/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="fixed bottom-20 left-10 w-96 h-96 bg-rose-400/10 dark:bg-rose-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="pointer-events-none fixed right-10 top-20 h-64 w-64 rounded-full bg-teal-400/10 blur-3xl dark:bg-teal-500/5" />
+      <div className="pointer-events-none fixed bottom-20 left-10 h-96 w-96 rounded-full bg-rose-400/10 blur-3xl dark:bg-rose-500/5" />
 
       <div className="relative flex min-h-screen flex-col items-center justify-center px-4">
         <div className="w-full max-w-md">
           {/* Logo/Header */}
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-teal-500 to-teal-600 shadow-2xl shadow-teal-500/30 mb-6">
+          <div className="mb-10 text-center">
+            <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-teal-500 to-teal-600 shadow-2xl shadow-teal-500/30">
               <svg
-                className="w-10 h-10 text-white"
+                className="h-10 w-10 text-white"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -84,7 +83,7 @@ const LoginPage = () => {
                 />
               </svg>
             </div>
-            <h1 className="text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <h1 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
               CoParent
             </h1>
             <p className="mt-3 text-lg text-slate-500 dark:text-slate-400">
@@ -93,14 +92,14 @@ const LoginPage = () => {
           </div>
 
           {/* Login Card */}
-          <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl border border-slate-200/60 dark:border-slate-700/60 shadow-2xl shadow-slate-200/40 dark:shadow-slate-950/50 p-8 sm:p-10">
+          <div className="rounded-3xl border border-slate-200/60 bg-white/80 p-8 shadow-2xl shadow-slate-200/40 backdrop-blur-xl sm:p-10 dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-slate-950/50">
             <div className="space-y-4">
               <button
                 onClick={handleLogin}
-                className="w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-teal-600 hover:bg-teal-700 text-white font-semibold text-lg rounded-xl shadow-lg shadow-teal-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-teal-500/30 hover:-translate-y-0.5 active:translate-y-0"
+                className="inline-flex w-full items-center justify-center gap-3 rounded-xl bg-teal-600 px-6 py-4 text-lg font-semibold text-white shadow-lg shadow-teal-500/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-teal-700 hover:shadow-xl hover:shadow-teal-500/30 active:translate-y-0"
               >
                 <svg
-                  className="w-5 h-5"
+                  className="h-5 w-5"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -120,7 +119,7 @@ const LoginPage = () => {
                   <div className="w-full border-t border-slate-200 dark:border-slate-700" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400">
+                  <span className="bg-white px-4 text-slate-500 dark:bg-slate-900 dark:text-slate-400">
                     or
                   </span>
                 </div>
@@ -128,10 +127,10 @@ const LoginPage = () => {
 
               <button
                 onClick={handleSignup}
-                className="w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-semibold text-lg rounded-xl border-2 border-slate-200 dark:border-slate-600 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
+                className="inline-flex w-full items-center justify-center gap-3 rounded-xl border-2 border-slate-200 bg-white px-6 py-4 text-lg font-semibold text-slate-900 transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-50 active:translate-y-0 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
               >
                 <svg
-                  className="w-5 h-5"
+                  className="h-5 w-5"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -147,14 +146,14 @@ const LoginPage = () => {
               </button>
             </div>
 
-            <div className="mt-8 pt-6 border-t border-slate-200/60 dark:border-slate-700/60">
+            <div className="mt-8 border-t border-slate-200/60 pt-6 dark:border-slate-700/60">
               <p className="text-center text-sm text-slate-500 dark:text-slate-400">
                 By continuing, you agree to our{' '}
-                <a href="#" className="text-teal-600 dark:text-teal-400 hover:underline">
+                <a href="/terms" className="text-teal-600 hover:underline dark:text-teal-400">
                   Terms of Service
                 </a>{' '}
                 and{' '}
-                <a href="#" className="text-teal-600 dark:text-teal-400 hover:underline">
+                <a href="/privacy" className="text-teal-600 hover:underline dark:text-teal-400">
                   Privacy Policy
                 </a>
               </p>
@@ -163,10 +162,10 @@ const LoginPage = () => {
 
           {/* Features List */}
           <div className="mt-12 grid grid-cols-3 gap-4 text-center">
-            <div className="p-4 rounded-2xl bg-white/50 dark:bg-slate-800/30 backdrop-blur-sm">
-              <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">
+            <div className="rounded-2xl bg-white/50 p-4 backdrop-blur-sm dark:bg-slate-800/30">
+              <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-teal-100 dark:bg-teal-900/30">
                 <svg
-                  className="w-5 h-5 text-teal-600 dark:text-teal-400"
+                  className="h-5 w-5 text-teal-600 dark:text-teal-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -183,10 +182,10 @@ const LoginPage = () => {
                 Shared Calendars
               </p>
             </div>
-            <div className="p-4 rounded-2xl bg-white/50 dark:bg-slate-800/30 backdrop-blur-sm">
-              <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
+            <div className="rounded-2xl bg-white/50 p-4 backdrop-blur-sm dark:bg-slate-800/30">
+              <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-violet-100 dark:bg-violet-900/30">
                 <svg
-                  className="w-5 h-5 text-violet-600 dark:text-violet-400"
+                  className="h-5 w-5 text-violet-600 dark:text-violet-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -199,14 +198,12 @@ const LoginPage = () => {
                   />
                 </svg>
               </div>
-              <p className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                Messaging
-              </p>
+              <p className="text-xs font-medium text-slate-700 dark:text-slate-300">Messaging</p>
             </div>
-            <div className="p-4 rounded-2xl bg-white/50 dark:bg-slate-800/30 backdrop-blur-sm">
-              <div className="w-10 h-10 mx-auto mb-2 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+            <div className="rounded-2xl bg-white/50 p-4 backdrop-blur-sm dark:bg-slate-800/30">
+              <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/30">
                 <svg
-                  className="w-5 h-5 text-amber-600 dark:text-amber-400"
+                  className="h-5 w-5 text-amber-600 dark:text-amber-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

@@ -1,16 +1,11 @@
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+
 import { Family, FamilyDocument } from '../schemas/family.schema';
 import { Parent, ParentDocument } from '../schemas/parent.schema';
-import {
-  OnboardingState,
-  OnboardingStateDocument,
-} from '../schemas/onboarding-state.schema';
+import { OnboardingState, OnboardingStateDocument } from '../schemas/onboarding-state.schema';
+
 import { CreateFamilyDto } from './dto/create-family.dto';
 import { UpdateFamilyDto } from './dto/update-family.dto';
 
@@ -29,10 +24,7 @@ export class FamiliesService {
     private onboardingModel: Model<OnboardingStateDocument>,
   ) {}
 
-  async create(
-    createFamilyDto: CreateFamilyDto,
-    user: AuthUser,
-  ): Promise<FamilyDocument> {
+  async create(createFamilyDto: CreateFamilyDto, user: AuthUser): Promise<FamilyDocument> {
     // Create the family
     const family = new this.familyModel({
       name: createFamilyDto.name,

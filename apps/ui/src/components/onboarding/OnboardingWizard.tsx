@@ -1,12 +1,6 @@
 import { useState } from 'react';
 
-import type {
-  Family,
-  Child,
-  Invitation,
-  OnboardingState,
-  ParentRole,
-} from '../../lib/api/client';
+import type { Family, Child, Invitation, OnboardingState, ParentRole } from '../../lib/api/client';
 
 type WizardStep = 'account' | 'family' | 'child' | 'invite' | 'review';
 
@@ -50,9 +44,7 @@ export function OnboardingWizard({
   onInviteCoParent,
   onCompleteOnboarding,
 }: OnboardingWizardProps) {
-  const activeOnboarding = onboardingStates.find(
-    (state) => state.familyId === activeFamilyId,
-  );
+  const activeOnboarding = onboardingStates.find((state) => state.familyId === activeFamilyId);
   const initialStep = (activeOnboarding?.currentStep as WizardStep) || 'account';
 
   const [currentStep, setCurrentStep] = useState<WizardStep>(initialStep);
@@ -125,24 +117,23 @@ export function OnboardingWizard({
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-teal-950/20">
       {/* Decorative background pattern */}
       <div
-        className="fixed inset-0 opacity-[0.015] dark:opacity-[0.025] pointer-events-none"
+        className="pointer-events-none fixed inset-0 opacity-[0.015] dark:opacity-[0.025]"
         style={{
-          backgroundImage:
-            'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)',
+          backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)',
           backgroundSize: '32px 32px',
         }}
       />
 
       {/* Floating decorative shapes */}
-      <div className="fixed top-20 right-10 w-64 h-64 bg-teal-400/10 dark:bg-teal-500/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="fixed bottom-20 left-10 w-96 h-96 bg-rose-400/10 dark:bg-rose-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="pointer-events-none fixed right-10 top-20 h-64 w-64 rounded-full bg-teal-400/10 blur-3xl dark:bg-teal-500/5" />
+      <div className="pointer-events-none fixed bottom-20 left-10 h-96 w-96 rounded-full bg-rose-400/10 blur-3xl dark:bg-rose-500/5" />
 
-      <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="relative mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 shadow-xl shadow-teal-500/30 mb-6">
+        <div className="mb-12 text-center">
+          <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 shadow-xl shadow-teal-500/30">
             <svg
-              className="w-8 h-8 text-white"
+              className="h-8 w-8 text-white"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -155,10 +146,10 @@ export function OnboardingWizard({
               />
             </svg>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
             Welcome to CoParent
           </h1>
-          <p className="mt-3 text-lg text-slate-500 dark:text-slate-400 max-w-lg mx-auto">
+          <p className="mx-auto mt-3 max-w-lg text-lg text-slate-500 dark:text-slate-400">
             Let's set up your family in just a few steps
           </p>
         </div>
@@ -167,29 +158,24 @@ export function OnboardingWizard({
         <div className="mb-12">
           <div className="flex items-center justify-between">
             {STEPS.map((step, index) => {
-              const isCompleted =
-                completedSteps.includes(step.id) || index < currentStepIndex;
+              const isCompleted = completedSteps.includes(step.id) || index < currentStepIndex;
               const isCurrent = step.id === currentStep;
 
               return (
-                <div key={step.id} className="flex-1 flex items-center">
-                  <div className="flex flex-col items-center flex-1">
+                <div key={step.id} className="flex flex-1 items-center">
+                  <div className="flex flex-1 flex-col items-center">
                     <div
-                      className={`
-                        relative w-12 h-12 rounded-2xl flex items-center justify-center
-                        transition-all duration-300 ease-out
-                        ${
-                          isCompleted
-                            ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/30'
-                            : isCurrent
-                              ? 'bg-white dark:bg-slate-800 text-teal-600 dark:text-teal-400 ring-2 ring-teal-500 shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50'
-                              : 'bg-slate-100 dark:bg-slate-800/60 text-slate-400 dark:text-slate-500'
-                        }
-                      `}
+                      className={`relative flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-300 ease-out ${
+                        isCompleted
+                          ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/30'
+                          : isCurrent
+                            ? 'bg-white text-teal-600 shadow-xl shadow-slate-200/50 ring-2 ring-teal-500 dark:bg-slate-800 dark:text-teal-400 dark:shadow-slate-900/50'
+                            : 'bg-slate-100 text-slate-400 dark:bg-slate-800/60 dark:text-slate-500'
+                      } `}
                     >
                       {isCompleted ? (
                         <svg
-                          className="w-5 h-5"
+                          className="h-5 w-5"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -205,7 +191,7 @@ export function OnboardingWizard({
                         <span className="text-sm font-bold">{index + 1}</span>
                       )}
                       {isCurrent && (
-                        <span className="absolute -inset-1 rounded-2xl bg-teal-500/20 animate-pulse" />
+                        <span className="absolute -inset-1 animate-pulse rounded-2xl bg-teal-500/20" />
                       )}
                     </div>
                     <div className="mt-3 text-center">
@@ -220,14 +206,14 @@ export function OnboardingWizard({
                       >
                         {step.label}
                       </p>
-                      <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 hidden sm:block">
+                      <p className="mt-0.5 hidden text-xs text-slate-400 sm:block dark:text-slate-500">
                         {step.description}
                       </p>
                     </div>
                   </div>
                   {index < STEPS.length - 1 && (
                     <div
-                      className={`h-0.5 flex-1 mx-2 mt-[-24px] rounded-full transition-colors ${
+                      className={`mx-2 mt-[-24px] h-0.5 flex-1 rounded-full transition-colors ${
                         isCompleted ? 'bg-teal-500' : 'bg-slate-200 dark:bg-slate-700'
                       }`}
                     />
@@ -239,14 +225,14 @@ export function OnboardingWizard({
         </div>
 
         {/* Step Content Card */}
-        <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl border border-slate-200/60 dark:border-slate-700/60 shadow-2xl shadow-slate-200/40 dark:shadow-slate-950/50 overflow-hidden">
+        <div className="overflow-hidden rounded-3xl border border-slate-200/60 bg-white/80 shadow-2xl shadow-slate-200/40 backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-slate-950/50">
           {/* Account Step */}
           {currentStep === 'account' && (
             <div className="p-8 sm:p-10">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="w-12 h-12 rounded-2xl bg-teal-500/10 dark:bg-teal-500/20 flex items-center justify-center">
+              <div className="mb-8 flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-500/10 dark:bg-teal-500/20">
                   <svg
-                    className="w-6 h-6 text-teal-600 dark:text-teal-400"
+                    className="h-6 w-6 text-teal-600 dark:text-teal-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -271,33 +257,33 @@ export function OnboardingWizard({
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                  <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Full Name
                   </label>
                   <input
                     type="text"
                     placeholder="Enter your full name"
-                    className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500 transition"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-slate-900 transition placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                  <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Email Address
                   </label>
                   <input
                     type="email"
                     placeholder="you@example.com"
-                    className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500 transition"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-slate-900 transition placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                  <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Password
                   </label>
                   <input
                     type="password"
                     placeholder="Create a secure password"
-                    className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500 transition"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-slate-900 transition placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   />
                   <p className="mt-2 text-xs text-slate-400">
                     At least 8 characters with a mix of letters and numbers
@@ -312,11 +298,11 @@ export function OnboardingWizard({
                     onCreateAccount?.();
                     goNext();
                   }}
-                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl shadow-lg shadow-teal-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-teal-500/30 hover:-translate-y-0.5 active:translate-y-0"
+                  className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-teal-500/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-teal-700 hover:shadow-xl hover:shadow-teal-500/30 active:translate-y-0"
                 >
                   Create Account
                   <svg
-                    className="w-4 h-4"
+                    className="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -336,10 +322,10 @@ export function OnboardingWizard({
           {/* Family Step */}
           {currentStep === 'family' && (
             <div className="p-8 sm:p-10">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="w-12 h-12 rounded-2xl bg-rose-500/10 dark:bg-rose-500/20 flex items-center justify-center">
+              <div className="mb-8 flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-500/10 dark:bg-rose-500/20">
                   <svg
-                    className="w-6 h-6 text-rose-600 dark:text-rose-400"
+                    className="h-6 w-6 text-rose-600 dark:text-rose-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -364,7 +350,7 @@ export function OnboardingWizard({
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                  <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Family Name
                   </label>
                   <input
@@ -372,20 +358,20 @@ export function OnboardingWizard({
                     value={familyName}
                     onChange={(e) => setFamilyName(e.target.value)}
                     placeholder="e.g., The Kingston Family"
-                    className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500 transition"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-slate-900 transition placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   />
                   <p className="mt-2 text-xs text-slate-400">
                     This is visible to both parents in the family
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                  <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Time Zone
                   </label>
                   <select
                     value={timeZone}
                     onChange={(e) => setTimeZone(e.target.value)}
-                    className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500 transition appearance-none"
+                    className="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-slate-900 transition focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   >
                     <option value="America/New_York">Eastern Time (ET)</option>
                     <option value="America/Chicago">Central Time (CT)</option>
@@ -396,10 +382,10 @@ export function OnboardingWizard({
                   </select>
                 </div>
 
-                <div className="p-4 rounded-xl bg-teal-50 dark:bg-teal-900/20 border border-teal-200/60 dark:border-teal-800/40">
+                <div className="rounded-xl border border-teal-200/60 bg-teal-50 p-4 dark:border-teal-800/40 dark:bg-teal-900/20">
                   <div className="flex gap-3">
                     <svg
-                      className="w-5 h-5 text-teal-600 dark:text-teal-400 flex-shrink-0 mt-0.5"
+                      className="mt-0.5 h-5 w-5 flex-shrink-0 text-teal-600 dark:text-teal-400"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -416,8 +402,8 @@ export function OnboardingWizard({
                         Why a family name?
                       </p>
                       <p className="mt-1 text-sm text-teal-700 dark:text-teal-300">
-                        The family name appears in your dashboard and helps
-                        organize shared schedules, expenses, and documents.
+                        The family name appears in your dashboard and helps organize shared
+                        schedules, expenses, and documents.
                       </p>
                     </div>
                   </div>
@@ -428,10 +414,10 @@ export function OnboardingWizard({
                 <button
                   type="button"
                   onClick={goBack}
-                  className="inline-flex items-center gap-2 px-6 py-3 text-slate-600 dark:text-slate-300 font-medium rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                  className="inline-flex items-center gap-2 rounded-xl px-6 py-3 font-medium text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                 >
                   <svg
-                    className="w-4 h-4"
+                    className="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -449,11 +435,11 @@ export function OnboardingWizard({
                   type="button"
                   onClick={handleCreateFamily}
                   disabled={!familyName.trim()}
-                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white font-semibold rounded-xl shadow-lg shadow-teal-500/25 disabled:shadow-none transition-all duration-200 hover:shadow-xl hover:shadow-teal-500/30 hover:-translate-y-0.5 active:translate-y-0 disabled:translate-y-0 disabled:cursor-not-allowed"
+                  className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-teal-500/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-teal-700 hover:shadow-xl hover:shadow-teal-500/30 active:translate-y-0 disabled:translate-y-0 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none dark:disabled:bg-slate-700"
                 >
                   Continue
                   <svg
-                    className="w-4 h-4"
+                    className="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -473,10 +459,10 @@ export function OnboardingWizard({
           {/* Child Step */}
           {currentStep === 'child' && (
             <div className="p-8 sm:p-10">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 dark:bg-amber-500/20 flex items-center justify-center">
+              <div className="mb-8 flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/10 dark:bg-amber-500/20">
                   <svg
-                    className="w-6 h-6 text-amber-600 dark:text-amber-400"
+                    className="h-6 w-6 text-amber-600 dark:text-amber-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -502,16 +488,16 @@ export function OnboardingWizard({
               {/* Added children list */}
               {(addedChildren.length > 0 || familyChildren.length > 0) && (
                 <div className="mb-6">
-                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
+                  <p className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Children added ({addedChildren.length + familyChildren.length})
                   </p>
                   <div className="space-y-2">
                     {[...familyChildren, ...addedChildren].map((child, index) => (
                       <div
                         key={child.id || index}
-                        className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60"
+                        className="flex items-center gap-3 rounded-xl border border-slate-200/60 bg-slate-50 p-3 dark:border-slate-700/60 dark:bg-slate-800/60"
                       >
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center text-white font-bold text-sm">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 text-sm font-bold text-white">
                           {child.fullName?.charAt(0)}
                         </div>
                         <div>
@@ -529,9 +515,9 @@ export function OnboardingWizard({
               )}
 
               <div className="space-y-5">
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                    <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                       Child's Full Name <span className="text-rose-500">*</span>
                     </label>
                     <input
@@ -539,55 +525,53 @@ export function OnboardingWizard({
                       value={childName}
                       onChange={(e) => setChildName(e.target.value)}
                       placeholder="First and last name"
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500 transition"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 transition placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                    <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                       Date of Birth <span className="text-rose-500">*</span>
                     </label>
                     <input
                       type="date"
                       value={childDob}
                       onChange={(e) => setChildDob(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500 transition"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 transition focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    School{' '}
-                    <span className="text-slate-400 font-normal">(optional)</span>
+                  <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    School <span className="font-normal text-slate-400">(optional)</span>
                   </label>
                   <input
                     type="text"
                     value={childSchool}
                     onChange={(e) => setChildSchool(e.target.value)}
                     placeholder="e.g., Willow Creek Elementary"
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500 transition"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 transition placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    Medical Notes{' '}
-                    <span className="text-slate-400 font-normal">(optional)</span>
+                  <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    Medical Notes <span className="font-normal text-slate-400">(optional)</span>
                   </label>
                   <textarea
                     value={childMedicalNotes}
                     onChange={(e) => setChildMedicalNotes(e.target.value)}
                     placeholder="Allergies, medications, or special requirements"
                     rows={3}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500 transition resize-none"
+                    className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 transition placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   />
                 </div>
                 <button
                   type="button"
                   onClick={handleAddChild}
                   disabled={!childName.trim() || !childDob}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 disabled:bg-slate-200 dark:disabled:bg-slate-700 text-white dark:text-slate-900 disabled:text-slate-400 dark:disabled:text-slate-500 font-medium rounded-xl transition disabled:cursor-not-allowed"
+                  className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 dark:disabled:bg-slate-700 dark:disabled:text-slate-500"
                 >
                   <svg
-                    className="w-4 h-4"
+                    className="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -603,10 +587,10 @@ export function OnboardingWizard({
                 <button
                   type="button"
                   onClick={goBack}
-                  className="inline-flex items-center gap-2 px-6 py-3 text-slate-600 dark:text-slate-300 font-medium rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                  className="inline-flex items-center gap-2 rounded-xl px-6 py-3 font-medium text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                 >
                   <svg
-                    className="w-4 h-4"
+                    className="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -624,11 +608,11 @@ export function OnboardingWizard({
                   type="button"
                   onClick={goNext}
                   disabled={addedChildren.length === 0 && familyChildren.length === 0}
-                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white font-semibold rounded-xl shadow-lg shadow-teal-500/25 disabled:shadow-none transition-all duration-200 hover:shadow-xl hover:shadow-teal-500/30 hover:-translate-y-0.5 active:translate-y-0 disabled:translate-y-0 disabled:cursor-not-allowed"
+                  className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-teal-500/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-teal-700 hover:shadow-xl hover:shadow-teal-500/30 active:translate-y-0 disabled:translate-y-0 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none dark:disabled:bg-slate-700"
                 >
                   Continue
                   <svg
-                    className="w-4 h-4"
+                    className="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -648,10 +632,10 @@ export function OnboardingWizard({
           {/* Invite Step */}
           {currentStep === 'invite' && (
             <div className="p-8 sm:p-10">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="w-12 h-12 rounded-2xl bg-violet-500/10 dark:bg-violet-500/20 flex items-center justify-center">
+              <div className="mb-8 flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/10 dark:bg-violet-500/20">
                   <svg
-                    className="w-6 h-6 text-violet-600 dark:text-violet-400"
+                    className="h-6 w-6 text-violet-600 dark:text-violet-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -675,8 +659,8 @@ export function OnboardingWizard({
               </div>
 
               {pendingInvites.length > 0 && (
-                <div className="mb-6 p-4 rounded-xl bg-violet-50 dark:bg-violet-900/20 border border-violet-200/60 dark:border-violet-800/40">
-                  <p className="text-sm font-medium text-violet-800 dark:text-violet-200 mb-2">
+                <div className="mb-6 rounded-xl border border-violet-200/60 bg-violet-50 p-4 dark:border-violet-800/40 dark:bg-violet-900/20">
+                  <p className="mb-2 text-sm font-medium text-violet-800 dark:text-violet-200">
                     Pending invitations
                   </p>
                   {pendingInvites.map((invite) => (
@@ -684,7 +668,7 @@ export function OnboardingWizard({
                       <span className="text-sm text-violet-700 dark:text-violet-300">
                         {invite.email}
                       </span>
-                      <span className="text-xs px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 font-medium">
+                      <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
                         Pending
                       </span>
                     </div>
@@ -694,7 +678,7 @@ export function OnboardingWizard({
 
               <div className="space-y-5">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                  <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Co-Parent Email
                   </label>
                   <input
@@ -702,17 +686,17 @@ export function OnboardingWizard({
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
                     placeholder="coparent@example.com"
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500 transition"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 transition placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                  <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Role
                   </label>
                   <select
                     value={inviteRole}
                     onChange={(e) => setInviteRole(e.target.value as ParentRole)}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500 transition appearance-none"
+                    className="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 transition focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   >
                     <option value="co-parent">Co-Parent</option>
                     <option value="primary">Primary</option>
@@ -724,10 +708,10 @@ export function OnboardingWizard({
                 <button
                   type="button"
                   onClick={goBack}
-                  className="inline-flex items-center gap-2 px-6 py-3 text-slate-600 dark:text-slate-300 font-medium rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                  className="inline-flex items-center gap-2 rounded-xl px-6 py-3 font-medium text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                 >
                   <svg
-                    className="w-4 h-4"
+                    className="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -745,7 +729,7 @@ export function OnboardingWizard({
                   <button
                     type="button"
                     onClick={goNext}
-                    className="inline-flex items-center gap-2 px-6 py-3 text-slate-600 dark:text-slate-300 font-medium rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                    className="inline-flex items-center gap-2 rounded-xl px-6 py-3 font-medium text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                   >
                     Skip
                   </button>
@@ -753,11 +737,11 @@ export function OnboardingWizard({
                     type="button"
                     onClick={handleInvite}
                     disabled={!inviteEmail.trim()}
-                    className="inline-flex items-center gap-2 px-8 py-3.5 bg-teal-600 hover:bg-teal-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white font-semibold rounded-xl shadow-lg shadow-teal-500/25 disabled:shadow-none transition-all duration-200 hover:shadow-xl hover:shadow-teal-500/30 hover:-translate-y-0.5 active:translate-y-0 disabled:translate-y-0 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-teal-500/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-teal-700 hover:shadow-xl hover:shadow-teal-500/30 active:translate-y-0 disabled:translate-y-0 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none dark:disabled:bg-slate-700"
                   >
                     Send Invite
                     <svg
-                      className="w-4 h-4"
+                      className="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -778,10 +762,10 @@ export function OnboardingWizard({
           {/* Review Step */}
           {currentStep === 'review' && (
             <div className="p-8 sm:p-10">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center">
+              <div className="mb-8 flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20">
                   <svg
-                    className="w-6 h-6 text-emerald-600 dark:text-emerald-400"
+                    className="h-6 w-6 text-emerald-600 dark:text-emerald-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -798,27 +782,25 @@ export function OnboardingWizard({
                   <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
                     Review & Complete
                   </h2>
-                  <p className="text-slate-500 dark:text-slate-400">
-                    Confirm your setup details
-                  </p>
+                  <p className="text-slate-500 dark:text-slate-400">Confirm your setup details</p>
                 </div>
               </div>
 
               <div className="space-y-6">
-                <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
-                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-2">
+                <div className="rounded-2xl border border-slate-200/60 bg-slate-50 p-5 dark:border-slate-700/60 dark:bg-slate-800/60">
+                  <h3 className="mb-2 text-sm font-semibold text-slate-900 dark:text-white">
                     Family
                   </h3>
                   <p className="text-slate-700 dark:text-slate-300">
                     {activeFamily?.name || familyName || 'Family name pending'}
                   </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                     Time Zone: {activeFamily?.timeZone || timeZone}
                   </p>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
-                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-2">
+                <div className="rounded-2xl border border-slate-200/60 bg-slate-50 p-5 dark:border-slate-700/60 dark:bg-slate-800/60">
+                  <h3 className="mb-2 text-sm font-semibold text-slate-900 dark:text-white">
                     Children
                   </h3>
                   <div className="space-y-2">
@@ -830,8 +812,8 @@ export function OnboardingWizard({
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
-                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-2">
+                <div className="rounded-2xl border border-slate-200/60 bg-slate-50 p-5 dark:border-slate-700/60 dark:bg-slate-800/60">
+                  <h3 className="mb-2 text-sm font-semibold text-slate-900 dark:text-white">
                     Invitations
                   </h3>
                   {pendingInvites.length > 0 ? (
@@ -843,9 +825,7 @@ export function OnboardingWizard({
                       ))}
                     </div>
                   ) : (
-                    <p className="text-slate-500 dark:text-slate-400">
-                      No invitations sent
-                    </p>
+                    <p className="text-slate-500 dark:text-slate-400">No invitations sent</p>
                   )}
                 </div>
               </div>
@@ -854,10 +834,10 @@ export function OnboardingWizard({
                 <button
                   type="button"
                   onClick={goBack}
-                  className="inline-flex items-center gap-2 px-6 py-3 text-slate-600 dark:text-slate-300 font-medium rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                  className="inline-flex items-center gap-2 rounded-xl px-6 py-3 font-medium text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                 >
                   <svg
-                    className="w-4 h-4"
+                    className="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -874,21 +854,17 @@ export function OnboardingWizard({
                 <button
                   type="button"
                   onClick={handleComplete}
-                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-lg shadow-emerald-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-emerald-500/30 hover:-translate-y-0.5 active:translate-y-0"
+                  className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-xl hover:shadow-emerald-500/30 active:translate-y-0"
                 >
                   Complete Setup
                   <svg
-                    className="w-4 h-4"
+                    className="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                     strokeWidth={2}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4.5 12.75l6 6 9-13.5"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                   </svg>
                 </button>
               </div>

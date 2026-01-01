@@ -1,10 +1,7 @@
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+
 import {
   OnboardingState,
   OnboardingStateDocument,
@@ -13,6 +10,7 @@ import {
 import { Family, FamilyDocument } from '../schemas/family.schema';
 import { Parent, ParentDocument } from '../schemas/parent.schema';
 import { AuthUser } from '../families/families.service';
+
 import { UpdateOnboardingDto } from './dto/update-onboarding.dto';
 
 @Injectable()
@@ -24,10 +22,7 @@ export class OnboardingService {
     @InjectModel(Parent.name) private parentModel: Model<ParentDocument>,
   ) {}
 
-  private async verifyFamilyAccess(
-    familyId: string,
-    user: AuthUser,
-  ): Promise<FamilyDocument> {
+  private async verifyFamilyAccess(familyId: string, user: AuthUser): Promise<FamilyDocument> {
     const family = await this.familyModel.findOne({
       _id: new Types.ObjectId(familyId),
       deletedAt: null,
@@ -49,15 +44,10 @@ export class OnboardingService {
     return family;
   }
 
-  async findByFamily(
-    familyId: string,
-    user: AuthUser,
-  ): Promise<OnboardingStateDocument | null> {
+  async findByFamily(familyId: string, user: AuthUser): Promise<OnboardingStateDocument | null> {
     await this.verifyFamilyAccess(familyId, user);
 
-    return this.onboardingModel
-      .findOne({ familyId: new Types.ObjectId(familyId) })
-      .exec();
+    return this.onboardingModel.findOne({ familyId: new Types.ObjectId(familyId) }).exec();
   }
 
   async update(

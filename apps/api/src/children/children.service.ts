@@ -1,14 +1,12 @@
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+
 import { Child, ChildDocument } from '../schemas/child.schema';
 import { Family, FamilyDocument } from '../schemas/family.schema';
 import { Parent, ParentDocument } from '../schemas/parent.schema';
 import { AuthUser } from '../families/families.service';
+
 import { CreateChildDto } from './dto/create-child.dto';
 import { UpdateChildDto } from './dto/update-child.dto';
 
@@ -20,10 +18,7 @@ export class ChildrenService {
     @InjectModel(Parent.name) private parentModel: Model<ParentDocument>,
   ) {}
 
-  private async verifyFamilyAccess(
-    familyId: string,
-    user: AuthUser,
-  ): Promise<FamilyDocument> {
+  private async verifyFamilyAccess(familyId: string, user: AuthUser): Promise<FamilyDocument> {
     const family = await this.familyModel.findOne({
       _id: new Types.ObjectId(familyId),
       deletedAt: null,
@@ -69,10 +64,7 @@ export class ChildrenService {
     return child;
   }
 
-  async findByFamily(
-    familyId: string,
-    user: AuthUser,
-  ): Promise<ChildDocument[]> {
+  async findByFamily(familyId: string, user: AuthUser): Promise<ChildDocument[]> {
     await this.verifyFamilyAccess(familyId, user);
 
     return this.childModel
@@ -133,9 +125,7 @@ export class ChildrenService {
     // Remove from family's childIds
     const family = await this.familyModel.findById(child.familyId);
     if (family) {
-      family.childIds = family.childIds.filter(
-        (id: Types.ObjectId) => id.toString() !== childId,
-      );
+      family.childIds = family.childIds.filter((id: Types.ObjectId) => id.toString() !== childId);
       await family.save();
     }
   }

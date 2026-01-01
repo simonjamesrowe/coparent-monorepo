@@ -1,24 +1,12 @@
-import {
-  Controller,
-  Get,
-  Patch,
-  Post,
-  Body,
-  Param,
-  UseGuards,
-  Req,
-} from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
+import { Controller, Get, Patch, Post, Body, Param, UseGuards, Req } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { OnboardingService } from './onboarding.service';
-import { UpdateOnboardingDto } from './dto/update-onboarding.dto';
+
 import { AuthUser } from '../families/families.service';
 import { OnboardingStep } from '../schemas/onboarding-state.schema';
+
+import { OnboardingService } from './onboarding.service';
+import { UpdateOnboardingDto } from './dto/update-onboarding.dto';
 
 interface RequestWithUser extends Request {
   user: AuthUser;
@@ -37,14 +25,8 @@ export class OnboardingController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - not a family member' })
   @ApiResponse({ status: 404, description: 'Family not found' })
-  async findByFamily(
-    @Param('familyId') familyId: string,
-    @Req() req: RequestWithUser,
-  ) {
-    const onboarding = await this.onboardingService.findByFamily(
-      familyId,
-      req.user,
-    );
+  async findByFamily(@Param('familyId') familyId: string, @Req() req: RequestWithUser) {
+    const onboarding = await this.onboardingService.findByFamily(familyId, req.user);
 
     if (!onboarding) {
       return {
@@ -78,11 +60,7 @@ export class OnboardingController {
     @Body() updateDto: UpdateOnboardingDto,
     @Req() req: RequestWithUser,
   ) {
-    const onboarding = await this.onboardingService.update(
-      familyId,
-      updateDto,
-      req.user,
-    );
+    const onboarding = await this.onboardingService.update(familyId, updateDto, req.user);
     return {
       id: onboarding._id,
       familyId: onboarding.familyId,
@@ -105,11 +83,7 @@ export class OnboardingController {
     @Body() body: { step: OnboardingStep },
     @Req() req: RequestWithUser,
   ) {
-    const onboarding = await this.onboardingService.completeStep(
-      familyId,
-      body.step,
-      req.user,
-    );
+    const onboarding = await this.onboardingService.completeStep(familyId, body.step, req.user);
     return {
       id: onboarding._id,
       familyId: onboarding.familyId,

@@ -20,10 +20,8 @@ export class EmailService {
   constructor(private configService: ConfigService) {
     const apiKey = this.configService.get<string>('SENDGRID_API_KEY');
     this.fromEmail =
-      this.configService.get<string>('SENDGRID_FROM_EMAIL') ||
-      'noreply@coparent.dev';
-    this.appUrl =
-      this.configService.get<string>('APP_URL') || 'http://localhost:5173';
+      this.configService.get<string>('SENDGRID_FROM_EMAIL') || 'noreply@coparent.dev';
+    this.appUrl = this.configService.get<string>('APP_URL') || 'http://localhost:5173';
 
     if (apiKey) {
       sgMail.setApiKey(apiKey);
@@ -31,9 +29,7 @@ export class EmailService {
       this.logger.log('SendGrid configured successfully');
     } else {
       this.isConfigured = false;
-      this.logger.warn(
-        'SendGrid API key not configured - emails will be logged to console',
-      );
+      this.logger.warn('SendGrid API key not configured - emails will be logged to console');
     }
   }
 

@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { FamiliesController } from './families.controller';
-import { FamiliesService } from './families.service';
+
 import { Family, FamilySchema } from '../schemas/family.schema';
 import { Parent, ParentSchema } from '../schemas/parent.schema';
-import {
-  OnboardingState,
-  OnboardingStateSchema,
-} from '../schemas/onboarding-state.schema';
+import { OnboardingState, OnboardingStateSchema } from '../schemas/onboarding-state.schema';
+
+import { FamiliesService } from './families.service';
+import { FamiliesController } from './families.controller';
 
 @Module({
   imports: [

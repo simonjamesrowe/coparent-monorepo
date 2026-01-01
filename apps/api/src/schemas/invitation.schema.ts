@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+
 import { ParentRole } from './parent.schema';
 
 export type InvitationDocument = Invitation & Document;

@@ -1,24 +1,11 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Query,
-  UseGuards,
-  Req,
-} from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-  ApiQuery,
-} from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, Query, UseGuards, Req } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+
+import { AuthUser } from '../families/families.service';
+
 import { InvitationsService } from './invitations.service';
 import { CreateInvitationDto } from './dto/create-invitation.dto';
-import { AuthUser } from '../families/families.service';
 
 interface RequestWithUser extends Request {
   user: AuthUser;
@@ -65,14 +52,8 @@ export class InvitationsController {
   @ApiResponse({ status: 200, description: 'Returns list of invitations' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - not a family member' })
-  async findByFamily(
-    @Param('familyId') familyId: string,
-    @Req() req: RequestWithUser,
-  ) {
-    const invitations = await this.invitationsService.findByFamily(
-      familyId,
-      req.user,
-    );
+  async findByFamily(@Param('familyId') familyId: string, @Req() req: RequestWithUser) {
+    const invitations = await this.invitationsService.findByFamily(familyId, req.user);
     return invitations.map((inv) => ({
       id: inv._id,
       familyId: inv.familyId,
@@ -137,10 +118,7 @@ export class InvitationsController {
   @ApiResponse({ status: 403, description: 'Email mismatch' })
   @ApiResponse({ status: 404, description: 'Invitation not found' })
   async accept(@Query('token') token: string, @Req() req: RequestWithUser) {
-    const { invitation, family } = await this.invitationsService.accept(
-      token,
-      req.user,
-    );
+    const { invitation, family } = await this.invitationsService.accept(token, req.user);
     return {
       message: 'Invitation accepted successfully',
       invitation: {

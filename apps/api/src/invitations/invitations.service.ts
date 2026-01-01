@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import {
   Injectable,
   NotFoundException,
@@ -6,15 +8,13 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { randomUUID } from 'node:crypto';
-import {
-  Invitation,
-  InvitationDocument,
-} from '../schemas/invitation.schema';
+
+import { Invitation, InvitationDocument } from '../schemas/invitation.schema';
 import { Family, FamilyDocument } from '../schemas/family.schema';
 import { Parent, ParentDocument, ParentRole } from '../schemas/parent.schema';
 import { EmailService } from '../email/email.service';
 import { AuthUser } from '../families/families.service';
+
 import { CreateInvitationDto } from './dto/create-invitation.dto';
 
 @Injectable()
@@ -66,9 +66,7 @@ export class InvitationsService {
     });
 
     if (existingParent) {
-      throw new BadRequestException(
-        'This email is already a member of this family',
-      );
+      throw new BadRequestException('This email is already a member of this family');
     }
 
     // Check for existing pending invitation
@@ -79,9 +77,7 @@ export class InvitationsService {
     });
 
     if (existingInvitation) {
-      throw new BadRequestException(
-        'A pending invitation already exists for this email',
-      );
+      throw new BadRequestException('A pending invitation already exists for this email');
     }
 
     // Create invitation
@@ -116,10 +112,7 @@ export class InvitationsService {
     return invitation;
   }
 
-  async findByFamily(
-    familyId: string,
-    user: AuthUser,
-  ): Promise<InvitationDocument[]> {
+  async findByFamily(familyId: string, user: AuthUser): Promise<InvitationDocument[]> {
     await this.verifyFamilyAccess(familyId, user);
 
     return this.invitationModel
@@ -135,15 +128,10 @@ export class InvitationsService {
       throw new NotFoundException(`Invitation with ID ${invitationId} not found`);
     }
 
-    const { family, parent } = await this.verifyFamilyAccess(
-      invitation.familyId.toString(),
-      user,
-    );
+    const { family, parent } = await this.verifyFamilyAccess(invitation.familyId.toString(), user);
 
     if (invitation.status !== 'pending' && invitation.status !== 'expired') {
-      throw new BadRequestException(
-        'Can only resend pending or expired invitations',
-      );
+      throw new BadRequestException('Can only resend pending or expired invitations');
     }
 
     // Update expiration
@@ -200,9 +188,7 @@ export class InvitationsService {
     }
 
     if (invitation.status !== 'pending') {
-      throw new BadRequestException(
-        `Invitation is ${invitation.status} and cannot be accepted`,
-      );
+      throw new BadRequestException(`Invitation is ${invitation.status} and cannot be accepted`);
     }
 
     if (new Date() > invitation.expiresAt) {
@@ -213,9 +199,7 @@ export class InvitationsService {
 
     // Check email matches
     if (invitation.email.toLowerCase() !== user.email.toLowerCase()) {
-      throw new ForbiddenException(
-        'This invitation was sent to a different email address',
-      );
+      throw new ForbiddenException('This invitation was sent to a different email address');
     }
 
     const family = await this.familyModel.findById(invitation.familyId);

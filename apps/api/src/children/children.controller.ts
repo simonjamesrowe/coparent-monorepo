@@ -1,25 +1,12 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Body,
-  Param,
-  UseGuards,
-  Req,
-} from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
+import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards, Req } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+
+import { AuthUser } from '../families/families.service';
+
 import { ChildrenService } from './children.service';
 import { CreateChildDto } from './dto/create-child.dto';
 import { UpdateChildDto } from './dto/update-child.dto';
-import { AuthUser } from '../families/families.service';
 
 interface RequestWithUser extends Request {
   user: AuthUser;
@@ -44,11 +31,7 @@ export class ChildrenController {
     @Body() createChildDto: CreateChildDto,
     @Req() req: RequestWithUser,
   ) {
-    const child = await this.childrenService.create(
-      familyId,
-      createChildDto,
-      req.user,
-    );
+    const child = await this.childrenService.create(familyId, createChildDto, req.user);
     return {
       id: child._id,
       familyId: child.familyId,
@@ -65,10 +48,7 @@ export class ChildrenController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - not a family member' })
   @ApiResponse({ status: 404, description: 'Family not found' })
-  async findByFamily(
-    @Param('familyId') familyId: string,
-    @Req() req: RequestWithUser,
-  ) {
+  async findByFamily(@Param('familyId') familyId: string, @Req() req: RequestWithUser) {
     const children = await this.childrenService.findByFamily(familyId, req.user);
     return children.map((child) => ({
       id: child._id,

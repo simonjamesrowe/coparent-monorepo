@@ -1,11 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import {
-  apiClient,
-  Parent,
-  CurrentUser,
-  UpdateParentRoleRequest,
-} from '../../lib/api/client';
+import type { Parent, CurrentUser, UpdateParentRoleRequest } from '../../lib/api/client';
+import { apiClient } from '../../lib/api/client';
 
 export const parentKeys = {
   all: ['parents'] as const,

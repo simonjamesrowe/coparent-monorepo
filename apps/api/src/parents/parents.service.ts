@@ -1,23 +1,15 @@
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+
 import { Parent, ParentDocument, ParentRole } from '../schemas/parent.schema';
 import { AuthUser } from '../families/families.service';
 
 @Injectable()
 export class ParentsService {
-  constructor(
-    @InjectModel(Parent.name) private parentModel: Model<ParentDocument>,
-  ) {}
+  constructor(@InjectModel(Parent.name) private parentModel: Model<ParentDocument>) {}
 
-  async findByFamily(
-    familyId: string,
-    user: AuthUser,
-  ): Promise<ParentDocument[]> {
+  async findByFamily(familyId: string, user: AuthUser): Promise<ParentDocument[]> {
     // Verify user belongs to this family
     const userParent = await this.parentModel.findOne({
       auth0Id: user.auth0Id,
@@ -28,9 +20,7 @@ export class ParentsService {
       throw new ForbiddenException('You do not have access to this family');
     }
 
-    return this.parentModel
-      .find({ familyId: new Types.ObjectId(familyId) })
-      .exec();
+    return this.parentModel.find({ familyId: new Types.ObjectId(familyId) }).exec();
   }
 
   async findCurrentUser(user: AuthUser): Promise<ParentDocument | null> {
@@ -64,11 +54,7 @@ export class ParentsService {
     return parent.save();
   }
 
-  async updateRole(
-    parentId: string,
-    role: ParentRole,
-    user: AuthUser,
-  ): Promise<ParentDocument> {
+  async updateRole(parentId: string, role: ParentRole, user: AuthUser): Promise<ParentDocument> {
     const parent = await this.parentModel.findById(parentId);
 
     if (!parent) {
@@ -95,9 +81,6 @@ export class ParentsService {
   }
 
   async updateLastSignedIn(auth0Id: string): Promise<void> {
-    await this.parentModel.updateMany(
-      { auth0Id },
-      { lastSignedInAt: new Date() },
-    );
+    await this.parentModel.updateMany({ auth0Id }, { lastSignedInAt: new Date() });
   }
 }

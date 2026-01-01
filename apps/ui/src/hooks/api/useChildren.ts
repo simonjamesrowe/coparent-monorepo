@@ -1,11 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import {
-  apiClient,
-  Child,
-  CreateChildRequest,
-  UpdateChildRequest,
-} from '../../lib/api/client';
+import type { Child, CreateChildRequest, UpdateChildRequest } from '../../lib/api/client';
+import { apiClient } from '../../lib/api/client';
+
 import { familyKeys } from './useFamilies';
 
 export const childKeys = {
@@ -31,14 +28,8 @@ export function useCreateChild() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      familyId,
-      ...request
-    }: CreateChildRequest & { familyId: string }) => {
-      const { data } = await apiClient.post<Child>(
-        `/families/${familyId}/children`,
-        request,
-      );
+    mutationFn: async ({ familyId, ...request }: CreateChildRequest & { familyId: string }) => {
+      const { data } = await apiClient.post<Child>(`/families/${familyId}/children`, request);
       return data;
     },
     onSuccess: (data) => {

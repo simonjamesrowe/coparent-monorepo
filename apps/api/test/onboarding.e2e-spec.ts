@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
+
 import { createTestApp } from './helpers/test-utils';
 import { getTestToken, clearTokenCache } from './helpers/auth.helper';
 
@@ -43,9 +44,7 @@ describe('Onboarding (e2e)', () => {
     });
 
     it('should return 401 without auth token', async () => {
-      await request(app.getHttpServer())
-        .get(`/onboarding/${testFamilyId}`)
-        .expect(401);
+      await request(app.getHttpServer()).get(`/onboarding/${testFamilyId}`).expect(401);
     });
 
     it('should return 404 for non-existent family', async () => {

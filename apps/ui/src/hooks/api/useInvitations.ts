@@ -1,10 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import {
-  apiClient,
-  Invitation,
-  CreateInvitationRequest,
-} from '../../lib/api/client';
+import type { Invitation, CreateInvitationRequest } from '../../lib/api/client';
+import { apiClient } from '../../lib/api/client';
+
 import { familyKeys } from './useFamilies';
 
 export const invitationKeys = {
@@ -17,9 +15,7 @@ export function useInvitations(familyId: string | undefined) {
   return useQuery({
     queryKey: invitationKeys.list(familyId!),
     queryFn: async () => {
-      const { data } = await apiClient.get<Invitation[]>(
-        `/families/${familyId}/invitations`,
-      );
+      const { data } = await apiClient.get<Invitation[]>(`/families/${familyId}/invitations`);
       return data;
     },
     enabled: !!familyId,

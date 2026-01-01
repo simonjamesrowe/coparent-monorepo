@@ -23,11 +23,11 @@ export function AuthCallback() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-teal-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-teal-950/20">
-        <div className="text-center max-w-md mx-auto p-8">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-rose-100 dark:bg-rose-900/20 flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-teal-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-teal-950/20">
+        <div className="mx-auto max-w-md p-8 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-100 dark:bg-rose-900/20">
             <svg
-              className="w-8 h-8 text-rose-600 dark:text-rose-400"
+              className="h-8 w-8 text-rose-600 dark:text-rose-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -40,15 +40,15 @@ export function AuthCallback() {
               />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
+          <h2 className="mb-2 text-xl font-bold text-slate-900 dark:text-white">
             Authentication Error
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 mb-6">
+          <p className="mb-6 text-slate-500 dark:text-slate-400">
             {error.message || 'An error occurred during authentication'}
           </p>
           <button
             onClick={() => navigate('/login', { replace: true })}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl shadow-lg shadow-teal-500/25 transition-all"
+            className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-6 py-3 font-semibold text-white shadow-lg shadow-teal-500/25 transition-all hover:bg-teal-700"
           >
             Return to Login
           </button>
@@ -58,11 +58,11 @@ export function AuthCallback() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-teal-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-teal-950/20">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-teal-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-teal-950/20">
       <div className="text-center">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 shadow-xl shadow-teal-500/30 flex items-center justify-center animate-pulse">
+        <div className="mx-auto mb-4 flex h-16 w-16 animate-pulse items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 shadow-xl shadow-teal-500/30">
           <svg
-            className="w-8 h-8 text-white"
+            className="h-8 w-8 text-white"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

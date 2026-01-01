@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
+
 import { createTestApp } from './helpers/test-utils';
 import { getTestToken, clearTokenCache } from './helpers/auth.helper';
 
@@ -57,16 +58,12 @@ describe('Parents (e2e)', () => {
       expect(response.body.length).toBeGreaterThan(0);
 
       // Should include the creating user as primary parent
-      const primaryParent = response.body.find(
-        (p: any) => p.role === 'primary',
-      );
+      const primaryParent = response.body.find((p: any) => p.role === 'primary');
       expect(primaryParent).toBeDefined();
     });
 
     it('should return 401 without auth token', async () => {
-      await request(app.getHttpServer())
-        .get(`/families/${testFamilyId}/parents`)
-        .expect(401);
+      await request(app.getHttpServer()).get(`/families/${testFamilyId}/parents`).expect(401);
     });
 
     it('should return 403 for family user does not belong to', async () => {

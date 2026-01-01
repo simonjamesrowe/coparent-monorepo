@@ -55,9 +55,7 @@ const OnboardingPage = () => {
       await updateOnboarding.mutateAsync({
         familyId: activeFamilyId,
         currentStep: 'invite',
-        completedSteps: Array.from(
-          new Set([...(onboarding?.completedSteps ?? []), 'child']),
-        ),
+        completedSteps: Array.from(new Set([...(onboarding?.completedSteps ?? []), 'child'])),
       });
     }
   };
@@ -68,9 +66,7 @@ const OnboardingPage = () => {
       await updateOnboarding.mutateAsync({
         familyId,
         currentStep: 'review',
-        completedSteps: Array.from(
-          new Set([...(onboarding?.completedSteps ?? []), 'invite']),
-        ),
+        completedSteps: Array.from(new Set([...(onboarding?.completedSteps ?? []), 'invite'])),
       });
     }
   };
@@ -80,15 +76,13 @@ const OnboardingPage = () => {
       familyId,
       isComplete: true,
       currentStep: 'complete',
-      completedSteps: Array.from(
-        new Set([...(onboarding?.completedSteps ?? []), 'review']),
-      ),
+      completedSteps: Array.from(new Set([...(onboarding?.completedSteps ?? []), 'review'])),
     });
   };
 
   if (familiesLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-900">
         <p className="text-slate-500 dark:text-slate-400">Loading onboarding...</p>
       </div>
     );

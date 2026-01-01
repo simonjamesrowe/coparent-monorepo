@@ -23,8 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   validate(payload: Record<string, unknown>) {
     const auth0Id = (payload.sub as string | undefined) ?? 'unknown';
     const email =
-      (payload.email as string | undefined) ??
-      `${auth0Id.replace(/\|/g, '_')}@coparent.dev`;
+      (payload.email as string | undefined) ?? `${auth0Id.replace(/\|/g, '_')}@coparent.dev`;
 
     return {
       auth0Id,

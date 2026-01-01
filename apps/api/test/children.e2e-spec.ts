@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
+
 import { createTestApp } from './helpers/test-utils';
 import { getTestToken, clearTokenCache } from './helpers/auth.helper';
 
@@ -109,9 +110,7 @@ describe('Children (e2e)', () => {
     });
 
     it('should return 401 without auth token', async () => {
-      await request(app.getHttpServer())
-        .get(`/families/${testFamilyId}/children`)
-        .expect(401);
+      await request(app.getHttpServer()).get(`/families/${testFamilyId}/children`).expect(401);
     });
 
     it('should return 404 for non-existent family', async () => {
@@ -172,9 +171,7 @@ describe('Children (e2e)', () => {
         .get(`/families/${testFamilyId}/children`)
         .set('Authorization', `Bearer ${authToken}`);
 
-      const deletedChild = listResponse.body.find(
-        (c: any) => c.id === childId,
-      );
+      const deletedChild = listResponse.body.find((c: any) => c.id === childId);
       expect(deletedChild).toBeUndefined();
     });
   });

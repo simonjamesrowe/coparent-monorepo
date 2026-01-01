@@ -3,13 +3,7 @@ import { Document, Types } from 'mongoose';
 
 export type OnboardingStateDocument = OnboardingState & Document;
 
-export type OnboardingStep =
-  | 'account'
-  | 'family'
-  | 'child'
-  | 'invite'
-  | 'review'
-  | 'complete';
+export type OnboardingStep = 'account' | 'family' | 'child' | 'invite' | 'review' | 'complete';
 
 @Schema({ timestamps: true })
 export class OnboardingState {
@@ -37,5 +31,4 @@ export class OnboardingState {
   lastUpdated!: Date;
 }
 
-export const OnboardingStateSchema =
-  SchemaFactory.createForClass(OnboardingState);
+export const OnboardingStateSchema = SchemaFactory.createForClass(OnboardingState);

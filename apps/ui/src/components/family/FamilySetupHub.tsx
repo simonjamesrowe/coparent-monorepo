@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from 'react';
 
 import type {
   Family,
@@ -7,28 +7,28 @@ import type {
   Invitation,
   InvitationStatus,
   ParentRole,
-} from '../../lib/api/client'
+} from '../../lib/api/client';
 
 type ChildDraft = {
-  fullName: string
-  dateOfBirth: string
-  school?: string
-  medicalNotes?: string
-}
+  fullName: string;
+  dateOfBirth: string;
+  school?: string;
+  medicalNotes?: string;
+};
 
 interface FamilySetupHubProps {
-  families: Family[]
-  parents: Parent[]
-  children: Child[]
-  invitations: Invitation[]
-  activeFamilyId?: string
-  onUpdateFamily?: (id: string, updates: Partial<Family>) => void
-  onAddChild?: (child: ChildDraft) => void
-  onUpdateChild?: (id: string, updates: Partial<ChildDraft>) => void
-  onInviteCoParent?: (familyId: string, email: string, role: ParentRole) => void
-  onResendInvite?: (invitationId: string) => void
-  onCancelInvite?: (invitationId: string) => void
-  onAssignRole?: (parentId: string, role: ParentRole) => void
+  families: Family[];
+  parents: Parent[];
+  children: Child[];
+  invitations: Invitation[];
+  activeFamilyId?: string;
+  onUpdateFamily?: (id: string, updates: Partial<Family>) => void;
+  onAddChild?: (child: ChildDraft) => void;
+  onUpdateChild?: (id: string, updates: Partial<ChildDraft>) => void;
+  onInviteCoParent?: (familyId: string, email: string, role: ParentRole) => void;
+  onResendInvite?: (invitationId: string) => void;
+  onCancelInvite?: (invitationId: string) => void;
+  onAssignRole?: (parentId: string, role: ParentRole) => void;
 }
 
 function getInvitationStatusBadge(status: InvitationStatus) {
@@ -53,8 +53,8 @@ function getInvitationStatusBadge(status: InvitationStatus) {
       text: 'text-rose-700 dark:text-rose-300',
       label: 'Canceled',
     },
-  }
-  return badges[status]
+  };
+  return badges[status];
 }
 
 function getRoleBadge(role: ParentRole) {
@@ -68,18 +68,18 @@ function getRoleBadge(role: ParentRole) {
         bg: 'bg-violet-100 dark:bg-violet-900/30',
         text: 'text-violet-700 dark:text-violet-300',
         label: 'Co-Parent',
-      }
+      };
 }
 
 function calculateAge(dateOfBirth: string): number {
-  const today = new Date()
-  const birthDate = new Date(dateOfBirth)
-  let age = today.getFullYear() - birthDate.getFullYear()
-  const monthDiff = today.getMonth() - birthDate.getMonth()
+  const today = new Date();
+  const birthDate = new Date(dateOfBirth);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-    age--
+    age--;
   }
-  return age
+  return age;
 }
 
 export function FamilySetupHub({
@@ -96,70 +96,69 @@ export function FamilySetupHub({
   onCancelInvite,
   onAssignRole,
 }: FamilySetupHubProps) {
-  const activeFamily = families.find((f) => f.id === activeFamilyId)
-  const familyParents = parents.filter((p) => p.familyId === activeFamilyId)
-  const familyChildren = children.filter((c) => c.familyId === activeFamilyId)
-  const familyInvitations = invitations.filter((i) => i.familyId === activeFamilyId)
-  const pendingInvites = familyInvitations.filter((i) => i.status === 'pending')
-  const [childName, setChildName] = useState('')
-  const [childDob, setChildDob] = useState('')
-  const [childSchool, setChildSchool] = useState('')
-  const [childMedicalNotes, setChildMedicalNotes] = useState('')
-  const [inviteEmail, setInviteEmail] = useState('')
-  const [inviteRole, setInviteRole] = useState<ParentRole>('co-parent')
+  const activeFamily = families.find((f) => f.id === activeFamilyId);
+  const familyParents = parents.filter((p) => p.familyId === activeFamilyId);
+  const familyChildren = children.filter((c) => c.familyId === activeFamilyId);
+  const familyInvitations = invitations.filter((i) => i.familyId === activeFamilyId);
+  const pendingInvites = familyInvitations.filter((i) => i.status === 'pending');
+  const [childName, setChildName] = useState('');
+  const [childDob, setChildDob] = useState('');
+  const [childSchool, setChildSchool] = useState('');
+  const [childMedicalNotes, setChildMedicalNotes] = useState('');
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteRole, setInviteRole] = useState<ParentRole>('co-parent');
 
   const handleAddChild = () => {
-    const trimmedName = childName.trim()
-    if (!trimmedName || !childDob) return
+    const trimmedName = childName.trim();
+    if (!trimmedName || !childDob) return;
     onAddChild?.({
       fullName: trimmedName,
       dateOfBirth: childDob,
       school: childSchool || undefined,
       medicalNotes: childMedicalNotes || undefined,
-    })
-    setChildName('')
-    setChildDob('')
-    setChildSchool('')
-    setChildMedicalNotes('')
-  }
+    });
+    setChildName('');
+    setChildDob('');
+    setChildSchool('');
+    setChildMedicalNotes('');
+  };
 
   const handleInvite = () => {
-    const normalizedEmail = inviteEmail.trim()
-    if (!activeFamilyId || !normalizedEmail) return
-    onInviteCoParent?.(activeFamilyId, normalizedEmail, inviteRole)
-    setInviteEmail('')
-    setInviteRole('co-parent')
-  }
+    const normalizedEmail = inviteEmail.trim();
+    if (!activeFamilyId || !normalizedEmail) return;
+    onInviteCoParent?.(activeFamilyId, normalizedEmail, inviteRole);
+    setInviteEmail('');
+    setInviteRole('co-parent');
+  };
 
   if (!activeFamily) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-900">
         <div className="text-center">
           <p className="text-slate-500 dark:text-slate-400">No family selected</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-teal-950/20">
       {/* Decorative background */}
       <div
-        className="fixed inset-0 opacity-[0.015] dark:opacity-[0.025] pointer-events-none"
+        className="pointer-events-none fixed inset-0 opacity-[0.015] dark:opacity-[0.025]"
         style={{
-          backgroundImage:
-            'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)',
+          backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)',
           backgroundSize: '32px 32px',
         }}
       />
 
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="relative mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
         {/* Header */}
         <div className="mb-10">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 shadow-lg shadow-teal-500/30 flex items-center justify-center">
+          <div className="mb-3 flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 shadow-lg shadow-teal-500/30">
               <svg
-                className="w-6 h-6 text-white"
+                className="h-6 w-6 text-white"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -176,20 +175,20 @@ export function FamilySetupHub({
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
                 Family Setup
               </p>
-              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
+              <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
                 {activeFamily.name}
               </h1>
             </div>
           </div>
-          <p className="text-slate-500 dark:text-slate-400 max-w-2xl">
-            Manage your family details, child profiles, co-parent invitations, and
-            role assignments all in one place.
+          <p className="max-w-2xl text-slate-500 dark:text-slate-400">
+            Manage your family details, child profiles, co-parent invitations, and role assignments
+            all in one place.
           </p>
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8">
-          <div className="bg-white/70 dark:bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-200/60 dark:border-slate-700/60">
+        <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+          <div className="rounded-xl border border-slate-200/60 bg-white/70 p-4 backdrop-blur-sm dark:border-slate-700/60 dark:bg-slate-800/50">
             <p className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">
               Parents
             </p>
@@ -197,7 +196,7 @@ export function FamilySetupHub({
               {familyParents.length}
             </p>
           </div>
-          <div className="bg-white/70 dark:bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-200/60 dark:border-slate-700/60">
+          <div className="rounded-xl border border-slate-200/60 bg-white/70 p-4 backdrop-blur-sm dark:border-slate-700/60 dark:bg-slate-800/50">
             <p className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">
               Children
             </p>
@@ -205,7 +204,7 @@ export function FamilySetupHub({
               {familyChildren.length}
             </p>
           </div>
-          <div className="bg-white/70 dark:bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-200/60 dark:border-slate-700/60">
+          <div className="rounded-xl border border-slate-200/60 bg-white/70 p-4 backdrop-blur-sm dark:border-slate-700/60 dark:bg-slate-800/50">
             <p className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">
               Pending Invites
             </p>
@@ -213,7 +212,7 @@ export function FamilySetupHub({
               {pendingInvites.length}
             </p>
           </div>
-          <div className="bg-white/70 dark:bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-200/60 dark:border-slate-700/60">
+          <div className="rounded-xl border border-slate-200/60 bg-white/70 p-4 backdrop-blur-sm dark:border-slate-700/60 dark:bg-slate-800/50">
             <p className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">
               Time Zone
             </p>
@@ -224,15 +223,15 @@ export function FamilySetupHub({
         </div>
 
         {/* Main Grid */}
-        <div className="grid lg:grid-cols-2 gap-6">
+        <div className="grid gap-6 lg:grid-cols-2">
           {/* Family Card */}
-          <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-xl shadow-slate-200/40 dark:shadow-slate-950/50 overflow-hidden">
-            <div className="p-6 border-b border-slate-200/60 dark:border-slate-700/60">
+          <div className="overflow-hidden rounded-2xl border border-slate-200/60 bg-white/80 shadow-xl shadow-slate-200/40 backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-slate-950/50">
+            <div className="border-b border-slate-200/60 p-6 dark:border-slate-700/60">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-teal-500/10 dark:bg-teal-500/20 flex items-center justify-center">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-500/10 dark:bg-teal-500/20">
                     <svg
-                      className="w-5 h-5 text-teal-600 dark:text-teal-400"
+                      className="h-5 w-5 text-teal-600 dark:text-teal-400"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -252,33 +251,27 @@ export function FamilySetupHub({
                 <button
                   type="button"
                   onClick={() => onUpdateFamily?.(activeFamily.id, {})}
-                  className="text-sm font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 transition"
+                  className="text-sm font-medium text-teal-600 transition hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300"
                 >
                   Edit
                 </button>
               </div>
             </div>
-            <div className="p-6 space-y-4">
+            <div className="space-y-4 p-6">
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400 mb-1">
-                  Family Name
-                </p>
+                <p className="mb-1 text-xs uppercase tracking-wide text-slate-400">Family Name</p>
                 <p className="text-base font-semibold text-slate-900 dark:text-white">
                   {activeFamily.name}
                 </p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400 mb-1">
-                  Time Zone
-                </p>
+                <p className="mb-1 text-xs uppercase tracking-wide text-slate-400">Time Zone</p>
                 <p className="text-base font-medium text-slate-700 dark:text-slate-300">
                   {activeFamily.timeZone}
                 </p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400 mb-1">
-                  Created
-                </p>
+                <p className="mb-1 text-xs uppercase tracking-wide text-slate-400">Created</p>
                 <p className="text-base font-medium text-slate-700 dark:text-slate-300">
                   {new Date(activeFamily.createdAt).toLocaleDateString('en-US', {
                     month: 'long',
@@ -291,12 +284,12 @@ export function FamilySetupHub({
           </div>
 
           {/* Parents & Roles Card */}
-          <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-xl shadow-slate-200/40 dark:shadow-slate-950/50 overflow-hidden">
-            <div className="p-6 border-b border-slate-200/60 dark:border-slate-700/60">
+          <div className="overflow-hidden rounded-2xl border border-slate-200/60 bg-white/80 shadow-xl shadow-slate-200/40 backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-slate-950/50">
+            <div className="border-b border-slate-200/60 p-6 dark:border-slate-700/60">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-violet-500/10 dark:bg-violet-500/20 flex items-center justify-center">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/10 dark:bg-violet-500/20">
                   <svg
-                    className="w-5 h-5 text-violet-600 dark:text-violet-400"
+                    className="h-5 w-5 text-violet-600 dark:text-violet-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -318,14 +311,14 @@ export function FamilySetupHub({
               {familyParents.length > 0 ? (
                 <div className="space-y-3">
                   {familyParents.map((parent) => {
-                    const roleBadge = getRoleBadge(parent.role)
+                    const roleBadge = getRoleBadge(parent.role);
                     return (
                       <div
                         key={parent.id}
-                        className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60"
+                        className="flex items-center justify-between rounded-xl border border-slate-200/60 bg-slate-50 p-4 dark:border-slate-700/60 dark:bg-slate-800/60"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-400 to-teal-500 flex items-center justify-center text-white font-bold">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-teal-400 to-teal-500 font-bold text-white">
                             {parent.fullName.charAt(0)}
                           </div>
                           <div>
@@ -339,7 +332,7 @@ export function FamilySetupHub({
                         </div>
                         <div className="flex items-center gap-2">
                           <span
-                            className={`px-3 py-1 rounded-full text-xs font-semibold ${roleBadge.bg} ${roleBadge.text}`}
+                            className={`rounded-full px-3 py-1 text-xs font-semibold ${roleBadge.bg} ${roleBadge.text}`}
                           >
                             {roleBadge.label}
                           </span>
@@ -351,10 +344,10 @@ export function FamilySetupHub({
                                 parent.role === 'primary' ? 'co-parent' : 'primary',
                               )
                             }
-                            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition"
+                            className="text-slate-400 transition hover:text-slate-600 dark:hover:text-slate-300"
                           >
                             <svg
-                              className="w-4 h-4"
+                              className="h-4 w-4"
                               fill="none"
                               viewBox="0 0 24 24"
                               stroke="currentColor"
@@ -369,14 +362,14 @@ export function FamilySetupHub({
                           </button>
                         </div>
                       </div>
-                    )
+                    );
                   })}
                 </div>
               ) : (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 mx-auto mb-4 flex items-center justify-center">
+                <div className="py-8 text-center">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800">
                     <svg
-                      className="w-8 h-8 text-slate-400"
+                      className="h-8 w-8 text-slate-400"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -398,12 +391,12 @@ export function FamilySetupHub({
           </div>
 
           {/* Children Card */}
-          <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-xl shadow-slate-200/40 dark:shadow-slate-950/50 overflow-hidden">
-            <div className="p-6 border-b border-slate-200/60 dark:border-slate-700/60">
+          <div className="overflow-hidden rounded-2xl border border-slate-200/60 bg-white/80 shadow-xl shadow-slate-200/40 backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-slate-950/50">
+            <div className="border-b border-slate-200/60 p-6 dark:border-slate-700/60">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 flex items-center justify-center">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 dark:bg-amber-500/20">
                   <svg
-                    className="w-5 h-5 text-amber-600 dark:text-amber-400"
+                    className="h-5 w-5 text-amber-600 dark:text-amber-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -416,16 +409,14 @@ export function FamilySetupHub({
                     />
                   </svg>
                 </div>
-                <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                  Children
-                </h2>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">Children</h2>
               </div>
             </div>
             <div className="p-6">
-              <div className="mb-6 rounded-xl border border-slate-200/60 dark:border-slate-700/60 bg-white/60 dark:bg-slate-800/40 p-4">
+              <div className="mb-6 rounded-xl border border-slate-200/60 bg-white/60 p-4 dark:border-slate-700/60 dark:bg-slate-800/40">
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1">
+                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">
                       Child Name
                     </label>
                     <input
@@ -433,22 +424,22 @@ export function FamilySetupHub({
                       value={childName}
                       onChange={(e) => setChildName(e.target.value)}
                       placeholder="First and last name"
-                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500"
+                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1">
+                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">
                       Date of Birth
                     </label>
                     <input
                       type="date"
                       value={childDob}
                       onChange={(e) => setChildDob(e.target.value)}
-                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500"
+                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1">
+                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">
                       School (optional)
                     </label>
                     <input
@@ -456,11 +447,11 @@ export function FamilySetupHub({
                       value={childSchool}
                       onChange={(e) => setChildSchool(e.target.value)}
                       placeholder="School name"
-                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500"
+                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
                     />
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1">
+                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">
                       Medical Notes (optional)
                     </label>
                     <textarea
@@ -468,7 +459,7 @@ export function FamilySetupHub({
                       onChange={(e) => setChildMedicalNotes(e.target.value)}
                       placeholder="Allergies, medications, or notes"
                       rows={2}
-                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500 resize-none"
+                      className="w-full resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
                     />
                   </div>
                 </div>
@@ -477,7 +468,7 @@ export function FamilySetupHub({
                     type="button"
                     onClick={handleAddChild}
                     disabled={!childName.trim() || !childDob}
-                    className="inline-flex items-center gap-2 rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-amber-500/20 transition-all hover:bg-amber-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 disabled:shadow-none"
+                    className="inline-flex items-center gap-2 rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-amber-500/20 transition-all hover:bg-amber-700 disabled:bg-slate-300 disabled:shadow-none dark:disabled:bg-slate-700"
                   >
                     <svg
                       className="h-4 w-4"
@@ -497,29 +488,29 @@ export function FamilySetupHub({
                   {familyChildren.map((child) => (
                     <div
                       key={child.id}
-                      className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 hover:border-amber-200 dark:hover:border-amber-800 transition group"
+                      className="group rounded-xl border border-slate-200/60 bg-slate-50 p-4 transition hover:border-amber-200 dark:border-slate-700/60 dark:bg-slate-800/60 dark:hover:border-amber-800"
                     >
                       <div className="flex items-start justify-between">
-                        <div className="flex items-start gap-3 flex-1">
-                          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                        <div className="flex flex-1 items-start gap-3">
+                          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-amber-500 font-bold text-white">
                             {child.fullName.charAt(0)}
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
+                          <div className="min-w-0 flex-1">
+                            <div className="mb-1 flex items-center gap-2">
                               <p className="font-semibold text-slate-900 dark:text-white">
                                 {child.fullName}
                               </p>
-                              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                              <span className="rounded-full bg-slate-200 px-2 py-0.5 text-xs text-slate-600 dark:bg-slate-700 dark:text-slate-300">
                                 {calculateAge(child.dateOfBirth)} yrs
                               </span>
                             </div>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">
+                            <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">
                               Born {child.dateOfBirth}
                             </p>
                             {child.school && (
-                              <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400 mb-1">
+                              <div className="mb-1 flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
                                 <svg
-                                  className="w-3.5 h-3.5"
+                                  className="h-3.5 w-3.5"
                                   fill="none"
                                   viewBox="0 0 24 24"
                                   stroke="currentColor"
@@ -535,9 +526,9 @@ export function FamilySetupHub({
                               </div>
                             )}
                             {child.medicalNotes && (
-                              <div className="flex items-start gap-1.5 text-xs text-rose-600 dark:text-rose-400 mt-2">
+                              <div className="mt-2 flex items-start gap-1.5 text-xs text-rose-600 dark:text-rose-400">
                                 <svg
-                                  className="w-3.5 h-3.5 flex-shrink-0 mt-0.5"
+                                  className="mt-0.5 h-3.5 w-3.5 flex-shrink-0"
                                   fill="none"
                                   viewBox="0 0 24 24"
                                   stroke="currentColor"
@@ -557,10 +548,10 @@ export function FamilySetupHub({
                         <button
                           type="button"
                           onClick={() => onUpdateChild?.(child.id, {})}
-                          className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition opacity-0 group-hover:opacity-100"
+                          className="text-slate-400 opacity-0 transition hover:text-slate-600 group-hover:opacity-100 dark:hover:text-slate-300"
                         >
                           <svg
-                            className="w-4 h-4"
+                            className="h-4 w-4"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -578,10 +569,10 @@ export function FamilySetupHub({
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 rounded-2xl bg-amber-100 dark:bg-amber-900/20 mx-auto mb-4 flex items-center justify-center">
+                <div className="py-8 text-center">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-100 dark:bg-amber-900/20">
                     <svg
-                      className="w-8 h-8 text-amber-500"
+                      className="h-8 w-8 text-amber-500"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -594,30 +585,26 @@ export function FamilySetupHub({
                       />
                     </svg>
                   </div>
-                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  <p className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
                     No children added yet
                   </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                  <p className="mb-4 text-xs text-slate-500 dark:text-slate-400">
                     Add child profiles to start organizing your co-parenting schedule
                   </p>
                   <button
                     type="button"
                     onClick={handleAddChild}
                     disabled={!childName.trim() || !childDob}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white text-sm font-medium rounded-lg shadow-md shadow-amber-500/20 transition-all hover:shadow-lg hover:shadow-amber-500/30 disabled:shadow-none"
+                    className="inline-flex items-center gap-2 rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white shadow-md shadow-amber-500/20 transition-all hover:bg-amber-700 hover:shadow-lg hover:shadow-amber-500/30 disabled:bg-slate-300 disabled:shadow-none dark:disabled:bg-slate-700"
                   >
                     <svg
-                      className="w-4 h-4"
+                      className="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
                       strokeWidth={2}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 4v16m8-8H4"
-                      />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                     </svg>
                     Add Your First Child
                   </button>
@@ -627,13 +614,13 @@ export function FamilySetupHub({
           </div>
 
           {/* Invitations Card */}
-          <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-slate-200/60 dark:border-slate-700/60 shadow-xl shadow-slate-200/40 dark:shadow-slate-950/50 overflow-hidden">
-            <div className="p-6 border-b border-slate-200/60 dark:border-slate-700/60">
+          <div className="overflow-hidden rounded-2xl border border-slate-200/60 bg-white/80 shadow-xl shadow-slate-200/40 backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-slate-950/50">
+            <div className="border-b border-slate-200/60 p-6 dark:border-slate-700/60">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-rose-500/10 dark:bg-rose-500/20 flex items-center justify-center">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-500/10 dark:bg-rose-500/20">
                     <svg
-                      className="w-5 h-5 text-rose-600 dark:text-rose-400"
+                      className="h-5 w-5 text-rose-600 dark:text-rose-400"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -654,30 +641,26 @@ export function FamilySetupHub({
                   type="button"
                   onClick={handleInvite}
                   disabled={!inviteEmail.trim()}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-600 hover:bg-rose-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white text-sm font-medium rounded-lg shadow-md shadow-rose-500/20 transition-all hover:shadow-lg hover:shadow-rose-500/30 disabled:shadow-none"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-rose-600 px-3 py-1.5 text-sm font-medium text-white shadow-md shadow-rose-500/20 transition-all hover:bg-rose-700 hover:shadow-lg hover:shadow-rose-500/30 disabled:bg-slate-300 disabled:shadow-none dark:disabled:bg-slate-700"
                 >
                   <svg
-                    className="w-4 h-4"
+                    className="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                     strokeWidth={2}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 4v16m8-8H4"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                   </svg>
                   Invite
                 </button>
               </div>
             </div>
             <div className="p-6">
-              <div className="mb-6 rounded-xl border border-slate-200/60 dark:border-slate-700/60 bg-white/60 dark:bg-slate-800/40 p-4">
+              <div className="mb-6 rounded-xl border border-slate-200/60 bg-white/60 p-4 dark:border-slate-700/60 dark:bg-slate-800/40">
                 <div className="grid gap-3 sm:grid-cols-3">
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1">
+                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">
                       Email
                     </label>
                     <input
@@ -685,17 +668,17 @@ export function FamilySetupHub({
                       value={inviteEmail}
                       onChange={(e) => setInviteEmail(e.target.value)}
                       placeholder="coparent@example.com"
-                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/40 focus:border-rose-500"
+                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1">
+                    <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">
                       Role
                     </label>
                     <select
                       value={inviteRole}
                       onChange={(e) => setInviteRole(e.target.value as ParentRole)}
-                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500/40 focus:border-rose-500"
+                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
                     >
                       <option value="co-parent">Co-Parent</option>
                       <option value="primary">Primary</option>
@@ -707,7 +690,7 @@ export function FamilySetupHub({
                     type="button"
                     onClick={handleInvite}
                     disabled={!inviteEmail.trim()}
-                    className="inline-flex items-center gap-2 rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-rose-500/20 transition-all hover:bg-rose-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 disabled:shadow-none"
+                    className="inline-flex items-center gap-2 rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-rose-500/20 transition-all hover:bg-rose-700 disabled:bg-slate-300 disabled:shadow-none dark:disabled:bg-slate-700"
                   >
                     Send Invite
                   </button>
@@ -716,19 +699,19 @@ export function FamilySetupHub({
               {familyInvitations.length > 0 ? (
                 <div className="space-y-3">
                   {familyInvitations.map((invite) => {
-                    const statusBadge = getInvitationStatusBadge(invite.status)
-                    const roleBadge = getRoleBadge(invite.role)
+                    const statusBadge = getInvitationStatusBadge(invite.status);
+                    const roleBadge = getRoleBadge(invite.role);
                     return (
                       <div
                         key={invite.id}
-                        className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60"
+                        className="rounded-xl border border-slate-200/60 bg-slate-50 p-4 dark:border-slate-700/60 dark:bg-slate-800/60"
                       >
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-slate-900 dark:text-white truncate">
+                        <div className="mb-3 flex items-start justify-between">
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate font-medium text-slate-900 dark:text-white">
                               {invite.email}
                             </p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                            <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                               Sent{' '}
                               {new Date(invite.sentAt).toLocaleDateString('en-US', {
                                 month: 'short',
@@ -736,39 +719,39 @@ export function FamilySetupHub({
                               })}
                             </p>
                           </div>
-                          <div className="flex items-center gap-2 flex-shrink-0 ml-3">
+                          <div className="ml-3 flex flex-shrink-0 items-center gap-2">
                             <span
-                              className={`px-2.5 py-1 rounded-full text-xs font-semibold ${statusBadge.bg} ${statusBadge.text}`}
+                              className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusBadge.bg} ${statusBadge.text}`}
                             >
                               {statusBadge.label}
                             </span>
                             <span
-                              className={`px-2.5 py-1 rounded-full text-xs font-medium ${roleBadge.bg} ${roleBadge.text}`}
+                              className={`rounded-full px-2.5 py-1 text-xs font-medium ${roleBadge.bg} ${roleBadge.text}`}
                             >
                               {roleBadge.label}
                             </span>
                           </div>
                         </div>
                         {invite.status === 'pending' && (
-                          <div className="flex gap-2 pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
+                          <div className="flex gap-2 border-t border-slate-200/60 pt-2 dark:border-slate-700/60">
                             <button
                               type="button"
                               onClick={() => onResendInvite?.(invite.id)}
-                              className="flex-1 px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 transition"
+                              className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600"
                             >
                               Resend
                             </button>
                             <button
                               type="button"
                               onClick={() => onCancelInvite?.(invite.id)}
-                              className="flex-1 px-3 py-1.5 text-xs font-medium text-rose-600 dark:text-rose-400 bg-white dark:bg-slate-700 border border-rose-200 dark:border-rose-800 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-900/20 transition"
+                              className="flex-1 rounded-lg border border-rose-200 bg-white px-3 py-1.5 text-xs font-medium text-rose-600 transition hover:bg-rose-50 dark:border-rose-800 dark:bg-slate-700 dark:text-rose-400 dark:hover:bg-rose-900/20"
                             >
                               Cancel
                             </button>
                           </div>
                         )}
                         {invite.status === 'accepted' && invite.acceptedAt && (
-                          <p className="text-xs text-emerald-600 dark:text-emerald-400 pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
+                          <p className="border-t border-slate-200/60 pt-2 text-xs text-emerald-600 dark:border-slate-700/60 dark:text-emerald-400">
                             Accepted on{' '}
                             {new Date(invite.acceptedAt).toLocaleDateString('en-US', {
                               month: 'short',
@@ -777,14 +760,14 @@ export function FamilySetupHub({
                           </p>
                         )}
                       </div>
-                    )
+                    );
                   })}
                 </div>
               ) : (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 rounded-2xl bg-rose-100 dark:bg-rose-900/20 mx-auto mb-4 flex items-center justify-center">
+                <div className="py-8 text-center">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-100 dark:bg-rose-900/20">
                     <svg
-                      className="w-8 h-8 text-rose-500"
+                      className="h-8 w-8 text-rose-500"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -797,31 +780,26 @@ export function FamilySetupHub({
                       />
                     </svg>
                   </div>
-                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  <p className="mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">
                     No invitations sent
                   </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
-                    Invite your co-parent to collaborate on schedules and shared
-                    information
+                  <p className="mb-4 text-xs text-slate-500 dark:text-slate-400">
+                    Invite your co-parent to collaborate on schedules and shared information
                   </p>
                   <button
                     type="button"
                     onClick={handleInvite}
                     disabled={!inviteEmail.trim()}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white text-sm font-medium rounded-lg shadow-md shadow-rose-500/20 transition-all hover:shadow-lg hover:shadow-rose-500/30 disabled:shadow-none"
+                    className="inline-flex items-center gap-2 rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white shadow-md shadow-rose-500/20 transition-all hover:bg-rose-700 hover:shadow-lg hover:shadow-rose-500/30 disabled:bg-slate-300 disabled:shadow-none dark:disabled:bg-slate-700"
                   >
                     <svg
-                      className="w-4 h-4"
+                      className="h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
                       strokeWidth={2}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 4v16m8-8H4"
-                      />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                     </svg>
                     Send First Invitation
                   </button>
@@ -832,5 +810,5 @@ export function FamilySetupHub({
         </div>
       </div>
     </div>
-  )
+  );
 }

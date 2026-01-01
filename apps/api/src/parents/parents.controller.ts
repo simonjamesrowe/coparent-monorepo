@@ -1,23 +1,11 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Body,
-  Param,
-  UseGuards,
-  Req,
-} from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
+import { Controller, Get, Post, Patch, Body, Param, UseGuards, Req } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+
+import { AuthUser } from '../families/families.service';
+
 import { ParentsService } from './parents.service';
 import { UpdateParentRoleDto } from './dto/update-parent-role.dto';
-import { AuthUser } from '../families/families.service';
 
 interface RequestWithUser extends Request {
   user: AuthUser;
@@ -35,10 +23,7 @@ export class ParentsController {
   @ApiResponse({ status: 200, description: 'Returns list of parents' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden - not a family member' })
-  async findByFamily(
-    @Param('familyId') familyId: string,
-    @Req() req: RequestWithUser,
-  ) {
+  async findByFamily(@Param('familyId') familyId: string, @Req() req: RequestWithUser) {
     const parents = await this.parentsService.findByFamily(familyId, req.user);
     return parents.map((parent) => ({
       id: parent._id,
@@ -58,9 +43,7 @@ export class ParentsController {
   @ApiResponse({ status: 200, description: 'Returns current user info' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getCurrentUser(@Req() req: RequestWithUser) {
-    const parents = await this.parentsService.findCurrentUserWithFamilies(
-      req.user,
-    );
+    const parents = await this.parentsService.findCurrentUserWithFamilies(req.user);
 
     if (parents.length === 0) {
       return {
@@ -89,14 +72,8 @@ export class ParentsController {
   @ApiOperation({ summary: 'Create initial user profile' })
   @ApiResponse({ status: 201, description: 'Profile created successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async createProfile(
-    @Body() body: { fullName: string },
-    @Req() req: RequestWithUser,
-  ) {
-    const parent = await this.parentsService.createProfile(
-      req.user,
-      body.fullName,
-    );
+  async createProfile(@Body() body: { fullName: string }, @Req() req: RequestWithUser) {
+    const parent = await this.parentsService.createProfile(req.user, body.fullName);
     return {
       id: parent._id,
       auth0Id: parent.auth0Id,
@@ -119,11 +96,7 @@ export class ParentsController {
     @Body() updateRoleDto: UpdateParentRoleDto,
     @Req() req: RequestWithUser,
   ) {
-    const parent = await this.parentsService.updateRole(
-      id,
-      updateRoleDto.role,
-      req.user,
-    );
+    const parent = await this.parentsService.updateRole(id, updateRoleDto.role, req.user);
     return {
       id: parent._id,
       familyId: parent.familyId,

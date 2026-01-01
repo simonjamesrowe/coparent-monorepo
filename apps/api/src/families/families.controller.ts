@@ -1,21 +1,7 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Body,
-  Param,
-  UseGuards,
-  Req,
-} from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
+import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards, Req } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+
 import { FamiliesService, AuthUser } from './families.service';
 import { CreateFamilyDto } from './dto/create-family.dto';
 import { UpdateFamilyDto } from './dto/update-family.dto';
@@ -36,10 +22,7 @@ export class FamiliesController {
   @ApiResponse({ status: 201, description: 'Family created successfully' })
   @ApiResponse({ status: 400, description: 'Validation error' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async create(
-    @Body() createFamilyDto: CreateFamilyDto,
-    @Req() req: RequestWithUser,
-  ) {
+  async create(@Body() createFamilyDto: CreateFamilyDto, @Req() req: RequestWithUser) {
     const family = await this.familiesService.create(createFamilyDto, req.user);
     return {
       id: family._id,
@@ -100,11 +83,7 @@ export class FamiliesController {
     @Body() updateFamilyDto: UpdateFamilyDto,
     @Req() req: RequestWithUser,
   ) {
-    const family = await this.familiesService.update(
-      id,
-      updateFamilyDto,
-      req.user,
-    );
+    const family = await this.familiesService.update(id, updateFamilyDto, req.user);
     return {
       id: family._id,
       name: family.name,

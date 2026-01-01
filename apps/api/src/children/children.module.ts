@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ChildrenController } from './children.controller';
-import { ChildrenService } from './children.service';
+
 import { Child, ChildSchema } from '../schemas/child.schema';
 import { Family, FamilySchema } from '../schemas/family.schema';
 import { Parent, ParentSchema } from '../schemas/parent.schema';
+
+import { ChildrenService } from './children.service';
+import { ChildrenController } from './children.controller';
 
 @Module({
   imports: [

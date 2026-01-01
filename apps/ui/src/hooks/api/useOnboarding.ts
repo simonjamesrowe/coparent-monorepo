@@ -1,11 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import {
-  apiClient,
+import type {
   OnboardingState,
   UpdateOnboardingRequest,
   CompleteStepRequest,
 } from '../../lib/api/client';
+import { apiClient } from '../../lib/api/client';
 
 export const onboardingKeys = {
   all: ['onboarding'] as const,
@@ -32,10 +32,7 @@ export function useUpdateOnboarding() {
       familyId,
       ...request
     }: UpdateOnboardingRequest & { familyId: string }) => {
-      const { data } = await apiClient.patch<OnboardingState>(
-        `/onboarding/${familyId}`,
-        request,
-      );
+      const { data } = await apiClient.patch<OnboardingState>(`/onboarding/${familyId}`, request);
       return data;
     },
     onSuccess: (data) => {
@@ -48,10 +45,7 @@ export function useCompleteOnboardingStep() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      familyId,
-      ...request
-    }: CompleteStepRequest & { familyId: string }) => {
+    mutationFn: async ({ familyId, ...request }: CompleteStepRequest & { familyId: string }) => {
       const { data } = await apiClient.post<OnboardingState>(
         `/onboarding/${familyId}/complete-step`,
         request,
