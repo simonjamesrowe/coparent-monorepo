@@ -32,8 +32,9 @@ const FamilySetupPage = () => {
   const updateParentRole = useUpdateParentRole();
 
   useEffect(() => {
-    if (!activeFamilyId && families.length > 0) {
-      setActiveFamilyId(families[0].id);
+    const [firstFamily] = families;
+    if (!activeFamilyId && firstFamily) {
+      setActiveFamilyId(firstFamily.id);
     }
   }, [activeFamilyId, families]);
 

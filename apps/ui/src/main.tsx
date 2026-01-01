@@ -21,6 +21,10 @@ const auth0ClientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
 const auth0RedirectUri = import.meta.env.VITE_AUTH0_REDIRECT_URI || window.location.origin;
 const auth0Audience = import.meta.env.VITE_AUTH0_AUDIENCE;
 
+if (!auth0Domain || !auth0ClientId) {
+  throw new Error('Missing Auth0 configuration. Check VITE_AUTH0_DOMAIN and VITE_AUTH0_CLIENT_ID.');
+}
+
 const authorizationParams: { redirect_uri: string; audience?: string } = {
   redirect_uri: auth0RedirectUri,
 };

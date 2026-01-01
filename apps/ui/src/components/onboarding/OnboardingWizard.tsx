@@ -45,7 +45,9 @@ export function OnboardingWizard({
   onCompleteOnboarding,
 }: OnboardingWizardProps) {
   const activeOnboarding = onboardingStates.find((state) => state.familyId === activeFamilyId);
-  const initialStep = (activeOnboarding?.currentStep as WizardStep) || 'account';
+  const initialStep = STEPS.some((step) => step.id === activeOnboarding?.currentStep)
+    ? (activeOnboarding?.currentStep as WizardStep)
+    : 'account';
 
   const [currentStep, setCurrentStep] = useState<WizardStep>(initialStep);
   const [familyName, setFamilyName] = useState('');
@@ -63,15 +65,17 @@ export function OnboardingWizard({
 
   const goNext = () => {
     const nextIndex = currentStepIndex + 1;
-    if (nextIndex < STEPS.length) {
-      setCurrentStep(STEPS[nextIndex].id);
+    const nextStep = STEPS[nextIndex];
+    if (nextStep) {
+      setCurrentStep(nextStep.id);
     }
   };
 
   const goBack = () => {
     const prevIndex = currentStepIndex - 1;
-    if (prevIndex >= 0) {
-      setCurrentStep(STEPS[prevIndex].id);
+    const prevStep = STEPS[prevIndex];
+    if (prevStep) {
+      setCurrentStep(prevStep.id);
     }
   };
 
