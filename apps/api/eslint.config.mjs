@@ -12,7 +12,7 @@ export default [
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
-        project: './tsconfig.json'
+        project: './tsconfig.eslint.json'
       },
       globals: {
         process: 'readonly'

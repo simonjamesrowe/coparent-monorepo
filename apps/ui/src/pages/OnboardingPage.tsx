@@ -1,11 +1,106 @@
+import { useEffect, useState } from 'react';
+
+import { OnboardingWizard } from '../components/onboarding/OnboardingWizard';
+import {
+  useFamilies,
+  useCreateFamily,
+  useChildren,
+  useCreateChild,
+  useInvitations,
+  useCreateInvitation,
+  useOnboarding,
+  useUpdateOnboarding,
+} from '../hooks/api';
+
 const OnboardingPage = () => {
+  const { data: families = [], isLoading: familiesLoading } = useFamilies();
+  const [activeFamilyId, setActiveFamilyId] = useState<string | undefined>();
+
+  const { data: children = [] } = useChildren(activeFamilyId);
+  const { data: invitations = [] } = useInvitations(activeFamilyId);
+  const { data: onboarding } = useOnboarding(activeFamilyId);
+
+  const createFamily = useCreateFamily();
+  const createChild = useCreateChild();
+  const createInvitation = useCreateInvitation();
+  const updateOnboarding = useUpdateOnboarding();
+
+  useEffect(() => {
+    const [firstFamily] = families;
+    if (!activeFamilyId && firstFamily) {
+      setActiveFamilyId(firstFamily.id);
+    }
+  }, [activeFamilyId, families]);
+
+  const onboardingStates = onboarding ? [onboarding] : [];
+
+  const handleCreateFamily = async (name: string, timeZone: string) => {
+    const family = await createFamily.mutateAsync({ name, timeZone });
+    setActiveFamilyId(family.id);
+    await updateOnboarding.mutateAsync({
+      familyId: family.id,
+      currentStep: 'child',
+      completedSteps: ['account', 'family'],
+    });
+  };
+
+  const handleAddChild = async (child: {
+    fullName: string;
+    dateOfBirth: string;
+    school?: string;
+    medicalNotes?: string;
+  }) => {
+    if (!activeFamilyId) return;
+    await createChild.mutateAsync({ familyId: activeFamilyId, ...child });
+    if (!onboarding?.completedSteps?.includes('child')) {
+      await updateOnboarding.mutateAsync({
+        familyId: activeFamilyId,
+        currentStep: 'invite',
+        completedSteps: Array.from(new Set([...(onboarding?.completedSteps ?? []), 'child'])),
+      });
+    }
+  };
+
+  const handleInvite = async (familyId: string, email: string, role: 'primary' | 'co-parent') => {
+    await createInvitation.mutateAsync({ familyId, email, role });
+    if (!onboarding?.completedSteps?.includes('invite')) {
+      await updateOnboarding.mutateAsync({
+        familyId,
+        currentStep: 'review',
+        completedSteps: Array.from(new Set([...(onboarding?.completedSteps ?? []), 'invite'])),
+      });
+    }
+  };
+
+  const handleComplete = async (familyId: string) => {
+    await updateOnboarding.mutateAsync({
+      familyId,
+      isComplete: true,
+      currentStep: 'complete',
+      completedSteps: Array.from(new Set([...(onboarding?.completedSteps ?? []), 'review'])),
+    });
+  };
+
+  if (familiesLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-900">
+        <p className="text-slate-500 dark:text-slate-400">Loading onboarding...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="p-8">
-      <h1 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white">
-        Welcome to CoParent
-      </h1>
-      <p className="text-slate-600 dark:text-slate-400">User signup and family setup wizard.</p>
-    </div>
+    <OnboardingWizard
+      families={families}
+      children={children}
+      invitations={invitations}
+      onboardingStates={onboardingStates}
+      activeFamilyId={activeFamilyId}
+      onCreateFamily={handleCreateFamily}
+      onAddChild={handleAddChild}
+      onInviteCoParent={handleInvite}
+      onCompleteOnboarding={handleComplete}
+    />
   );
 };
 

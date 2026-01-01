@@ -1,3 +1,4 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import {
   LayoutDashboard,
   Calendar,
@@ -10,15 +11,18 @@ import {
 import { useEffect } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
+import { AuthCallback, ProtectedRoute } from './components/auth';
 import { UpdateNotification, OfflineIndicator, InstallPrompt } from './components/pwa';
 import type { NavigationItem } from './components/shell';
 import { AppShell } from './components/shell';
+import { useApiClient } from './hooks/api';
 import { initDB, initSync } from './lib/pwa';
 import CalendarPage from './pages/CalendarPage';
 import DashboardPage from './pages/DashboardPage';
 import DocumentsPage from './pages/DocumentsPage';
 import ExpensesPage from './pages/ExpensesPage';
 import FamilySetupPage from './pages/FamilySetupPage';
+import LoginPage from './pages/LoginPage';
 import MessagesPage from './pages/MessagesPage';
 import OnboardingPage from './pages/OnboardingPage';
 import SettingsPage from './pages/SettingsPage';
@@ -39,15 +43,18 @@ const App = () => {
     initSync();
   }, []);
 
-  // Mock user data - this will be replaced with real Auth0 data later
-  const user = {
-    name: 'Demo Parent',
-    avatarUrl: undefined,
-  };
+  const { user: authUser, logout, isAuthenticated } = useAuth0();
+  useApiClient();
+
+  const user = authUser
+    ? {
+        name: authUser.name || authUser.email || 'Parent',
+        avatarUrl: authUser.picture,
+      }
+    : undefined;
 
   const handleLogout = () => {
-    console.log('Logout clicked');
-    // Auth0 logout will be implemented later
+    logout({ logoutParams: { returnTo: window.location.origin } });
   };
 
   const handleNavigate = (href: string) => {
@@ -101,30 +108,44 @@ const App = () => {
 
   return (
     <>
-      <AppShell
-        navigationItems={navigationItems}
-        user={user}
-        onNavigate={handleNavigate}
-        onLogout={handleLogout}
-      >
-        <Routes>
-          <Route path="/" element={<DashboardPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/calendar" element={<CalendarPage />} />
-          <Route path="/messages" element={<MessagesPage />} />
-          <Route path="/expenses" element={<ExpensesPage />} />
-          <Route path="/documents" element={<DocumentsPage />} />
-          <Route path="/timeline" element={<TimelinePage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/onboarding" element={<OnboardingPage />} />
-          <Route path="/family-setup" element={<FamilySetupPage />} />
-        </Routes>
-      </AppShell>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route
+          path="/*"
+          element={
+            <ProtectedRoute>
+              <AppShell
+                navigationItems={navigationItems}
+                user={user}
+                onNavigate={handleNavigate}
+                onLogout={handleLogout}
+              >
+                <Routes>
+                  <Route path="/" element={<DashboardPage />} />
+                  <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route path="/calendar" element={<CalendarPage />} />
+                  <Route path="/messages" element={<MessagesPage />} />
+                  <Route path="/expenses" element={<ExpensesPage />} />
+                  <Route path="/documents" element={<DocumentsPage />} />
+                  <Route path="/timeline" element={<TimelinePage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="/onboarding" element={<OnboardingPage />} />
+                  <Route path="/family-setup" element={<FamilySetupPage />} />
+                </Routes>
+              </AppShell>
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
 
-      {/* PWA Components */}
-      <UpdateNotification />
-      <OfflineIndicator />
-      <InstallPrompt />
+      {isAuthenticated && (
+        <>
+          <UpdateNotification />
+          <OfflineIndicator />
+          <InstallPrompt />
+        </>
+      )}
     </>
   );
 };
