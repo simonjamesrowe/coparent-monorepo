@@ -22,6 +22,7 @@ Implement all tasks assigned to you and ONLY those task(s) that have been assign
 - **Specific notes provided in requirements.md, spec.md AND/OR tasks.md**
 - **Visuals provided (if any)** which would be located in `agent-os/specs/[this-spec]/planning/visuals/`
 - **User Standards & Preferences** which are defined below.
+- **Audit Logging**: All data mutations must write an entry to the Audit collection.
 
 ## Self-verify and test your work by:
 - Running ONLY the tests you've written (if any) and ensuring those tests pass.

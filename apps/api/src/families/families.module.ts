@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Family, FamilySchema } from '../schemas/family.schema';
 import { Parent, ParentSchema } from '../schemas/parent.schema';
 import { OnboardingState, OnboardingStateSchema } from '../schemas/onboarding-state.schema';
+import { AuditModule } from '../audit/audit.module';
 
 import { FamiliesService } from './families.service';
 import { FamiliesController } from './families.controller';
@@ -15,6 +16,7 @@ import { FamiliesController } from './families.controller';
       { name: Parent.name, schema: ParentSchema },
       { name: OnboardingState.name, schema: OnboardingStateSchema },
     ]),
+    AuditModule,
   ],
   controllers: [FamiliesController],
   providers: [FamiliesService],

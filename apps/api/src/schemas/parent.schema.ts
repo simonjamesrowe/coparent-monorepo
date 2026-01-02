@@ -14,7 +14,7 @@ export class Parent {
   @Prop({ type: Types.ObjectId, ref: 'Family' })
   familyId!: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ required: false, default: '' })
   fullName!: string;
 
   @Prop({ required: true })

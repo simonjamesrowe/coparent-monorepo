@@ -1,11 +1,17 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+
+import { useCurrentUser } from '../../hooks/api/useParents';
 
 export function AuthCallback() {
   const { isAuthenticated, isLoading, error } = useAuth0();
   const navigate = useNavigate();
   const location = useLocation();
+  const [shouldFetchUser, setShouldFetchUser] = useState(false);
+
+  // Only fetch user data after authentication is confirmed
+  const { data: currentUser, isLoading: isLoadingUser } = useCurrentUser(shouldFetchUser);
 
   useEffect(() => {
     if (!isLoading) {
@@ -13,13 +19,32 @@ export function AuthCallback() {
         console.error('Auth0 callback error:', error);
         navigate('/login', { replace: true });
       } else if (isAuthenticated) {
-        // Get the return URL from state or default to dashboard
-        const state = location.state as { from?: { pathname: string } } | null;
-        const returnTo = state?.from?.pathname || '/dashboard';
-        navigate(returnTo, { replace: true });
+        // Trigger user data fetch
+        setShouldFetchUser(true);
       }
     }
-  }, [isAuthenticated, isLoading, error, navigate, location.state]);
+  }, [isAuthenticated, isLoading, error, navigate]);
+
+  useEffect(() => {
+    // Route user once we have their data
+    if (shouldFetchUser && !isLoadingUser && currentUser) {
+      const state = location.state as { from?: { pathname: string } } | null;
+      const returnTo = state?.from?.pathname;
+
+      // Check if user has accepted an invitation (has a family but no profile was created during onboarding)
+      const hasAcceptedInvitation =
+        currentUser.profiles.length > 0 &&
+        currentUser.profiles.some((p) => p.familyId && p.role === 'co-parent');
+
+      if (currentUser.isNewUser && !hasAcceptedInvitation) {
+        // New user creating their own family - send to onboarding
+        navigate('/onboarding', { replace: true });
+      } else {
+        // Existing user or invited user who accepted - send to dashboard
+        navigate(returnTo || '/dashboard', { replace: true });
+      }
+    }
+  }, [shouldFetchUser, isLoadingUser, currentUser, navigate, location.state]);
 
   if (error) {
     return (

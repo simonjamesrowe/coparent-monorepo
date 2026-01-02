@@ -10,6 +10,7 @@ import {
 import { Family, FamilyDocument } from '../schemas/family.schema';
 import { Parent, ParentDocument } from '../schemas/parent.schema';
 import { AuthUser } from '../families/families.service';
+import { AuditService } from '../audit/audit.service';
 
 import { UpdateOnboardingDto } from './dto/update-onboarding.dto';
 
@@ -20,6 +21,7 @@ export class OnboardingService {
     private onboardingModel: Model<OnboardingStateDocument>,
     @InjectModel(Family.name) private familyModel: Model<FamilyDocument>,
     @InjectModel(Parent.name) private parentModel: Model<ParentDocument>,
+    private auditService: AuditService,
   ) {}
 
   private async verifyFamilyAccess(familyId: string, user: AuthUser): Promise<FamilyDocument> {
@@ -90,6 +92,19 @@ export class OnboardingService {
     onboarding.lastUpdated = new Date();
     await onboarding.save();
 
+    await this.auditService.log({
+      familyId: onboarding.familyId,
+      entityType: 'onboarding',
+      entityId: onboarding._id.toString(),
+      action: 'update',
+      performedBy: user.auth0Id,
+      changes: {
+        currentStep: onboarding.currentStep,
+        completedSteps: onboarding.completedSteps,
+        isComplete: onboarding.isComplete,
+      },
+    });
+
     return onboarding;
   }
 
@@ -135,6 +150,20 @@ export class OnboardingService {
 
     onboarding.lastUpdated = new Date();
     await onboarding.save();
+
+    await this.auditService.log({
+      familyId: onboarding.familyId,
+      entityType: 'onboarding',
+      entityId: onboarding._id.toString(),
+      action: 'complete-step',
+      performedBy: user.auth0Id,
+      changes: {
+        step,
+        currentStep: onboarding.currentStep,
+        completedSteps: onboarding.completedSteps,
+        isComplete: onboarding.isComplete,
+      },
+    });
 
     return onboarding;
   }

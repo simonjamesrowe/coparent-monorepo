@@ -6,6 +6,7 @@ You are helping to plan and document the mission, roadmap and tech stack for the
 - **Mission Document**: Take what you've gathered and create a concise mission document
 - **Roadmap**: Create a phased development plan with prioritized features
 - **Tech stack**: Establish the technical stack used for all aspects of this product's codebase
+  - Ensure audit logging (Audit collection) is included for all data mutations
 
 This process will create these files in `agent-os/product/` directory.
 

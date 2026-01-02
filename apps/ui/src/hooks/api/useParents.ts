@@ -10,13 +10,14 @@ export const parentKeys = {
   me: () => ['me'] as const,
 };
 
-export function useCurrentUser() {
+export function useCurrentUser(enabled = true) {
   return useQuery({
     queryKey: parentKeys.me(),
     queryFn: async () => {
       const { data } = await apiClient.get<CurrentUser>('/me');
       return data;
     },
+    enabled,
   });
 }
 

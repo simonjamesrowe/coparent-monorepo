@@ -5,6 +5,7 @@ import { Model, Types } from 'mongoose';
 import { Family, FamilyDocument } from '../schemas/family.schema';
 import { Parent, ParentDocument } from '../schemas/parent.schema';
 import { OnboardingState, OnboardingStateDocument } from '../schemas/onboarding-state.schema';
+import { AuditService } from '../audit/audit.service';
 
 import { CreateFamilyDto } from './dto/create-family.dto';
 import { UpdateFamilyDto } from './dto/update-family.dto';
@@ -22,9 +23,13 @@ export class FamiliesService {
     @InjectModel(Parent.name) private parentModel: Model<ParentDocument>,
     @InjectModel(OnboardingState.name)
     private onboardingModel: Model<OnboardingStateDocument>,
+    private auditService: AuditService,
   ) {}
 
   async create(createFamilyDto: CreateFamilyDto, user: AuthUser): Promise<FamilyDocument> {
+    // Find existing parent profile (should exist after first login)
+    const existingParent = await this.parentModel.findOne({ auth0Id: user.auth0Id });
+
     // Create the family
     const family = new this.familyModel({
       name: createFamilyDto.name,
@@ -32,17 +37,39 @@ export class FamiliesService {
     });
     await family.save();
 
-    // Create parent record for the creating user (as primary)
-    const parent = new this.parentModel({
-      auth0Id: user.auth0Id,
-      familyId: family._id,
-      fullName: user.email.split('@')[0], // Default name from email
-      email: user.email,
-      role: 'primary',
-      status: 'active',
-      lastSignedInAt: new Date(),
-    });
+    // Update parent to reference this family, set as primary, and update fullName if provided
+    let parent = existingParent;
+    if (!parent) {
+      parent = new this.parentModel({
+        auth0Id: user.auth0Id,
+        email: user.email,
+        fullName: createFamilyDto.fullName ?? '',
+        role: 'primary',
+        status: 'active',
+        familyId: family._id as Types.ObjectId,
+        lastSignedInAt: new Date(),
+      });
+    } else {
+      parent.familyId = family._id as Types.ObjectId;
+      parent.role = 'primary';
+      if (createFamilyDto.fullName) {
+        parent.fullName = createFamilyDto.fullName;
+      }
+    }
     await parent.save();
+
+    await this.auditService.log({
+      familyId: family._id,
+      entityType: 'parent',
+      entityId: parent._id.toString(),
+      action: existingParent ? 'link-family' : 'create-and-link',
+      performedBy: user.auth0Id,
+      changes: {
+        role: parent.role,
+        familyId: family._id.toString(),
+        fullName: parent.fullName,
+      },
+    });
 
     // Link parent to family
     family.parentIds.push(parent._id as Types.ObjectId);
@@ -51,12 +78,25 @@ export class FamiliesService {
     // Create onboarding state
     const onboarding = new this.onboardingModel({
       familyId: family._id,
-      currentStep: 'family',
-      completedSteps: ['account'],
+      currentStep: 'child',
+      completedSteps: ['family'],
       isComplete: false,
       lastUpdated: new Date(),
     });
     await onboarding.save();
+
+    await this.auditService.log({
+      familyId: family._id,
+      entityType: 'family',
+      entityId: family._id.toString(),
+      action: 'create',
+      performedBy: user.auth0Id,
+      changes: {
+        name: family.name,
+        timeZone: family.timeZone,
+        parentId: parent._id.toString(),
+      },
+    });
 
     return family;
   }
@@ -107,6 +147,11 @@ export class FamiliesService {
     const family = await this.findById(id, user);
 
     // Update only provided fields
+    const before = {
+      name: family.name,
+      timeZone: family.timeZone,
+    };
+
     if (updateFamilyDto.name !== undefined) {
       family.name = updateFamilyDto.name;
     }
@@ -115,6 +160,24 @@ export class FamiliesService {
     }
 
     await family.save();
+
+    const after = {
+      name: family.name,
+      timeZone: family.timeZone,
+    };
+
+    await this.auditService.log({
+      familyId: family._id,
+      entityType: 'family',
+      entityId: family._id.toString(),
+      action: 'update',
+      performedBy: user.auth0Id,
+      changes: {
+        before,
+        after,
+      },
+    });
+
     return family;
   }
 
@@ -124,5 +187,16 @@ export class FamiliesService {
     // Soft delete
     family.deletedAt = new Date();
     await family.save();
+
+    await this.auditService.log({
+      familyId: family._id,
+      entityType: 'family',
+      entityId: family._id.toString(),
+      action: 'delete',
+      performedBy: user.auth0Id,
+      changes: {
+        deletedAt: family.deletedAt,
+      },
+    });
   }
 }

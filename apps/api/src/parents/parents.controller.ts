@@ -43,15 +43,15 @@ export class ParentsController {
   @ApiResponse({ status: 200, description: 'Returns current user info' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getCurrentUser(@Req() req: RequestWithUser) {
-    const parents = await this.parentsService.findCurrentUserWithFamilies(req.user);
+    let parents = await this.parentsService.findCurrentUserWithFamilies(req.user);
 
+    // Auto-create parent profile on first login if doesn't exist
     if (parents.length === 0) {
-      return {
-        auth0Id: req.user.auth0Id,
-        email: req.user.email,
-        profiles: [],
-        isNewUser: true,
-      };
+      const profile = await this.parentsService.createInitialProfile(
+        req.user.auth0Id,
+        req.user.email,
+      );
+      parents = [profile];
     }
 
     return {
@@ -64,7 +64,7 @@ export class ParentsController {
         role: p.role,
         status: p.status,
       })),
-      isNewUser: false,
+      isNewUser: parents.every((p) => !p.familyId), // True if no family assigned yet
     };
   }
 
@@ -79,6 +79,29 @@ export class ParentsController {
       auth0Id: parent.auth0Id,
       email: parent.email,
       fullName: parent.fullName,
+      role: parent.role,
+      status: parent.status,
+    };
+  }
+
+  @Patch('me')
+  @ApiOperation({ summary: 'Update current user profile' })
+  @ApiResponse({ status: 200, description: 'Profile updated successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Profile not found' })
+  async updateCurrentUser(@Body() updateDto: { fullName?: string }, @Req() req: RequestWithUser) {
+    const parent = await this.parentsService.updateCurrentUserProfile(req.user.auth0Id, updateDto);
+
+    if (!parent) {
+      return {
+        message: 'Profile not found',
+      };
+    }
+
+    return {
+      id: parent._id,
+      fullName: parent.fullName,
+      email: parent.email,
       role: parent.role,
       status: parent.status,
     };

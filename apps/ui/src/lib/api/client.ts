@@ -55,7 +55,7 @@ export { apiClient };
 // Type definitions for API responses
 export type ParentRole = 'primary' | 'co-parent';
 export type InvitationStatus = 'pending' | 'accepted' | 'expired' | 'canceled';
-export type OnboardingStep = 'account' | 'family' | 'child' | 'invite' | 'review' | 'complete';
+export type OnboardingStep = 'family' | 'child' | 'invite' | 'review' | 'complete';
 
 export interface Family {
   id: string;
@@ -129,6 +129,7 @@ export interface CurrentUser {
 export interface CreateFamilyRequest {
   name: string;
   timeZone: string;
+  fullName?: string;
 }
 
 export interface UpdateFamilyRequest {

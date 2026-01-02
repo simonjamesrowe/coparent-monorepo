@@ -5,6 +5,7 @@ import { Invitation, InvitationSchema } from '../schemas/invitation.schema';
 import { Family, FamilySchema } from '../schemas/family.schema';
 import { Parent, ParentSchema } from '../schemas/parent.schema';
 import { EmailModule } from '../email/email.module';
+import { AuditModule } from '../audit/audit.module';
 
 import { InvitationsService } from './invitations.service';
 import { InvitationsController } from './invitations.controller';
@@ -17,6 +18,7 @@ import { InvitationsController } from './invitations.controller';
       { name: Parent.name, schema: ParentSchema },
     ]),
     EmailModule,
+    AuditModule,
   ],
   controllers: [InvitationsController],
   providers: [InvitationsService],
