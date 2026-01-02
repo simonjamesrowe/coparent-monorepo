@@ -6,6 +6,7 @@ import { Child, ChildDocument } from '../schemas/child.schema';
 import { Family, FamilyDocument } from '../schemas/family.schema';
 import { Parent, ParentDocument } from '../schemas/parent.schema';
 import { AuthUser } from '../families/families.service';
+import { AuditService } from '../audit/audit.service';
 
 import { CreateChildDto } from './dto/create-child.dto';
 import { UpdateChildDto } from './dto/update-child.dto';
@@ -16,6 +17,7 @@ export class ChildrenService {
     @InjectModel(Child.name) private childModel: Model<ChildDocument>,
     @InjectModel(Family.name) private familyModel: Model<FamilyDocument>,
     @InjectModel(Parent.name) private parentModel: Model<ParentDocument>,
+    private auditService: AuditService,
   ) {}
 
   private async verifyFamilyAccess(familyId: string, user: AuthUser): Promise<FamilyDocument> {
@@ -60,6 +62,19 @@ export class ChildrenService {
     // Add child to family's childIds
     family.childIds.push(child._id as Types.ObjectId);
     await family.save();
+
+    await this.auditService.log({
+      familyId: family._id,
+      entityType: 'child',
+      entityId: child._id.toString(),
+      action: 'create',
+      performedBy: user.auth0Id,
+      changes: {
+        fullName: child.fullName,
+        dateOfBirth: child.dateOfBirth,
+        school: child.school,
+      },
+    });
 
     return child;
   }
@@ -112,6 +127,21 @@ export class ChildrenService {
     }
 
     await child.save();
+
+    await this.auditService.log({
+      familyId: child.familyId,
+      entityType: 'child',
+      entityId: child._id.toString(),
+      action: 'update',
+      performedBy: user.auth0Id,
+      changes: {
+        fullName: child.fullName,
+        dateOfBirth: child.dateOfBirth,
+        school: child.school,
+        medicalNotes: child.medicalNotes,
+      },
+    });
+
     return child;
   }
 
@@ -128,5 +158,16 @@ export class ChildrenService {
       family.childIds = family.childIds.filter((id: Types.ObjectId) => id.toString() !== childId);
       await family.save();
     }
+
+    await this.auditService.log({
+      familyId: child.familyId,
+      entityType: 'child',
+      entityId: child._id.toString(),
+      action: 'delete',
+      performedBy: user.auth0Id,
+      changes: {
+        deletedAt: child.deletedAt,
+      },
+    });
   }
 }

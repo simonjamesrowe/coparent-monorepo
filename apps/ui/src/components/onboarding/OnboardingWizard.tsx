@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import type { Family, Child, Invitation, OnboardingState, ParentRole } from '../../lib/api/client';
+import { formatDate } from '../../lib/formatters/date';
 
-type WizardStep = 'account' | 'family' | 'child' | 'invite' | 'review';
+type WizardStep = 'family' | 'child' | 'invite' | 'review';
 
 type ChildDraft = {
   fullName: string;
@@ -11,8 +12,50 @@ type ChildDraft = {
   medicalNotes?: string;
 };
 
+const getChildKey = (child: { fullName?: string; dateOfBirth?: string }) =>
+  `${(child.fullName ?? '').trim().toLowerCase()}|${child.dateOfBirth ?? ''}`;
+
+const LOCATION_OPTIONS = [
+  { label: 'London, UK', timeZone: 'Europe/London' },
+  { label: 'Edinburgh, UK', timeZone: 'Europe/London' },
+  { label: 'Dublin, Ireland', timeZone: 'Europe/Dublin' },
+  { label: 'Paris, France', timeZone: 'Europe/Paris' },
+  { label: 'Berlin, Germany', timeZone: 'Europe/Berlin' },
+  { label: 'Madrid, Spain', timeZone: 'Europe/Madrid' },
+  { label: 'Rome, Italy', timeZone: 'Europe/Rome' },
+  { label: 'Lisbon, Portugal', timeZone: 'Europe/Lisbon' },
+  { label: 'New York, USA', timeZone: 'America/New_York' },
+  { label: 'Chicago, USA', timeZone: 'America/Chicago' },
+  { label: 'Denver, USA', timeZone: 'America/Denver' },
+  { label: 'Los Angeles, USA', timeZone: 'America/Los_Angeles' },
+  { label: 'Vancouver, Canada', timeZone: 'America/Vancouver' },
+  { label: 'Toronto, Canada', timeZone: 'America/Toronto' },
+  { label: 'Mexico City, Mexico', timeZone: 'America/Mexico_City' },
+  { label: 'Sao Paulo, Brazil', timeZone: 'America/Sao_Paulo' },
+  { label: 'Johannesburg, South Africa', timeZone: 'Africa/Johannesburg' },
+  { label: 'Dubai, UAE', timeZone: 'Asia/Dubai' },
+  { label: 'Mumbai, India', timeZone: 'Asia/Kolkata' },
+  { label: 'Singapore, Singapore', timeZone: 'Asia/Singapore' },
+  { label: 'Hong Kong, China', timeZone: 'Asia/Hong_Kong' },
+  { label: 'Tokyo, Japan', timeZone: 'Asia/Tokyo' },
+  { label: 'Sydney, Australia', timeZone: 'Australia/Sydney' },
+  { label: 'Auckland, New Zealand', timeZone: 'Pacific/Auckland' },
+];
+
+const normalizeLocation = (value: string) => value.trim().toLowerCase();
+
+const findLocationByLabel = (value: string) =>
+  LOCATION_OPTIONS.find((option) => normalizeLocation(option.label) === normalizeLocation(value));
+
+const findLocationByTimeZone = (value: string) =>
+  LOCATION_OPTIONS.find((option) => option.timeZone === value);
+
+const resolveInitialTimeZone = () => {
+  if (typeof Intl === 'undefined') return 'UTC';
+  return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+};
+
 const STEPS: { id: WizardStep; label: string; description: string }[] = [
-  { id: 'account', label: 'Account', description: 'Create your login' },
   { id: 'family', label: 'Family', description: 'Name your family' },
   { id: 'child', label: 'Children', description: 'Add profiles' },
   { id: 'invite', label: 'Invite', description: 'Bring your co-parent' },
@@ -25,9 +68,8 @@ interface OnboardingWizardProps {
   invitations: Invitation[];
   onboardingStates: OnboardingState[];
   activeFamilyId?: string;
-  onCreateAccount?: () => void;
-  onCreateFamily?: (name: string, timeZone: string) => void;
-  onAddChild?: (child: ChildDraft) => void;
+  onCreateFamily?: (name: string, timeZone: string, fullName: string) => void;
+  onAddChild?: (child: ChildDraft) => Promise<void> | void;
   onInviteCoParent?: (familyId: string, email: string, role: ParentRole) => void;
   onCompleteOnboarding?: (familyId: string) => void;
 }
@@ -38,7 +80,6 @@ export function OnboardingWizard({
   invitations,
   onboardingStates,
   activeFamilyId,
-  onCreateAccount,
   onCreateFamily,
   onAddChild,
   onInviteCoParent,
@@ -47,11 +88,16 @@ export function OnboardingWizard({
   const activeOnboarding = onboardingStates.find((state) => state.familyId === activeFamilyId);
   const initialStep = STEPS.some((step) => step.id === activeOnboarding?.currentStep)
     ? (activeOnboarding?.currentStep as WizardStep)
-    : 'account';
+    : 'family';
 
   const [currentStep, setCurrentStep] = useState<WizardStep>(initialStep);
+  const [fullName, setFullName] = useState('');
   const [familyName, setFamilyName] = useState('');
-  const [timeZone, setTimeZone] = useState('America/New_York');
+  const initialTimeZone = resolveInitialTimeZone();
+  const [timeZone, setTimeZone] = useState(initialTimeZone);
+  const [location, setLocation] = useState(
+    () => findLocationByTimeZone(initialTimeZone)?.label ?? '',
+  );
   const [childName, setChildName] = useState('');
   const [childDob, setChildDob] = useState('');
   const [childSchool, setChildSchool] = useState('');
@@ -59,6 +105,13 @@ export function OnboardingWizard({
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<ParentRole>('co-parent');
   const [addedChildren, setAddedChildren] = useState<Partial<Child>[]>([]);
+  const [familyError, setFamilyError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!activeOnboarding?.currentStep) return;
+    if (!STEPS.some((step) => step.id === activeOnboarding.currentStep)) return;
+    setCurrentStep(activeOnboarding.currentStep as WizardStep);
+  }, [activeOnboarding?.currentStep]);
 
   const currentStepIndex = STEPS.findIndex((step) => step.id === currentStep);
   const completedSteps = activeOnboarding?.completedSteps || [];
@@ -79,20 +132,42 @@ export function OnboardingWizard({
     }
   };
 
-  const handleCreateFamily = () => {
-    onCreateFamily?.(familyName, timeZone);
-    goNext();
+  const handleCreateFamily = async () => {
+    if (!onCreateFamily) {
+      goNext();
+      return;
+    }
+
+    try {
+      setFamilyError(null);
+      await onCreateFamily(familyName, timeZone, fullName);
+      goNext();
+    } catch (error) {
+      console.error('Failed to create family:', error);
+      setFamilyError('We could not create your family. Please try again.');
+    }
   };
 
-  const handleAddChild = () => {
+  const handleAddChild = async () => {
+    const trimmedName = childName.trim();
+    if (!trimmedName || !childDob) return;
+
     const newChild: ChildDraft = {
-      fullName: childName,
+      fullName: trimmedName,
       dateOfBirth: childDob,
       school: childSchool || undefined,
       medicalNotes: childMedicalNotes || undefined,
     };
-    onAddChild?.(newChild);
-    setAddedChildren([...addedChildren, newChild]);
+    const newChildKey = getChildKey(newChild);
+    const alreadyAdded = [...familyChildren, ...addedChildren].some(
+      (child) => getChildKey(child) === newChildKey,
+    );
+
+    if (!alreadyAdded) {
+      await onAddChild?.(newChild);
+      setAddedChildren((prev) => [...prev, newChild]);
+    }
+
     setChildName('');
     setChildDob('');
     setChildSchool('');
@@ -112,8 +187,29 @@ export function OnboardingWizard({
     }
   };
 
+  const handleLocationChange = (value: string) => {
+    setLocation(value);
+    const matchedLocation = findLocationByLabel(value);
+    if (matchedLocation) {
+      setTimeZone(matchedLocation.timeZone);
+    }
+  };
+
+  const selectedLocation = findLocationByLabel(location) ?? findLocationByTimeZone(timeZone);
+
   const activeFamily = families.find((f) => f.id === activeFamilyId);
   const familyChildren = children.filter((c) => c.familyId === activeFamilyId);
+  const mergedChildren = (() => {
+    const seen = new Set<string>();
+    const merged: Partial<Child>[] = [];
+    [...familyChildren, ...addedChildren].forEach((child) => {
+      const key = getChildKey(child);
+      if (!key || seen.has(key)) return;
+      seen.add(key);
+      merged.push(child);
+    });
+    return merged;
+  })();
   const familyInvitations = invitations.filter((i) => i.familyId === activeFamilyId);
   const pendingInvites = familyInvitations.filter((i) => i.status === 'pending');
 
@@ -230,99 +326,6 @@ export function OnboardingWizard({
 
         {/* Step Content Card */}
         <div className="overflow-hidden rounded-3xl border border-slate-200/60 bg-white/80 shadow-2xl shadow-slate-200/40 backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/60 dark:shadow-slate-950/50">
-          {/* Account Step */}
-          {currentStep === 'account' && (
-            <div className="p-8 sm:p-10">
-              <div className="mb-8 flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-500/10 dark:bg-teal-500/20">
-                  <svg
-                    className="h-6 w-6 text-teal-600 dark:text-teal-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={1.5}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-                    Create Your Account
-                  </h2>
-                  <p className="text-slate-500 dark:text-slate-400">
-                    Start by setting up your personal login
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter your full name"
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-slate-900 transition placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                  />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="you@example.com"
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-slate-900 transition placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                  />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    placeholder="Create a secure password"
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-slate-900 transition placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                  />
-                  <p className="mt-2 text-xs text-slate-400">
-                    At least 8 characters with a mix of letters and numbers
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-10 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => {
-                    onCreateAccount?.();
-                    goNext();
-                  }}
-                  className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-teal-500/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-teal-700 hover:shadow-xl hover:shadow-teal-500/30 active:translate-y-0"
-                >
-                  Create Account
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          )}
-
           {/* Family Step */}
           {currentStep === 'family' && (
             <div className="p-8 sm:p-10">
@@ -355,6 +358,21 @@ export function OnboardingWizard({
               <div className="space-y-6">
                 <div>
                   <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    Your Full Name
+                  </label>
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Enter your full name"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-slate-900 transition placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                  />
+                  <p className="mt-2 text-xs text-slate-400">
+                    This will be shown to your co-parent
+                  </p>
+                </div>
+                <div>
+                  <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Family Name
                   </label>
                   <input
@@ -370,20 +388,31 @@ export function OnboardingWizard({
                 </div>
                 <div>
                   <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Time Zone
+                    Location
                   </label>
-                  <select
-                    value={timeZone}
-                    onChange={(e) => setTimeZone(e.target.value)}
-                    className="w-full appearance-none rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-slate-900 transition focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                  >
-                    <option value="America/New_York">Eastern Time (ET)</option>
-                    <option value="America/Chicago">Central Time (CT)</option>
-                    <option value="America/Denver">Mountain Time (MT)</option>
-                    <option value="America/Los_Angeles">Pacific Time (PT)</option>
-                    <option value="America/Anchorage">Alaska Time (AKT)</option>
-                    <option value="Pacific/Honolulu">Hawaii Time (HT)</option>
-                  </select>
+                  <input
+                    type="text"
+                    list="location-options"
+                    value={location}
+                    onChange={(e) => handleLocationChange(e.target.value)}
+                    placeholder="Start typing a city (e.g., London)"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-slate-900 transition placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                  />
+                  <datalist id="location-options">
+                    {LOCATION_OPTIONS.map((option) => (
+                      <option key={option.label} value={option.label}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </datalist>
+                  <p className="mt-2 text-xs text-slate-400">
+                    {selectedLocation
+                      ? `Time zone inferred: ${selectedLocation.timeZone}`
+                      : 'Select a location to infer your time zone.'}
+                  </p>
+                  {familyError ? (
+                    <p className="mt-2 text-xs text-rose-600">{familyError}</p>
+                  ) : null}
                 </div>
 
                 <div className="rounded-xl border border-teal-200/60 bg-teal-50 p-4 dark:border-teal-800/40 dark:bg-teal-900/20">
@@ -414,31 +443,11 @@ export function OnboardingWizard({
                 </div>
               </div>
 
-              <div className="mt-10 flex justify-between">
-                <button
-                  type="button"
-                  onClick={goBack}
-                  className="inline-flex items-center gap-2 rounded-xl px-6 py-3 font-medium text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                >
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-                    />
-                  </svg>
-                  Back
-                </button>
+              <div className="mt-10 flex justify-end">
                 <button
                   type="button"
                   onClick={handleCreateFamily}
-                  disabled={!familyName.trim()}
+                  disabled={!familyName.trim() || !fullName.trim()}
                   className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-teal-500/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-teal-700 hover:shadow-xl hover:shadow-teal-500/30 active:translate-y-0 disabled:translate-y-0 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none dark:disabled:bg-slate-700"
                 >
                   Continue
@@ -490,13 +499,13 @@ export function OnboardingWizard({
               </div>
 
               {/* Added children list */}
-              {(addedChildren.length > 0 || familyChildren.length > 0) && (
+              {mergedChildren.length > 0 && (
                 <div className="mb-6">
                   <p className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Children added ({addedChildren.length + familyChildren.length})
+                    Children added ({mergedChildren.length})
                   </p>
                   <div className="space-y-2">
-                    {[...familyChildren, ...addedChildren].map((child, index) => (
+                    {mergedChildren.map((child, index) => (
                       <div
                         key={child.id || index}
                         className="flex items-center gap-3 rounded-xl border border-slate-200/60 bg-slate-50 p-3 dark:border-slate-700/60 dark:bg-slate-800/60"
@@ -509,7 +518,7 @@ export function OnboardingWizard({
                             {child.fullName}
                           </p>
                           <p className="text-xs text-slate-500 dark:text-slate-400">
-                            Born {child.dateOfBirth}
+                            Born {formatDate(child.dateOfBirth)}
                           </p>
                         </div>
                       </div>
@@ -610,8 +619,13 @@ export function OnboardingWizard({
                 </button>
                 <button
                   type="button"
-                  onClick={goNext}
-                  disabled={addedChildren.length === 0 && familyChildren.length === 0}
+                  onClick={async () => {
+                    if (childName.trim() && childDob) {
+                      await handleAddChild();
+                    }
+                    goNext();
+                  }}
+                  disabled={mergedChildren.length === 0 && (!childName.trim() || !childDob)}
                   className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-teal-500/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-teal-700 hover:shadow-xl hover:shadow-teal-500/30 active:translate-y-0 disabled:translate-y-0 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none dark:disabled:bg-slate-700"
                 >
                   Continue
@@ -799,6 +813,7 @@ export function OnboardingWizard({
                     {activeFamily?.name || familyName || 'Family name pending'}
                   </p>
                   <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    {selectedLocation?.label ? `Location: ${selectedLocation.label} • ` : ''}
                     Time Zone: {activeFamily?.timeZone || timeZone}
                   </p>
                 </div>
@@ -808,7 +823,7 @@ export function OnboardingWizard({
                     Children
                   </h3>
                   <div className="space-y-2">
-                    {[...familyChildren, ...addedChildren].map((child, index) => (
+                    {mergedChildren.map((child, index) => (
                       <div key={child.id || index} className="text-slate-700 dark:text-slate-300">
                         {child.fullName}
                       </div>

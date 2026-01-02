@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { OnboardingWizard } from '../components/onboarding/OnboardingWizard';
 import {
@@ -13,6 +14,7 @@ import {
 } from '../hooks/api';
 
 const OnboardingPage = () => {
+  const navigate = useNavigate();
   const { data: families = [], isLoading: familiesLoading } = useFamilies();
   const [activeFamilyId, setActiveFamilyId] = useState<string | undefined>();
 
@@ -34,14 +36,18 @@ const OnboardingPage = () => {
 
   const onboardingStates = onboarding ? [onboarding] : [];
 
-  const handleCreateFamily = async (name: string, timeZone: string) => {
-    const family = await createFamily.mutateAsync({ name, timeZone });
+  const handleCreateFamily = async (name: string, timeZone: string, fullName: string) => {
+    const family = await createFamily.mutateAsync({ name, timeZone, fullName });
     setActiveFamilyId(family.id);
-    await updateOnboarding.mutateAsync({
-      familyId: family.id,
-      currentStep: 'child',
-      completedSteps: ['account', 'family'],
-    });
+    try {
+      await updateOnboarding.mutateAsync({
+        familyId: family.id,
+        currentStep: 'child',
+        completedSteps: ['family'],
+      });
+    } catch (error) {
+      console.error('Failed to update onboarding after family creation:', error);
+    }
   };
 
   const handleAddChild = async (child: {
@@ -73,12 +79,17 @@ const OnboardingPage = () => {
   };
 
   const handleComplete = async (familyId: string) => {
-    await updateOnboarding.mutateAsync({
-      familyId,
-      isComplete: true,
-      currentStep: 'complete',
-      completedSteps: Array.from(new Set([...(onboarding?.completedSteps ?? []), 'review'])),
-    });
+    try {
+      await updateOnboarding.mutateAsync({
+        familyId,
+        isComplete: true,
+        currentStep: 'complete',
+        completedSteps: Array.from(new Set([...(onboarding?.completedSteps ?? []), 'review'])),
+      });
+    } finally {
+      // Navigate to dashboard after completing onboarding, even if the update fails.
+      navigate('/dashboard', { replace: true });
+    }
   };
 
   if (familiesLoading) {

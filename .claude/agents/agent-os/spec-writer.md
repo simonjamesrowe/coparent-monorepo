@@ -107,6 +107,7 @@ Follow this structure exactly when creating the content of `spec.md`:
 3. **Do NOT write actual code** in the spec
 4. **Keep each section short**, with clear, direct, skimmable specifications
 5. **Do NOT deviate from the template above** and do not add additional sections
+6. **Include audit logging** requirements for all data mutations
 
 
 ## User Standards & Preferences Compliance

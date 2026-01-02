@@ -8,6 +8,7 @@ import type {
   InvitationStatus,
   ParentRole,
 } from '../../lib/api/client';
+import { formatDate } from '../../lib/formatters/date';
 
 type ChildDraft = {
   fullName: string;
@@ -273,11 +274,7 @@ export function FamilySetupHub({
               <div>
                 <p className="mb-1 text-xs uppercase tracking-wide text-slate-400">Created</p>
                 <p className="text-base font-medium text-slate-700 dark:text-slate-300">
-                  {new Date(activeFamily.createdAt).toLocaleDateString('en-US', {
-                    month: 'long',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })}
+                  {formatDate(activeFamily.createdAt)}
                 </p>
               </div>
             </div>
@@ -505,7 +502,7 @@ export function FamilySetupHub({
                               </span>
                             </div>
                             <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">
-                              Born {child.dateOfBirth}
+                              Born {formatDate(child.dateOfBirth)}
                             </p>
                             {child.school && (
                               <div className="mb-1 flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
@@ -712,11 +709,7 @@ export function FamilySetupHub({
                               {invite.email}
                             </p>
                             <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-                              Sent{' '}
-                              {new Date(invite.sentAt).toLocaleDateString('en-US', {
-                                month: 'short',
-                                day: 'numeric',
-                              })}
+                              Sent {formatDate(invite.sentAt)}
                             </p>
                           </div>
                           <div className="ml-3 flex flex-shrink-0 items-center gap-2">
@@ -752,11 +745,7 @@ export function FamilySetupHub({
                         )}
                         {invite.status === 'accepted' && invite.acceptedAt && (
                           <p className="border-t border-slate-200/60 pt-2 text-xs text-emerald-600 dark:border-slate-700/60 dark:text-emerald-400">
-                            Accepted on{' '}
-                            {new Date(invite.acceptedAt).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                            })}
+                            Accepted on {formatDate(invite.acceptedAt)}
                           </p>
                         )}
                       </div>

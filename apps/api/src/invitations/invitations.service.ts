@@ -14,6 +14,7 @@ import { Family, FamilyDocument } from '../schemas/family.schema';
 import { Parent, ParentDocument, ParentRole } from '../schemas/parent.schema';
 import { EmailService } from '../email/email.service';
 import { AuthUser } from '../families/families.service';
+import { AuditService } from '../audit/audit.service';
 
 import { CreateInvitationDto } from './dto/create-invitation.dto';
 
@@ -25,6 +26,7 @@ export class InvitationsService {
     @InjectModel(Family.name) private familyModel: Model<FamilyDocument>,
     @InjectModel(Parent.name) private parentModel: Model<ParentDocument>,
     private emailService: EmailService,
+    private auditService: AuditService,
   ) {}
 
   private async verifyFamilyAccess(
@@ -109,6 +111,20 @@ export class InvitationsService {
       role: invitation.role,
     });
 
+    await this.auditService.log({
+      familyId: family._id,
+      entityType: 'invitation',
+      entityId: invitation._id.toString(),
+      action: 'create',
+      performedBy: user.auth0Id,
+      changes: {
+        email: invitation.email,
+        role: invitation.role,
+        status: invitation.status,
+        expiresAt: invitation.expiresAt,
+      },
+    });
+
     return invitation;
   }
 
@@ -154,6 +170,19 @@ export class InvitationsService {
       role: invitation.role,
     });
 
+    await this.auditService.log({
+      familyId: family._id,
+      entityType: 'invitation',
+      entityId: invitation._id.toString(),
+      action: 'resend',
+      performedBy: user.auth0Id,
+      changes: {
+        status: invitation.status,
+        sentAt: invitation.sentAt,
+        expiresAt: invitation.expiresAt,
+      },
+    });
+
     return invitation;
   }
 
@@ -174,6 +203,19 @@ export class InvitationsService {
     invitation.canceledAt = new Date();
 
     await invitation.save();
+
+    await this.auditService.log({
+      familyId: invitation.familyId,
+      entityType: 'invitation',
+      entityId: invitation._id.toString(),
+      action: 'cancel',
+      performedBy: user.auth0Id,
+      changes: {
+        status: invitation.status,
+        canceledAt: invitation.canceledAt,
+      },
+    });
+
     return invitation;
   }
 
@@ -238,6 +280,32 @@ export class InvitationsService {
     invitation.status = 'accepted';
     invitation.acceptedAt = new Date();
     await invitation.save();
+
+    await this.auditService.log({
+      familyId: family._id,
+      entityType: 'parent',
+      entityId: parent._id.toString(),
+      action: 'create',
+      performedBy: user.auth0Id,
+      changes: {
+        fullName: parent.fullName,
+        role: parent.role,
+        status: parent.status,
+      },
+    });
+
+    await this.auditService.log({
+      familyId: family._id,
+      entityType: 'invitation',
+      entityId: invitation._id.toString(),
+      action: 'accept',
+      performedBy: user.auth0Id,
+      changes: {
+        status: invitation.status,
+        acceptedAt: invitation.acceptedAt,
+        parentId: parent._id.toString(),
+      },
+    });
 
     return { invitation, family };
   }

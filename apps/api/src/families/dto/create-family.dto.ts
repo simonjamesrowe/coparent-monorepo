@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsTimeZone } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsTimeZone } from 'class-validator';
 
 export class CreateFamilyDto {
   @ApiProperty({
@@ -17,4 +17,13 @@ export class CreateFamilyDto {
   @IsString()
   @IsTimeZone()
   timeZone!: string;
+
+  @ApiProperty({
+    description: "The parent's full name",
+    example: 'John Smith',
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  fullName?: string;
 }

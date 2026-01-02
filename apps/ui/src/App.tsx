@@ -11,7 +11,7 @@ import {
 import { useEffect } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
-import { AuthCallback, ProtectedRoute } from './components/auth';
+import { AuthCallback, ProtectedRoute, OnboardingGuard } from './components/auth';
 import { UpdateNotification, OfflineIndicator, InstallPrompt } from './components/pwa';
 import type { NavigationItem } from './components/shell';
 import { AppShell } from './components/shell';
@@ -115,25 +115,27 @@ const App = () => {
           path="/*"
           element={
             <ProtectedRoute>
-              <AppShell
-                navigationItems={navigationItems}
-                user={user}
-                onNavigate={handleNavigate}
-                onLogout={handleLogout}
-              >
-                <Routes>
-                  <Route path="/" element={<DashboardPage />} />
-                  <Route path="/dashboard" element={<DashboardPage />} />
-                  <Route path="/calendar" element={<CalendarPage />} />
-                  <Route path="/messages" element={<MessagesPage />} />
-                  <Route path="/expenses" element={<ExpensesPage />} />
-                  <Route path="/documents" element={<DocumentsPage />} />
-                  <Route path="/timeline" element={<TimelinePage />} />
-                  <Route path="/settings" element={<SettingsPage />} />
-                  <Route path="/onboarding" element={<OnboardingPage />} />
-                  <Route path="/family-setup" element={<FamilySetupPage />} />
-                </Routes>
-              </AppShell>
+              <OnboardingGuard>
+                <AppShell
+                  navigationItems={navigationItems}
+                  user={user}
+                  onNavigate={handleNavigate}
+                  onLogout={handleLogout}
+                >
+                  <Routes>
+                    <Route path="/" element={<DashboardPage />} />
+                    <Route path="/dashboard" element={<DashboardPage />} />
+                    <Route path="/calendar" element={<CalendarPage />} />
+                    <Route path="/messages" element={<MessagesPage />} />
+                    <Route path="/expenses" element={<ExpensesPage />} />
+                    <Route path="/documents" element={<DocumentsPage />} />
+                    <Route path="/timeline" element={<TimelinePage />} />
+                    <Route path="/settings" element={<SettingsPage />} />
+                    <Route path="/onboarding" element={<OnboardingPage />} />
+                    <Route path="/family-setup" element={<FamilySetupPage />} />
+                  </Routes>
+                </AppShell>
+              </OnboardingGuard>
             </ProtectedRoute>
           }
         />
