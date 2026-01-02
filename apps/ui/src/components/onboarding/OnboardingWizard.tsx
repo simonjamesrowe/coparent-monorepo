@@ -410,9 +410,9 @@ export function OnboardingWizard({
                       ? `Time zone inferred: ${selectedLocation.timeZone}`
                       : 'Select a location to infer your time zone.'}
                   </p>
-                  {familyError ? (
+                  {familyError && (
                     <p className="mt-2 text-xs text-rose-600">{familyError}</p>
-                  ) : null}
+                  )}
                 </div>
 
                 <div className="rounded-xl border border-teal-200/60 bg-teal-50 p-4 dark:border-teal-800/40 dark:bg-teal-900/20">

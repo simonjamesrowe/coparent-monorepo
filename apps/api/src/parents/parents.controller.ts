@@ -89,14 +89,8 @@ export class ParentsController {
   @ApiResponse({ status: 200, description: 'Profile updated successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Profile not found' })
-  async updateCurrentUser(
-    @Body() updateDto: { fullName?: string },
-    @Req() req: RequestWithUser,
-  ) {
-    const parent = await this.parentsService.updateCurrentUserProfile(
-      req.user.auth0Id,
-      updateDto,
-    );
+  async updateCurrentUser(@Body() updateDto: { fullName?: string }, @Req() req: RequestWithUser) {
+    const parent = await this.parentsService.updateCurrentUserProfile(req.user.auth0Id, updateDto);
 
     if (!parent) {
       return {
