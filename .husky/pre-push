@@ -1,0 +1,3 @@
+#!/bin/sh
+pnpm --filter coparent-ui lint
+pnpm --filter coparent-api lint

@@ -16,14 +16,26 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "clean": "turbo run clean && rm -rf node_modules",
-    "docker:dev": "docker-compose -f docker/docker-compose.yml up"
+    "docker:dev": "docker-compose -f docker/docker-compose.yml up",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "turbo": "^1.11.0",
-    "prettier": "^3.1.0",
-    "eslint": "^8.55.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
     "@typescript-eslint/parser": "^6.13.2",
-    "@typescript-eslint/eslint-plugin": "^6.13.2"
+    "eslint": "^8.55.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.1.0",
+    "turbo": "^1.11.0"
+  },
+  "lint-staged": {
+    "apps/ui/**/*.{ts,tsx,js,jsx}": [
+      "pnpm --filter coparent-ui lint:fix",
+      "pnpm --filter coparent-ui format"
+    ],
+    "apps/api/**/*.{ts,js}": [
+      "pnpm --filter coparent-api exec eslint --fix"
+    ]
   },
   "packageManager": "pnpm@8.12.0",
   "engines": {
