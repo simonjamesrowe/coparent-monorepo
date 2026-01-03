@@ -74,21 +74,23 @@ export function WeekView({
   const getEventPosition = (event: Event) => {
     if (!event.startTime) return null;
 
-    const [startHour, startMin] = event.startTime.split(':').map(Number);
+    const [startHour = 0, startMin = 0] = event.startTime.split(':').map(Number);
     const [endHour, endMin] = event.endTime
       ? event.endTime.split(':').map(Number)
       : [startHour + 1, startMin];
+    const resolvedEndHour = endHour ?? startHour + 1;
+    const resolvedEndMin = endMin ?? startMin;
 
     const top = (((startHour - 7) * 60 + startMin) / 60) * 64; // 64px per hour
-    const height = (((endHour - startHour) * 60 + (endMin - startMin)) / 60) * 64;
+    const height = (((resolvedEndHour - startHour) * 60 + (resolvedEndMin - startMin)) / 60) * 64;
 
     return { top, height: Math.max(height, 24) };
   };
 
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const expandedEvents = useMemo(() => {
-    const rangeStart = weekDays[0];
-    const rangeEnd = weekDays[6];
+    const rangeStart = weekDays[0] ?? currentDate;
+    const rangeEnd = weekDays[6] ?? currentDate;
     return expandRecurringEvents(events, dateToYmd(rangeStart), dateToYmd(rangeEnd));
   }, [events, weekDays]);
 
@@ -100,7 +102,9 @@ export function WeekView({
           <div className="p-2" /> {/* Empty corner */}
           {weekDays.map((date, i) => {
             const custodyEvent = getCustodyForDay(date, expandedEvents);
-            const custodyParent = custodyEvent?.parentId ? parents[custodyEvent.parentId] : null;
+            const custodyParent = custodyEvent?.parentId
+              ? (parents[custodyEvent.parentId] ?? null)
+              : null;
             const isToday = date.getTime() === today.getTime();
 
             return (
@@ -110,7 +114,7 @@ export function WeekView({
                 className={`cursor-pointer p-3 text-center transition-colors hover:bg-slate-50 dark:hover:bg-slate-700/50 ${i < 6 ? 'border-r border-slate-200 dark:border-slate-700' : ''} `}
               >
                 <div className="text-xs font-medium uppercase text-slate-500 dark:text-slate-400">
-                  {dayNames[date.getDay()]}
+                  {dayNames[date.getDay()] ?? ''}
                 </div>
                 <div
                   className={`mx-auto mt-1 flex h-10 w-10 items-center justify-center text-lg font-semibold ${

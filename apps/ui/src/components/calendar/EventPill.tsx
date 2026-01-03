@@ -19,7 +19,7 @@ export function EventPill({
 }: EventPillProps) {
   const color = getEventTypeColor(event.type);
 
-  const colorMap: Record<string, { bg: string; text: string; dot: string }> = {
+  const colorMap = {
     red: {
       bg: 'bg-red-100 dark:bg-red-900/40 hover:bg-red-200 dark:hover:bg-red-900/60',
       text: 'text-red-700 dark:text-red-300',
@@ -60,9 +60,9 @@ export function EventPill({
       text: 'text-slate-700 dark:text-slate-300',
       dot: 'bg-slate-500',
     },
-  };
+  } satisfies Record<string, { bg: string; text: string; dot: string }>;
 
-  const colors = colorMap[color] || colorMap.slate;
+  const colors = colorMap[color as keyof typeof colorMap] ?? colorMap.slate;
 
   if (compact) {
     return (

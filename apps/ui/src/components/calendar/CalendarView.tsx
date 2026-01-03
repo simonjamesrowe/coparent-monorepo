@@ -29,9 +29,16 @@ export function CalendarView({
 }: CalendarSchedulingProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('month');
   const [currentDate, setCurrentDate] = useState(new Date());
+  const dateToYmd = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   const pendingRequests = scheduleChangeRequests.filter((r) => r.status === 'pending');
   const incomingRequests = pendingRequests.filter((r) => r.requestedBy !== currentParentId);
+  const [firstIncomingRequest] = incomingRequests;
 
   const handleViewChange = (view: ViewMode) => {
     setViewMode(view);
@@ -61,7 +68,7 @@ export function CalendarView({
     }
 
     setCurrentDate(newDate);
-    onNavigateDate?.(newDate.toISOString().split('T')[0]);
+    onNavigateDate?.(dateToYmd(newDate));
   };
 
   const handleDayClick = (date: Date) => {
@@ -70,7 +77,7 @@ export function CalendarView({
       setViewMode('day');
       onChangeView?.('day');
     }
-    onNavigateDate?.(date.toISOString().split('T')[0]);
+    onNavigateDate?.(dateToYmd(date));
   };
 
   const parentsMap = useMemo(() => {
@@ -116,7 +123,11 @@ export function CalendarView({
               {incomingRequests.length > 0 && (
                 <PendingRequestsBadge
                   count={incomingRequests.length}
-                  onClick={() => onViewRequest?.(incomingRequests[0].id)}
+                  onClick={() => {
+                    if (firstIncomingRequest) {
+                      onViewRequest?.(firstIncomingRequest.id);
+                    }
+                  }}
                 />
               )}
 

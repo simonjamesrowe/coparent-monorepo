@@ -26,7 +26,7 @@ export function CalendarHeader({
       'November',
       'December',
     ];
-    const month = months[currentDate.getMonth()];
+    const month = months[currentDate.getMonth()] ?? '';
     const year = currentDate.getFullYear();
 
     switch (viewMode) {
@@ -38,8 +38,8 @@ export function CalendarHeader({
         const endOfWeek = new Date(startOfWeek);
         endOfWeek.setDate(startOfWeek.getDate() + 6);
 
-        const startMonth = months[startOfWeek.getMonth()].slice(0, 3);
-        const endMonth = months[endOfWeek.getMonth()].slice(0, 3);
+        const startMonth = (months[startOfWeek.getMonth()] ?? '').slice(0, 3);
+        const endMonth = (months[endOfWeek.getMonth()] ?? '').slice(0, 3);
 
         if (startOfWeek.getMonth() === endOfWeek.getMonth()) {
           return `${startMonth} ${startOfWeek.getDate()} – ${endOfWeek.getDate()}, ${year}`;
@@ -56,7 +56,7 @@ export function CalendarHeader({
           'Friday',
           'Saturday',
         ];
-        return `${weekdays[currentDate.getDay()]}, ${month} ${currentDate.getDate()}`;
+        return `${weekdays[currentDate.getDay()] ?? ''}, ${month} ${currentDate.getDate()}`;
       }
     }
   };

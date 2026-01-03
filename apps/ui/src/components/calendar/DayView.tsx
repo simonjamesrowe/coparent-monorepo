@@ -72,20 +72,22 @@ export function DayView({
   const getEventPosition = (event: Event) => {
     if (!event.startTime) return null;
 
-    const [startHour, startMin] = event.startTime.split(':').map(Number);
+    const [startHour = 0, startMin = 0] = event.startTime.split(':').map(Number);
     const [endHour, endMin] = event.endTime
       ? event.endTime.split(':').map(Number)
       : [startHour + 1, startMin];
+    const resolvedEndHour = endHour ?? startHour + 1;
+    const resolvedEndMin = endMin ?? startMin;
 
     const top = (((startHour - 6) * 60 + startMin) / 60) * 80; // 80px per hour
-    const height = (((endHour - startHour) * 60 + (endMin - startMin)) / 60) * 80;
+    const height = (((resolvedEndHour - startHour) * 60 + (resolvedEndMin - startMin)) / 60) * 80;
 
     return { top, height: Math.max(height, 40) };
   };
 
   const getEventColors = (eventType: string) => {
     const color = getEventTypeColor(eventType);
-    const colorMap: Record<string, { bg: string; text: string; border: string }> = {
+    const colorMap = {
       red: {
         bg: 'bg-red-50 dark:bg-red-900/30',
         text: 'text-red-700 dark:text-red-300',
@@ -126,9 +128,9 @@ export function DayView({
         text: 'text-slate-700 dark:text-slate-300',
         border: 'border-slate-200 dark:border-slate-700',
       },
-    };
+    } satisfies Record<string, { bg: string; text: string; border: string }>;
 
-    return colorMap[color] || colorMap.slate;
+    return colorMap[color as keyof typeof colorMap] ?? colorMap.slate;
   };
 
   const timedEvents = dayEvents.filter((e) => e.startTime);
@@ -157,13 +159,13 @@ export function DayView({
         {/* Date display */}
         <div className="mb-6 text-center lg:text-left">
           <div className="text-sm uppercase tracking-wide text-slate-500 dark:text-slate-400">
-            {weekdays[currentDate.getDay()]}
+            {weekdays[currentDate.getDay()] ?? ''}
           </div>
           <div className="my-2 text-5xl font-bold text-slate-800 dark:text-slate-100">
             {currentDate.getDate()}
           </div>
           <div className="text-slate-600 dark:text-slate-300">
-            {months[currentDate.getMonth()]} {currentDate.getFullYear()}
+            {months[currentDate.getMonth()] ?? ''} {currentDate.getFullYear()}
           </div>
         </div>
 

@@ -17,16 +17,74 @@ import {
 } from '../hooks/api';
 import type { Event, ScheduleChangeRequest, Parent, Child } from '../types/calendar';
 
+type ApiEvent = {
+  _id?: string;
+  id?: string;
+  type?: string;
+  title?: string;
+  startDate?: string;
+  endDate?: string;
+  startTime?: string;
+  endTime?: string;
+  allDay?: boolean;
+  parentId?: string | { _id?: string } | null;
+  parentIds?: Array<string | { _id?: string }> | { _id?: string } | null;
+  childIds?: Array<string | { _id?: string }>;
+  location?: string;
+  notes?: string | null;
+  recurring?: Event['recurring'] | null;
+};
+
+type ApiScheduleChangeRequest = {
+  _id?: string;
+  id?: string;
+  status?: ScheduleChangeRequest['status'];
+  requestedBy?: string | { _id?: string };
+  requestedAt?: string;
+  resolvedBy?: string | { _id?: string } | null;
+  resolvedAt?: string | null;
+  originalEventId?: string | { _id?: string } | null;
+  proposedChange?: ScheduleChangeRequest['proposedChange'];
+  reason?: string;
+  responseNote?: string | null;
+};
+
 const CalendarPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { data: families = [], isLoading: familiesLoading } = useFamilies();
   const [activeFamilyId, setActiveFamilyId] = useState<string | undefined>();
+  const dateToYmd = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  const todayYmd = dateToYmd(new Date());
+  const normalizeDate = (value: string | undefined, fallback: string) => {
+    if (!value) return fallback;
+    return value.includes('T') ? value.slice(0, 10) : value;
+  };
+  const unwrapId = (value: string | { _id?: string } | null | undefined) => {
+    if (!value) return null;
+    if (typeof value === 'string') return value;
+    return value._id ?? null;
+  };
+  const normalizeIdArray = (value: ApiEvent['parentIds'] | ApiEvent['childIds']) => {
+    if (!value) return [];
+    if (Array.isArray(value)) {
+      return value
+        .map((entry) => (typeof entry === 'string' ? entry : entry?._id))
+        .filter((id): id is string => Boolean(id));
+    }
+    const single = typeof value === 'string' ? value : value?._id;
+    return single ? [single] : [];
+  };
 
   // Get drawer state from URL
   const isCreating = searchParams.get('create') === 'true';
   const editingEventId = searchParams.get('edit') || undefined;
   const isEditing = Boolean(editingEventId);
-  const initialDate = searchParams.get('date') || new Date().toISOString().split('T')[0];
+  const initialDate = searchParams.get('date') || todayYmd;
 
   const { data: parents = [] } = useParents(activeFamilyId);
   const { data: children = [] } = useChildren(activeFamilyId);
@@ -68,53 +126,44 @@ const CalendarPage = () => {
     avatarUrl: null,
   }));
 
-  const transformedEvents: Event[] = events.map((e: Record<string, unknown>) => {
-    const startDate = e.startDate
-      ? new Date(e.startDate).toISOString().split('T')[0]
-      : new Date().toISOString().split('T')[0];
+  const transformedEvents: Event[] = (events as unknown as ApiEvent[]).map((e, index) => {
+    const startDate = normalizeDate(e.startDate, todayYmd);
     return {
-      id: (e._id || e.id) as string,
-      type: e.type as string,
-      title: e.title as string,
+      id: (e._id ?? e.id ?? `event-${index}`) as string,
+      type: e.type ?? 'activity',
+      title: e.title ?? 'Untitled event',
       startDate,
-      endDate: e.endDate ? new Date(e.endDate as string).toISOString().split('T')[0] : undefined,
-      startTime: e.startTime as string | undefined,
-      endTime: e.endTime as string | undefined,
+      endDate: e.endDate ? normalizeDate(e.endDate, startDate) : undefined,
+      startTime: e.startTime ?? undefined,
+      endTime: e.endTime ?? undefined,
       allDay: Boolean(e.allDay),
-      parentId: (e.parentId as { _id?: string } | string | null)?.['_id'] || e.parentId || null,
-      parentIds: Array.isArray(e.parentIds)
-        ? (e.parentIds.map((id) => (id as { _id?: string } | string)?.['_id'] || id) as string[])
-        : (e.parentIds as { _id?: string } | string | undefined)?._id
-          ? [(e.parentIds as { _id?: string })._id as string]
-          : [],
-      childIds: Array.isArray(e.childIds)
-        ? (e.childIds.map((id) => (id as { _id?: string } | string)?.['_id'] || id) as string[])
-        : [],
-      location: e.location as string | undefined,
-      notes: (e.notes as string | null) ?? null,
-      recurring: (e.recurring as Event['recurring']) ?? null,
+      parentId: unwrapId(e.parentId),
+      parentIds: normalizeIdArray(e.parentIds),
+      childIds: normalizeIdArray(e.childIds),
+      location: e.location ?? undefined,
+      notes: e.notes ?? null,
+      recurring: e.recurring ?? null,
     };
   });
 
-  const transformedRequests: ScheduleChangeRequest[] = scheduleChangeRequests.map(
-    (r: Record<string, unknown>) => ({
-      id: (r._id || r.id) as string,
-      status: r.status as ScheduleChangeRequest['status'],
-      requestedBy: ((r.requestedBy as { _id?: string } | string | undefined)?._id ||
-        r.requestedBy) as string,
-      requestedAt: r.requestedAt as string,
-      resolvedBy: ((r.resolvedBy as { _id?: string } | string | undefined)?._id ||
-        r.resolvedBy ||
-        null) as string | null,
-      resolvedAt: (r.resolvedAt as string | null) ?? null,
-      originalEventId: ((r.originalEventId as { _id?: string } | string | undefined)?._id ||
-        r.originalEventId ||
-        null) as string | null,
-      proposedChange: r.proposedChange as ScheduleChangeRequest['proposedChange'],
-      reason: r.reason as string,
-      responseNote: (r.responseNote as string | null) ?? null,
-    }),
-  );
+  const transformedRequests: ScheduleChangeRequest[] = (
+    scheduleChangeRequests as unknown as ApiScheduleChangeRequest[]
+  ).map((r, index) => ({
+    id: (r._id ?? r.id ?? `request-${index}`) as string,
+    status: r.status ?? 'pending',
+    requestedBy: unwrapId(r.requestedBy) ?? '',
+    requestedAt: r.requestedAt ?? new Date().toISOString(),
+    resolvedBy: unwrapId(r.resolvedBy),
+    resolvedAt: r.resolvedAt ?? null,
+    originalEventId: unwrapId(r.originalEventId),
+    proposedChange: r.proposedChange ?? {
+      type: 'add',
+      newStartDate: todayYmd,
+      newEndDate: todayYmd,
+    },
+    reason: r.reason ?? '',
+    responseNote: r.responseNote ?? null,
+  }));
 
   const editingEvent = editingEventId
     ? transformedEvents.find((event) => event.id === editingEventId)

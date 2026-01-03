@@ -118,7 +118,7 @@ export function ScheduleChangeApproval({
 
   const selectedRequest = scheduleChangeRequests.find((request) => request.id === selectedId);
   const selectedEvent = selectedRequest?.originalEventId
-    ? eventMap[selectedRequest.originalEventId]
+    ? (eventMap[selectedRequest.originalEventId] ?? null)
     : null;
   const requestingParent = selectedRequest ? parentsMap[selectedRequest.requestedBy] : null;
   const eventOwner = getEventOwner(selectedEvent, parentsMap);

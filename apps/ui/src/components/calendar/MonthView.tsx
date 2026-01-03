@@ -89,7 +89,7 @@ export function MonthView({
         date: new Date(current),
         isCurrentMonth: current.getMonth() === month,
         isToday: current.getTime() === today.getTime(),
-        custodyParent: custodyEvent?.parentId ? parents[custodyEvent.parentId] : null,
+        custodyParent: custodyEvent?.parentId ? (parents[custodyEvent.parentId] ?? null) : null,
         custodyEventId: custodyEvent?.id ?? null,
         events: dayEvents,
       });
@@ -135,6 +135,7 @@ export function MonthView({
   // Determine custody block position for each day
   const getCustodyPosition = (dayIndex: number): 'start' | 'middle' | 'end' | 'single' | null => {
     const day = calendarDays[dayIndex];
+    if (!day) return null;
     if (!day.custodyParent) return null;
 
     const prevDay = calendarDays[dayIndex - 1];
