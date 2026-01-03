@@ -1,6 +1,16 @@
-import type { Child, Event, Parent, RecurringPattern } from '../../types/calendar';
 import type { MouseEvent, PointerEvent } from 'react';
-import { useMemo, useState, useEffect, useCallback, forwardRef, useImperativeHandle, useRef } from 'react';
+import {
+  useMemo,
+  useState,
+  useEffect,
+  useCallback,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from 'react';
+
+import type { Child, Event, Parent, RecurringPattern } from '../../types/calendar';
+
 import { EventPill } from './EventPill';
 import { DEFAULT_EVENT_TYPES } from './eventTypeColors';
 
@@ -40,7 +50,7 @@ export const EventCreationForm = forwardRef<EventCreationFormRef, EventCreationF
       initialDate,
       initialEvent,
       onSubmit,
-      onCancel,
+      onCancel: _onCancel,
       onValidationChange,
     },
     ref,
@@ -158,7 +168,7 @@ export const EventCreationForm = forwardRef<EventCreationFormRef, EventCreationF
     };
 
     const handleToggleParent = (parentId: string) => {
-      if (isCustody) return
+      if (isCustody) return;
       setSelectedParentIds((prev) =>
         prev.includes(parentId) ? prev.filter((id) => id !== parentId) : [...prev, parentId],
       );
@@ -339,26 +349,25 @@ export const EventCreationForm = forwardRef<EventCreationFormRef, EventCreationF
                   </label>
                   <div className="space-y-2">
                     {parents.map((parent) => {
-                      const selected = custodyParentId === parent.id
+                      const selected = custodyParentId === parent.id;
                       return (
                         <button
                           key={parent.id}
                           type="button"
                           onClick={() => setCustodyParentId(parent.id)}
                           disabled={!isCustody}
-                          className={`
-                            w-full flex items-center justify-between rounded-xl border px-4 py-2.5 text-left
-                            transition ${selected
+                          className={`flex w-full items-center justify-between rounded-xl border px-4 py-2.5 text-left transition ${
+                            selected
                               ? 'border-teal-500 bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-100'
                               : 'border-slate-200 text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:text-slate-300'
-                            }
-                            ${!isCustody ? 'opacity-50 cursor-not-allowed' : ''}
-                          `}
+                          } ${!isCustody ? 'cursor-not-allowed opacity-50' : ''} `}
                         >
                           <span className="text-sm font-medium">{parent.name}</span>
-                          {selected && <span className="text-xs uppercase tracking-wide">Primary</span>}
+                          {selected && (
+                            <span className="text-xs uppercase tracking-wide">Primary</span>
+                          )}
                         </button>
-                      )
+                      );
                     })}
                   </div>
                 </div>
@@ -369,26 +378,25 @@ export const EventCreationForm = forwardRef<EventCreationFormRef, EventCreationF
                   </label>
                   <div className="space-y-2">
                     {parents.map((parent) => {
-                      const selected = selectedParentIds.includes(parent.id)
+                      const selected = selectedParentIds.includes(parent.id);
                       return (
                         <button
                           key={parent.id}
                           type="button"
                           onClick={() => handleToggleParent(parent.id)}
                           disabled={isCustody}
-                          className={`
-                            w-full flex items-center justify-between rounded-xl border px-4 py-2.5 text-left
-                            transition ${selected
+                          className={`flex w-full items-center justify-between rounded-xl border px-4 py-2.5 text-left transition ${
+                            selected
                               ? 'border-indigo-500 bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-100'
                               : 'border-slate-200 text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:text-slate-300'
-                            }
-                            ${isCustody ? 'opacity-50 cursor-not-allowed' : ''}
-                          `}
+                          } ${isCustody ? 'cursor-not-allowed opacity-50' : ''} `}
                         >
                           <span className="text-sm font-medium">{parent.name}</span>
-                          {selected && <span className="text-xs uppercase tracking-wide">Included</span>}
+                          {selected && (
+                            <span className="text-xs uppercase tracking-wide">Included</span>
+                          )}
                         </button>
-                      )
+                      );
                     })}
                   </div>
                   <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
@@ -628,15 +636,10 @@ export const EventCreationForm = forwardRef<EventCreationFormRef, EventCreationF
             </h3>
             <div className="mt-4">
               <div className="rounded-xl border border-slate-200/70 bg-slate-50 p-3 dark:border-slate-700/60 dark:bg-slate-800/60">
-                <EventPill
-                  event={previewEvent}
-                  showTime={!previewEvent.allDay}
-                />
+                <EventPill event={previewEvent} showTime={!previewEvent.allDay} />
                 <div className="mt-3 space-y-2 text-xs text-slate-500 dark:text-slate-400">
                   <p>
-                    <span className="font-semibold text-slate-600 dark:text-slate-300">
-                      Type:
-                    </span>{' '}
+                    <span className="font-semibold text-slate-600 dark:text-slate-300">Type:</span>{' '}
                     {resolvedType}
                   </p>
                   <p>

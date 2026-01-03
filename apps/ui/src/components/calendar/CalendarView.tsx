@@ -1,12 +1,14 @@
-import type { CalendarSchedulingProps, Parent } from '../../types/calendar'
-import { useState, useMemo } from 'react'
-import { CalendarHeader } from './CalendarHeader'
-import { MonthView } from './MonthView'
-import { WeekView } from './WeekView'
-import { DayView } from './DayView'
-import { PendingRequestsBadge } from './PendingRequestsBadge'
+import { useState, useMemo } from 'react';
 
-type ViewMode = 'month' | 'week' | 'day'
+import type { CalendarSchedulingProps, Parent } from '../../types/calendar';
+
+import { CalendarHeader } from './CalendarHeader';
+import { DayView } from './DayView';
+import { MonthView } from './MonthView';
+import { PendingRequestsBadge } from './PendingRequestsBadge';
+import { WeekView } from './WeekView';
+
+type ViewMode = 'month' | 'week' | 'day';
 
 export function CalendarView({
   parents,
@@ -16,94 +18,96 @@ export function CalendarView({
   currentParentId,
   onViewEvent,
   onCreateEvent,
-  onEditEvent,
-  onDeleteEvent,
-  onRequestScheduleChange,
-  onApproveRequest,
-  onDeclineRequest,
+  onEditEvent: _onEditEvent,
+  onDeleteEvent: _onDeleteEvent,
+  onRequestScheduleChange: _onRequestScheduleChange,
+  onApproveRequest: _onApproveRequest,
+  onDeclineRequest: _onDeclineRequest,
   onViewRequest,
   onChangeView,
   onNavigateDate,
 }: CalendarSchedulingProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>('month')
-  const [currentDate, setCurrentDate] = useState(new Date())
+  const [viewMode, setViewMode] = useState<ViewMode>('month');
+  const [currentDate, setCurrentDate] = useState(new Date());
 
-  const pendingRequests = scheduleChangeRequests.filter(r => r.status === 'pending')
-  const incomingRequests = pendingRequests.filter(r => r.requestedBy !== currentParentId)
+  const pendingRequests = scheduleChangeRequests.filter((r) => r.status === 'pending');
+  const incomingRequests = pendingRequests.filter((r) => r.requestedBy !== currentParentId);
 
   const handleViewChange = (view: ViewMode) => {
-    setViewMode(view)
-    onChangeView?.(view)
-  }
+    setViewMode(view);
+    onChangeView?.(view);
+  };
 
   const handleNavigate = (direction: 'prev' | 'next' | 'today') => {
-    let newDate: Date
+    let newDate: Date;
 
     if (direction === 'today') {
-      newDate = new Date() // Current date
+      newDate = new Date(); // Current date
     } else {
-      const offset = direction === 'prev' ? -1 : 1
+      const offset = direction === 'prev' ? -1 : 1;
       switch (viewMode) {
         case 'month':
-          newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + offset, 1)
-          break
+          newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + offset, 1);
+          break;
         case 'week':
-          newDate = new Date(currentDate.getTime() + offset * 7 * 24 * 60 * 60 * 1000)
-          break
+          newDate = new Date(currentDate.getTime() + offset * 7 * 24 * 60 * 60 * 1000);
+          break;
         case 'day':
-          newDate = new Date(currentDate.getTime() + offset * 24 * 60 * 60 * 1000)
-          break
+          newDate = new Date(currentDate.getTime() + offset * 24 * 60 * 60 * 1000);
+          break;
         default:
-          newDate = currentDate
+          newDate = currentDate;
       }
     }
 
-    setCurrentDate(newDate)
-    onNavigateDate?.(newDate.toISOString().split('T')[0])
-  }
+    setCurrentDate(newDate);
+    onNavigateDate?.(newDate.toISOString().split('T')[0]);
+  };
 
   const handleDayClick = (date: Date) => {
-    setCurrentDate(date)
+    setCurrentDate(date);
     if (viewMode === 'month') {
-      setViewMode('day')
-      onChangeView?.('day')
+      setViewMode('day');
+      onChangeView?.('day');
     }
-    onNavigateDate?.(date.toISOString().split('T')[0])
-  }
+    onNavigateDate?.(date.toISOString().split('T')[0]);
+  };
 
   const parentsMap = useMemo(() => {
-    const map: Record<string, Parent> = {}
-    parents.forEach(p => { map[p.id] = p })
-    return map
-  }, [parents])
+    const map: Record<string, Parent> = {};
+    parents.forEach((p) => {
+      map[p.id] = p;
+    });
+    return map;
+  }, [parents]);
 
   const handleCreateEventClick = () => {
-    onCreateEvent?.()
-  }
+    onCreateEvent?.();
+  };
 
-  const normalizeType = (value: string) => value.trim().toLowerCase()
+  const normalizeType = (value: string) => value.trim().toLowerCase();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-teal-950/20">
       {/* Subtle pattern overlay */}
       <div
-        className="fixed inset-0 opacity-[0.015] dark:opacity-[0.03] pointer-events-none"
+        className="pointer-events-none fixed inset-0 opacity-[0.015] dark:opacity-[0.03]"
         style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`,
-          backgroundSize: '24px 24px'
+          backgroundSize: '24px 24px',
         }}
       />
 
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div className="relative mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         {/* Header Section */}
         <div className="mb-6 sm:mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-semibold text-slate-800 dark:text-slate-100 tracking-tight">
+              <h1 className="text-2xl font-semibold tracking-tight text-slate-800 sm:text-3xl dark:text-slate-100">
                 Family Calendar
               </h1>
-              <p className="mt-1 text-slate-500 dark:text-slate-400 text-sm">
-                Shared schedule for {children.map(c => c.name).join(' & ')}
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                Shared schedule for {children.map((c) => c.name).join(' & ')}
               </p>
             </div>
 
@@ -119,12 +123,15 @@ export function CalendarView({
               {/* Add Event Button */}
               <button
                 onClick={handleCreateEventClick}
-                className="inline-flex items-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-700
-                         text-white text-sm font-medium rounded-xl shadow-lg shadow-teal-500/20
-                         transition-all duration-200 hover:shadow-xl hover:shadow-teal-500/30
-                         hover:-translate-y-0.5 active:translate-y-0"
+                className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg shadow-teal-500/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-teal-700 hover:shadow-xl hover:shadow-teal-500/30 active:translate-y-0"
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                 </svg>
                 <span className="hidden sm:inline">Add Event</span>
@@ -133,14 +140,12 @@ export function CalendarView({
           </div>
 
           {/* Parent Legend */}
-          <div className="flex flex-wrap items-center gap-4 mb-6">
-            {parents.map(parent => (
+          <div className="mb-6 flex flex-wrap items-center gap-4">
+            {parents.map((parent) => (
               <div key={parent.id} className="flex items-center gap-2">
                 <div
-                  className={`w-3 h-3 rounded-full ${
-                    parent.color === 'violet'
-                      ? 'bg-violet-500'
-                      : 'bg-sky-500'
+                  className={`h-3 w-3 rounded-full ${
+                    parent.color === 'violet' ? 'bg-violet-500' : 'bg-sky-500'
                   }`}
                 />
                 <span className="text-sm text-slate-600 dark:text-slate-400">
@@ -160,9 +165,7 @@ export function CalendarView({
         </div>
 
         {/* Calendar Body */}
-        <div className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-xl shadow-slate-200/50
-                      dark:shadow-slate-900/50 border border-slate-200/60 dark:border-slate-700/60
-                      overflow-hidden backdrop-blur-sm">
+        <div className="overflow-hidden rounded-2xl border border-slate-200/60 bg-white shadow-xl shadow-slate-200/50 backdrop-blur-sm dark:border-slate-700/60 dark:bg-slate-800/50 dark:shadow-slate-900/50">
           {viewMode === 'month' && (
             <MonthView
               currentDate={currentDate}
@@ -194,29 +197,41 @@ export function CalendarView({
         </div>
 
         {/* Quick Stats Footer */}
-        <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            { label: 'This Month', value: events.filter(e => e.startDate.startsWith('2025-01')).length, suffix: 'events' },
-            { label: 'Activities', value: events.filter(e => normalizeType(e.type) === 'activity').length, suffix: 'scheduled' },
-            { label: 'Medical', value: events.filter(e => normalizeType(e.type) === 'medical').length, suffix: 'appointments' },
+            {
+              label: 'This Month',
+              value: events.filter((e) => e.startDate.startsWith('2025-01')).length,
+              suffix: 'events',
+            },
+            {
+              label: 'Activities',
+              value: events.filter((e) => normalizeType(e.type) === 'activity').length,
+              suffix: 'scheduled',
+            },
+            {
+              label: 'Medical',
+              value: events.filter((e) => normalizeType(e.type) === 'medical').length,
+              suffix: 'appointments',
+            },
             { label: 'Pending', value: pendingRequests.length, suffix: 'requests' },
           ].map((stat, i) => (
             <div
               key={stat.label}
-              className="bg-white/60 dark:bg-slate-800/30 rounded-xl p-3 border border-slate-200/40
-                       dark:border-slate-700/40 backdrop-blur-sm"
+              className="rounded-xl border border-slate-200/40 bg-white/60 p-3 backdrop-blur-sm dark:border-slate-700/40 dark:bg-slate-800/30"
               style={{ animationDelay: `${i * 50}ms` }}
             >
-              <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+              <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 {stat.label}
               </p>
               <p className="mt-1 text-lg font-semibold text-slate-800 dark:text-slate-100">
-                {stat.value} <span className="text-xs font-normal text-slate-400">{stat.suffix}</span>
+                {stat.value}{' '}
+                <span className="text-xs font-normal text-slate-400">{stat.suffix}</span>
               </p>
             </div>
           ))}
         </div>
       </div>
     </div>
-  )
+  );
 }

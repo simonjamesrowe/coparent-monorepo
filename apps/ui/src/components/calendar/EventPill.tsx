@@ -1,12 +1,13 @@
-import type { Event } from '../../types/calendar'
-import { getEventTypeColor } from './eventTypeColors'
+import type { Event } from '../../types/calendar';
+
+import { getEventTypeColor } from './eventTypeColors';
 
 interface EventPillProps {
-  event: Event
-  onClick?: (e: React.MouseEvent) => void
-  compact?: boolean
-  showTime?: boolean
-  ownerLabel?: string
+  event: Event;
+  onClick?: (e: React.MouseEvent) => void;
+  compact?: boolean;
+  showTime?: boolean;
+  ownerLabel?: string;
 }
 
 export function EventPill({
@@ -16,7 +17,7 @@ export function EventPill({
   showTime = false,
   ownerLabel,
 }: EventPillProps) {
-  const color = getEventTypeColor(event.type)
+  const color = getEventTypeColor(event.type);
 
   const colorMap: Record<string, { bg: string; text: string; dot: string }> = {
     red: {
@@ -59,52 +60,43 @@ export function EventPill({
       text: 'text-slate-700 dark:text-slate-300',
       dot: 'bg-slate-500',
     },
-  }
+  };
 
-  const colors = colorMap[color] || colorMap.slate
+  const colors = colorMap[color] || colorMap.slate;
 
   if (compact) {
     return (
       <button
         onClick={onClick}
-        className={`
-          w-full flex items-center gap-1 px-1.5 py-0.5 rounded text-left
-          transition-colors duration-150 ${colors.bg}
-        `}
+        className={`flex w-full items-center gap-1 rounded px-1.5 py-0.5 text-left transition-colors duration-150 ${colors.bg} `}
       >
-        <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${colors.dot}`} />
-        <span className={`text-[10px] sm:text-xs truncate font-medium ${colors.text}`}>
+        <span className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${colors.dot}`} />
+        <span className={`truncate text-[10px] font-medium sm:text-xs ${colors.text}`}>
           {event.title}
         </span>
         {ownerLabel && (
-          <span className="text-[9px] uppercase tracking-wide text-slate-400 ml-auto">
+          <span className="ml-auto text-[9px] uppercase tracking-wide text-slate-400">
             {ownerLabel}
           </span>
         )}
       </button>
-    )
+    );
   }
 
   return (
     <button
       onClick={onClick}
-      className={`
-        w-full h-full flex flex-col p-2 rounded-lg text-left
-        transition-all duration-150 ${colors.bg}
-        border border-transparent hover:border-current/10
-      `}
+      className={`flex h-full w-full flex-col rounded-lg p-2 text-left transition-all duration-150 ${colors.bg} hover:border-current/10 border border-transparent`}
     >
       <div className="flex items-center gap-1.5">
-        <span className={`w-2 h-2 rounded-full flex-shrink-0 ${colors.dot}`} />
-        <span className={`text-xs sm:text-sm font-medium truncate ${colors.text}`}>
+        <span className={`h-2 w-2 flex-shrink-0 rounded-full ${colors.dot}`} />
+        <span className={`truncate text-xs font-medium sm:text-sm ${colors.text}`}>
           {event.title}
         </span>
       </div>
 
       {ownerLabel && (
-        <div className="mt-0.5 text-[10px] text-slate-500 dark:text-slate-400">
-          {ownerLabel}
-        </div>
+        <div className="mt-0.5 text-[10px] text-slate-500 dark:text-slate-400">{ownerLabel}</div>
       )}
 
       {showTime && event.startTime && (
@@ -115,12 +107,22 @@ export function EventPill({
 
       {event.location && !compact && (
         <div className="mt-1 flex items-center gap-1 text-[10px] text-slate-500 dark:text-slate-400">
-          <svg className="w-2.5 h-2.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <svg
+            className="h-2.5 w-2.5 flex-shrink-0"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+            />
           </svg>
           <span className="truncate">{event.location}</span>
         </div>
       )}
     </button>
-  )
+  );
 }

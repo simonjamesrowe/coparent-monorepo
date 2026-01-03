@@ -68,44 +68,53 @@ const CalendarPage = () => {
     avatarUrl: null,
   }));
 
-  const transformedEvents: Event[] = events.map((e: any) => {
+  const transformedEvents: Event[] = events.map((e: Record<string, unknown>) => {
     const startDate = e.startDate
       ? new Date(e.startDate).toISOString().split('T')[0]
       : new Date().toISOString().split('T')[0];
     return {
-      id: e._id || e.id,
-      type: e.type,
-      title: e.title,
+      id: (e._id || e.id) as string,
+      type: e.type as string,
+      title: e.title as string,
       startDate,
-      endDate: e.endDate ? new Date(e.endDate).toISOString().split('T')[0] : undefined,
-      startTime: e.startTime,
-      endTime: e.endTime,
-      allDay: e.allDay,
-      parentId: e.parentId?._id || e.parentId || null,
+      endDate: e.endDate ? new Date(e.endDate as string).toISOString().split('T')[0] : undefined,
+      startTime: e.startTime as string | undefined,
+      endTime: e.endTime as string | undefined,
+      allDay: Boolean(e.allDay),
+      parentId: (e.parentId as { _id?: string } | string | null)?.['_id'] || e.parentId || null,
       parentIds: Array.isArray(e.parentIds)
-        ? e.parentIds.map((id: any) => id?._id || id)
-        : e.parentIds?._id
-          ? [e.parentIds._id]
+        ? (e.parentIds.map((id) => (id as { _id?: string } | string)?.['_id'] || id) as string[])
+        : (e.parentIds as { _id?: string } | string | undefined)?._id
+          ? [(e.parentIds as { _id?: string })._id as string]
           : [],
-      childIds: Array.isArray(e.childIds) ? e.childIds.map((id: any) => id._id || id) : [],
-      location: e.location,
-      notes: e.notes,
-      recurring: e.recurring,
+      childIds: Array.isArray(e.childIds)
+        ? (e.childIds.map((id) => (id as { _id?: string } | string)?.['_id'] || id) as string[])
+        : [],
+      location: e.location as string | undefined,
+      notes: (e.notes as string | null) ?? null,
+      recurring: (e.recurring as Event['recurring']) ?? null,
     };
   });
 
-  const transformedRequests: ScheduleChangeRequest[] = scheduleChangeRequests.map((r: any) => ({
-    id: r._id || r.id,
-    status: r.status,
-    requestedBy: r.requestedBy?._id || r.requestedBy,
-    requestedAt: r.requestedAt,
-    resolvedBy: r.resolvedBy?._id || r.resolvedBy || null,
-    resolvedAt: r.resolvedAt || null,
-    originalEventId: r.originalEventId?._id || r.originalEventId || null,
-    proposedChange: r.proposedChange,
-    reason: r.reason,
-    responseNote: r.responseNote,
-  }));
+  const transformedRequests: ScheduleChangeRequest[] = scheduleChangeRequests.map(
+    (r: Record<string, unknown>) => ({
+      id: (r._id || r.id) as string,
+      status: r.status as ScheduleChangeRequest['status'],
+      requestedBy: ((r.requestedBy as { _id?: string } | string | undefined)?._id ||
+        r.requestedBy) as string,
+      requestedAt: r.requestedAt as string,
+      resolvedBy: ((r.resolvedBy as { _id?: string } | string | undefined)?._id ||
+        r.resolvedBy ||
+        null) as string | null,
+      resolvedAt: (r.resolvedAt as string | null) ?? null,
+      originalEventId: ((r.originalEventId as { _id?: string } | string | undefined)?._id ||
+        r.originalEventId ||
+        null) as string | null,
+      proposedChange: r.proposedChange as ScheduleChangeRequest['proposedChange'],
+      reason: r.reason as string,
+      responseNote: (r.responseNote as string | null) ?? null,
+    }),
+  );
 
   const editingEvent = editingEventId
     ? transformedEvents.find((event) => event.id === editingEventId)
@@ -210,7 +219,7 @@ const CalendarPage = () => {
         scheduleChangeRequests={transformedRequests}
         currentParentId={currentParentId}
         onViewEvent={handleViewEvent}
-        onCreateEvent={handleOpenDrawer as any}
+        onCreateEvent={() => handleOpenDrawer()}
         onEditEvent={handleEditEvent}
         onDeleteEvent={handleDeleteEvent}
         onRequestScheduleChange={handleRequestScheduleChange}

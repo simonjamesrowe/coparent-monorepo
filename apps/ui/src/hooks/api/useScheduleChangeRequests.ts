@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import type { ScheduleChangeRequest, ProposedChange } from '../../types/calendar';
 import { apiClient } from '../../lib/api/client';
+import type { ScheduleChangeRequest, ProposedChange } from '../../types/calendar';
 
 import { eventKeys } from './useEvents';
 

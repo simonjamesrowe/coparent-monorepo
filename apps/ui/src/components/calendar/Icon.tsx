@@ -23,31 +23,32 @@ import {
   AlertCircle,
   Info,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
-const iconMap: Record<string, any> = {
-  'home': Home,
+const iconMap: Record<string, LucideIcon> = {
+  home: Home,
   'heart-pulse': HeartPulse,
   'graduation-cap': GraduationCap,
-  'trophy': Trophy,
-  'cake': Cake,
-  'circle': Circle,
-  'music': Music,
-  'calendar': Calendar,
+  trophy: Trophy,
+  cake: Cake,
+  circle: Circle,
+  music: Music,
+  calendar: Calendar,
   'calendar-days': CalendarDays,
-  'clock': Clock,
+  clock: Clock,
   'map-pin': MapPin,
-  'user': User,
-  'users': Users,
-  'plus': Plus,
-  'x': X,
-  'check': Check,
+  user: User,
+  users: Users,
+  plus: Plus,
+  x: X,
+  check: Check,
   'chevron-left': ChevronLeft,
   'chevron-right': ChevronRight,
   'more-horizontal': MoreHorizontal,
-  'edit': Edit,
+  edit: Edit,
   'trash-2': Trash2,
   'alert-circle': AlertCircle,
-  'info': Info,
+  info: Info,
 };
 
 interface IconProps {

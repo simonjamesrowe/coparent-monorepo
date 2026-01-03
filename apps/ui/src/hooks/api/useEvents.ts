@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import type { Event } from '../../types/calendar';
 import { apiClient } from '../../lib/api/client';
+import type { Event } from '../../types/calendar';
 
 export const eventKeys = {
   all: ['events'] as const,

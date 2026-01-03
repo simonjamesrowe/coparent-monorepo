@@ -1,28 +1,25 @@
 interface PendingRequestsBadgeProps {
-  count: number
-  onClick?: () => void
+  count: number;
+  onClick?: () => void;
 }
 
 export function PendingRequestsBadge({ count, onClick }: PendingRequestsBadgeProps) {
   return (
     <button
       onClick={onClick}
-      className="relative inline-flex items-center gap-2 px-4 py-2.5 bg-rose-50 dark:bg-rose-900/30
-               text-rose-700 dark:text-rose-300 rounded-xl border border-rose-200 dark:border-rose-800
-               hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-all duration-200
-               hover:shadow-lg hover:shadow-rose-500/10 group"
+      className="group relative inline-flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-rose-700 transition-all duration-200 hover:bg-rose-100 hover:shadow-lg hover:shadow-rose-500/10 dark:border-rose-800 dark:bg-rose-900/30 dark:text-rose-300 dark:hover:bg-rose-900/50"
     >
       {/* Animated ping effect */}
-      <span className="absolute -top-1 -right-1 flex h-4 w-4">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
-        <span className="relative inline-flex rounded-full h-4 w-4 bg-rose-500 text-white text-[10px] font-bold items-center justify-center">
+      <span className="absolute -right-1 -top-1 flex h-4 w-4">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose-400 opacity-75" />
+        <span className="relative inline-flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">
           {count}
         </span>
       </span>
 
       {/* Bell icon */}
       <svg
-        className="w-5 h-5 group-hover:animate-[wiggle_0.3s_ease-in-out]"
+        className="h-5 w-5 group-hover:animate-[wiggle_0.3s_ease-in-out]"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -39,5 +36,5 @@ export function PendingRequestsBadge({ count, onClick }: PendingRequestsBadgePro
         {count} pending {count === 1 ? 'request' : 'requests'}
       </span>
     </button>
-  )
+  );
 }
