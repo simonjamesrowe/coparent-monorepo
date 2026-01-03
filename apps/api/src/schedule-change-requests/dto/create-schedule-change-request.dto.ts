@@ -71,7 +71,7 @@ export class CreateScheduleChangeRequestDto {
 
   @ApiProperty({
     description: 'Reason for the schedule change request',
-    example: 'I have a work conference on Friday the 17th that I can\'t reschedule.',
+    example: "I have a work conference on Friday the 17th that I can't reschedule.",
   })
   @IsString()
   @IsNotEmpty()

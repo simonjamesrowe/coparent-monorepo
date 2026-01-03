@@ -11,14 +11,9 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-  ApiParam,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
@@ -89,11 +84,7 @@ export class EventsController {
   @ApiResponse({ status: 400, description: 'Invalid input' })
   @ApiResponse({ status: 403, description: 'Access denied' })
   @ApiResponse({ status: 404, description: 'Event not found' })
-  async update(
-    @Param('id') id: string,
-    @Body() updateEventDto: UpdateEventDto,
-    @Req() req: any,
-  ) {
+  async update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto, @Req() req: any) {
     const user = {
       auth0Id: req.user.auth0Id,
       email: req.user.email,

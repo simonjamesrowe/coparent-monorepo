@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { ScheduleChangeRequest, ScheduleChangeRequestSchema } from '../schemas/schedule-change-request.schema';
+import {
+  ScheduleChangeRequest,
+  ScheduleChangeRequestSchema,
+} from '../schemas/schedule-change-request.schema';
 import { Event, EventSchema } from '../schemas/event.schema';
 import { Family, FamilySchema } from '../schemas/family.schema';
 import { Parent, ParentSchema } from '../schemas/parent.schema';

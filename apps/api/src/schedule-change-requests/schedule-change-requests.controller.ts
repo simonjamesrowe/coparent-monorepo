@@ -10,14 +10,9 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-  ApiParam,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+
 import { ScheduleChangeRequestsService } from './schedule-change-requests.service';
 import { CreateScheduleChangeRequestDto } from './dto/create-schedule-change-request.dto';
 import { RespondToRequestDto } from './dto/respond-to-request.dto';
@@ -46,7 +41,11 @@ export class ScheduleChangeRequestsController {
       email: req.user.email,
     };
 
-    return this.scheduleChangeRequestsService.create(familyId, createScheduleChangeRequestDto, user);
+    return this.scheduleChangeRequestsService.create(
+      familyId,
+      createScheduleChangeRequestDto,
+      user,
+    );
   }
 
   @Get()
@@ -85,7 +84,10 @@ export class ScheduleChangeRequestsController {
   @ApiParam({ name: 'familyId', description: 'Family ID' })
   @ApiParam({ name: 'id', description: 'Request ID' })
   @ApiResponse({ status: 200, description: 'Request approved successfully' })
-  @ApiResponse({ status: 400, description: 'Request already resolved or cannot approve own request' })
+  @ApiResponse({
+    status: 400,
+    description: 'Request already resolved or cannot approve own request',
+  })
   @ApiResponse({ status: 403, description: 'Access denied' })
   @ApiResponse({ status: 404, description: 'Request not found' })
   async approve(
@@ -106,7 +108,10 @@ export class ScheduleChangeRequestsController {
   @ApiParam({ name: 'familyId', description: 'Family ID' })
   @ApiParam({ name: 'id', description: 'Request ID' })
   @ApiResponse({ status: 200, description: 'Request declined successfully' })
-  @ApiResponse({ status: 400, description: 'Request already resolved or cannot decline own request' })
+  @ApiResponse({
+    status: 400,
+    description: 'Request already resolved or cannot decline own request',
+  })
   @ApiResponse({ status: 403, description: 'Access denied' })
   @ApiResponse({ status: 404, description: 'Request not found' })
   async decline(
