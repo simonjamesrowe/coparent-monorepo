@@ -34,7 +34,7 @@
       "pnpm --filter coparent-ui format"
     ],
     "apps/api/**/*.{ts,js}": [
-      "pnpm --filter coparent-api lint -- --fix"
+      "pnpm --filter coparent-api exec eslint --fix"
     ]
   },
   "packageManager": "pnpm@8.12.0",

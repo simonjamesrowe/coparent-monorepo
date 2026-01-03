@@ -162,48 +162,7 @@ export class EventsService {
     user: AuthUser,
   ): Promise<EventDocument> {
     const event = await this.findById(eventId, user);
-
-    if (updateEventDto.type !== undefined) {
-      event.type = updateEventDto.type;
-    }
-    if (updateEventDto.title !== undefined) {
-      event.title = updateEventDto.title;
-    }
-    if (updateEventDto.startDate !== undefined) {
-      event.startDate = new Date(updateEventDto.startDate);
-    }
-    if (updateEventDto.endDate !== undefined) {
-      event.endDate = new Date(updateEventDto.endDate);
-    }
-    if (updateEventDto.startTime !== undefined) {
-      event.startTime = updateEventDto.startTime;
-    }
-    if (updateEventDto.endTime !== undefined) {
-      event.endTime = updateEventDto.endTime;
-    }
-    if (updateEventDto.allDay !== undefined) {
-      event.allDay = updateEventDto.allDay;
-    }
-    if (updateEventDto.parentId !== undefined) {
-      event.parentId = updateEventDto.parentId ? new Types.ObjectId(updateEventDto.parentId) : null;
-    }
-    if (updateEventDto.parentIds !== undefined) {
-      event.parentIds = updateEventDto.parentIds
-        ? updateEventDto.parentIds.map((id) => new Types.ObjectId(id))
-        : [];
-    }
-    if (updateEventDto.childIds !== undefined) {
-      event.childIds = updateEventDto.childIds.map((id) => new Types.ObjectId(id));
-    }
-    if (updateEventDto.location !== undefined) {
-      event.location = updateEventDto.location;
-    }
-    if (updateEventDto.notes !== undefined) {
-      event.notes = updateEventDto.notes || null;
-    }
-    if (updateEventDto.recurring !== undefined) {
-      event.recurring = updateEventDto.recurring || null;
-    }
+    this.applyEventUpdates(event, updateEventDto);
 
     await event.save();
 
@@ -217,6 +176,58 @@ export class EventsService {
     });
 
     return event;
+  }
+
+  private applyEventUpdates(event: EventDocument, updateEventDto: UpdateEventDto): void {
+    const setIfDefined = <K extends keyof UpdateEventDto>(
+      key: K,
+      apply: (value: NonNullable<UpdateEventDto[K]>) => void,
+    ) => {
+      const value = updateEventDto[key];
+      if (value !== undefined) {
+        apply(value as NonNullable<UpdateEventDto[K]>);
+      }
+    };
+
+    setIfDefined('type', (value) => {
+      event.type = value;
+    });
+    setIfDefined('title', (value) => {
+      event.title = value;
+    });
+    setIfDefined('startDate', (value) => {
+      event.startDate = new Date(value);
+    });
+    setIfDefined('endDate', (value) => {
+      event.endDate = new Date(value);
+    });
+    setIfDefined('startTime', (value) => {
+      event.startTime = value;
+    });
+    setIfDefined('endTime', (value) => {
+      event.endTime = value;
+    });
+    setIfDefined('allDay', (value) => {
+      event.allDay = value;
+    });
+    setIfDefined('parentId', (value) => {
+      event.parentId = value ? new Types.ObjectId(value) : null;
+    });
+    setIfDefined('parentIds', (value) => {
+      event.parentIds = value ? value.map((id) => new Types.ObjectId(id)) : [];
+    });
+    setIfDefined('childIds', (value) => {
+      event.childIds = value.map((id) => new Types.ObjectId(id));
+    });
+    setIfDefined('location', (value) => {
+      event.location = value;
+    });
+    setIfDefined('notes', (value) => {
+      event.notes = value || null;
+    });
+    setIfDefined('recurring', (value) => {
+      event.recurring = value || null;
+    });
   }
 
   async delete(eventId: string, user: AuthUser): Promise<void> {
