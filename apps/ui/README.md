@@ -19,3 +19,7 @@ npm run dev
 ```
 
 Copy `.env.example` to `.env` and fill in values before running.
+
+Optional UI environment variables:
+- `VITE_IDLE_TIMEOUT_MINUTES` (default: 3 in dev, 10 in prod)
+- `VITE_IDLE_TIMEOUT_SHOW_COUNTDOWN` (set `true` to display the on-screen countdown)

@@ -22,10 +22,30 @@ export interface AppShellProps {
   };
   onNavigate?: (href: string) => void;
   onLogout?: () => void;
+  showIdleCountdown?: boolean;
+  idleCountdownSeconds?: number;
 }
 
-export function AppShell({ children, navigationItems, user, onNavigate, onLogout }: AppShellProps) {
+function formatCountdown(seconds: number): string {
+  const clamped = Math.max(0, Math.floor(seconds));
+  const minutes = Math.floor(clamped / 60);
+  const remaining = clamped % 60;
+  return `${minutes}:${remaining.toString().padStart(2, '0')}`;
+}
+
+export function AppShell({
+  children,
+  navigationItems,
+  user,
+  onNavigate,
+  onLogout,
+  showIdleCountdown,
+  idleCountdownSeconds,
+}: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const shouldShowCountdown =
+    showIdleCountdown && typeof idleCountdownSeconds === 'number' && idleCountdownSeconds >= 0;
+  const countdownLabel = shouldShowCountdown ? formatCountdown(idleCountdownSeconds) : null;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
@@ -35,7 +55,14 @@ export function AppShell({ children, navigationItems, user, onNavigate, onLogout
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 text-lg font-bold text-white">
             CP
           </div>
-          <span className="text-xl font-bold text-slate-900 dark:text-white">CoParent</span>
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-bold text-slate-900 dark:text-white">CoParent</span>
+            {shouldShowCountdown && countdownLabel && (
+              <span className="rounded-full border border-amber-200/80 bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
+                Auto logout {countdownLabel}
+              </span>
+            )}
+          </div>
         </div>
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -63,11 +90,19 @@ export function AppShell({ children, navigationItems, user, onNavigate, onLogout
         className={`fixed left-0 top-0 z-40 flex h-full w-[260px] flex-col border-r border-slate-200 bg-white transition-transform duration-300 ease-in-out lg:translate-x-0 dark:border-slate-700 dark:bg-slate-800 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} `}
       >
         {/* Logo */}
-        <div className="flex items-center gap-3 border-b border-slate-200 px-4 py-6 dark:border-slate-700">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 text-lg font-bold text-white">
-            CP
+        <div className="border-b border-slate-200 px-4 py-6 dark:border-slate-700">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 text-lg font-bold text-white">
+              CP
+            </div>
+            <span className="text-xl font-bold text-slate-900 dark:text-white">CoParent</span>
           </div>
-          <span className="text-xl font-bold text-slate-900 dark:text-white">CoParent</span>
+          {shouldShowCountdown && countdownLabel && (
+            <div className="mt-3 inline-flex items-center gap-2 rounded-xl border border-amber-200/80 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
+              <span className="h-2 w-2 rounded-full bg-amber-500" aria-hidden="true" />
+              Auto logout in {countdownLabel}
+            </div>
+          )}
         </div>
 
         {/* Navigation */}

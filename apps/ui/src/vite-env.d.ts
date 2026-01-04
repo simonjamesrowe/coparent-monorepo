@@ -6,6 +6,8 @@ interface ImportMetaEnv {
   readonly VITE_AUTH0_CLIENT_ID?: string;
   readonly VITE_AUTH0_REDIRECT_URI?: string;
   readonly VITE_AUTH0_AUDIENCE?: string;
+  readonly VITE_IDLE_TIMEOUT_MINUTES?: string;
+  readonly VITE_IDLE_TIMEOUT_SHOW_COUNTDOWN?: string;
 }
 
 interface ImportMeta {
