@@ -1,23 +1,22 @@
 # Milestone 2: Calendar & Scheduling
 
 > **Provide alongside:** `product-overview.md`
-> **Prerequisites:** Milestone 1 (Foundation) complete
+> **Prerequisites:** Milestone 1 (Foundation) complete, plus any prior section milestones
 
 ## Goal
 
-Implement the Calendar & Scheduling feature — a shared calendar system that enables co-parents to manage custody schedules, activities, appointments, and important dates.
+Implement the Calendar & Scheduling feature — Shared calendar for custody schedules, activities, appointments, and important dates with real-time sync between parents..
 
 ## Overview
 
-This section provides co-parents with a comprehensive shared calendar that displays custody schedules, activities, appointments, and important dates. Parents can view time in monthly, weekly, or daily formats with color-coding to clearly distinguish which parent has custody. Schedule changes require formal approval from the other parent, maintaining trust and accountability.
+A shared calendar system that enables co-parents to manage custody schedules, activities, appointments, and important dates. Parents can view time in monthly, weekly, or daily views with color-coding to clearly distinguish which parent has custody. Schedule changes require approval from the other parent.
 
 **Key Functionality:**
-- View calendar in monthly, weekly, or daily views with color-coded custody blocks
+- View calendar in monthly, weekly, or daily view with parent-colored custody blocks
 - Create and edit custody schedules with custom day-by-day configuration
 - Add events (activities, medical appointments, school events, holidays, custom categories)
-- Request schedule changes (swap days, adjust times) that require approval
-- Approve or decline incoming schedule change requests with notes
-- Create and manage custom event categories with icons and colors
+- Request schedule changes (swap days, adjust times) which require other parent's approval
+- Approve or decline incoming schedule change requests
 
 ## Recommended Approach: Test-Driven Development
 
@@ -41,77 +40,53 @@ The test instructions are framework-agnostic — adapt them to your testing setu
 
 Copy the section components from `product-plan/sections/calendar-and-scheduling/components/`:
 
-- `CalendarView.tsx` — Main calendar component with view switching
-- `CalendarHeader.tsx` — Calendar header with date navigation and view controls
-- `MonthView.tsx` — Monthly calendar grid
-- `WeekView.tsx` — Weekly calendar view
-- `DayView.tsx` — Daily schedule view
-- `EventPill.tsx` — Event pill display in calendar cells
-- `EventCreationForm.tsx` — Form for creating/editing events
-- `ScheduleChangeRequestModal.tsx` — Modal for requesting schedule changes
-- `ScheduleChangeApproval.tsx` — Interface for approving/declining requests
-- `CategoryManagement.tsx` — UI for managing custom event categories
-- `PendingRequestsBadge.tsx` — Badge showing pending request count
+- `CalendarHeader`
+- `CalendarView`
+- `CategoryManagement`
+- `DayView`
+- `EventCreationForm`
+- `EventPill`
+- `MonthView`
+- `PendingRequestsBadge`
+- `ScheduleChangeApproval`
+- `ScheduleChangeRequestModal`
+- `WeekView`
 
 ### Data Layer
 
 The components expect these data shapes:
 
-**Event:**
-- `id`, `type`, `title`, `startDate`, `endDate`, `startTime`, `endTime`, `allDay`
-- `parentId` (which parent "owns" this event), `childIds`
-- `categoryId`, `location`, `notes`, `recurring` (optional pattern)
-
-**ScheduleChangeRequest:**
-- `id`, `status` (pending/approved/declined)
-- `requestedBy`, `requestedAt`, `resolvedBy`, `resolvedAt`
-- `originalEventId`, `proposedChange`, `reason`, `responseNote`
-
-**EventCategory:**
-- `id`, `name`, `icon`, `color`, `isDefault`, `isSystem`
-
-**Parent & Child:**
-- Basic info (id, name, color for parent)
+Parent, Child, EventCategory, RecurringPattern, Event, ProposedChange, ScheduleChangeRequest
 
 You'll need to:
-- Create MongoDB schemas/models for these entities
-- Create API endpoints for CRUD operations
+- Create API endpoints or data fetching logic
 - Connect real data to the components
-- Implement approval workflow for schedule changes
 
 ### Callbacks
 
 Wire up these user actions:
 
-**Event Actions:**
-- `onViewEvent(eventId)` — View event details
-- `onCreateEvent()` — Open event creation form
-- `onEditEvent(eventId)` — Edit existing event
-- `onDeleteEvent(eventId)` — Delete event
-
-**Schedule Change Request Actions:**
-- `onRequestScheduleChange(eventId)` — Request change to existing event
-- `onApproveRequest(requestId, responseNote?)` — Approve request
-- `onDeclineRequest(requestId, responseNote?)` — Decline request
-- `onViewRequest(requestId)` — View request details
-
-**Category Actions:**
-- `onCreateCategory()` — Create custom category
-- `onEditCategory(categoryId)` — Edit category
-- `onDeleteCategory(categoryId)` — Delete category
-
-**View Actions:**
-- `onChangeView(view)` — Switch between month/week/day
-- `onNavigateDate(date)` — Navigate to different date
+- `onViewEvent` — Called when user wants to view event details
+- `onCreateEvent` — Called when user wants to create a new event
+- `onEditEvent` — Called when user wants to edit an event
+- `onDeleteEvent` — Called when user wants to delete an event
+- `onRequestScheduleChange` — Called when user wants to request a schedule change
+- `onApproveRequest` — Called when user approves a schedule change request
+- `onDeclineRequest` — Called when user declines a schedule change request
+- `onViewRequest` — Called when user wants to view request details
+- `onCreateCategory` — Called when user wants to create a custom category
+- `onEditCategory` — Called when user wants to edit a category
+- `onDeleteCategory` — Called when user wants to delete a category
+- `onChangeView` — Called when user changes the calendar view
+- `onNavigateDate` — Called when user navigates to a different date
 
 ### Empty States
 
 Implement empty state UI for when no records exist yet:
 
-- **No events yet:** Show a helpful message and CTA to create the first event
-- **No categories yet:** Guide users to create custom categories
-- **No pending requests:** Show "All caught up" message in requests list
-- **First-time user experience:** Prominently display "Add Event" button when calendar is empty
+- **No data yet:** Show a helpful message and call-to-action when the primary list/collection is empty
+- **No related records:** Handle cases where associated records don't exist (e.g., a project with no tasks)
+- **First-time user experience:** Guide users to create their first item with clear CTAs
 
 The provided components include empty state designs — make sure to render them when data is empty rather than showing blank screens.
 
@@ -122,59 +97,39 @@ The provided components include empty state designs — make sure to render them
 - `product-plan/sections/calendar-and-scheduling/components/` — React components
 - `product-plan/sections/calendar-and-scheduling/types.ts` — TypeScript interfaces
 - `product-plan/sections/calendar-and-scheduling/sample-data.json` — Test data
-- `product-plan/sections/calendar-and-scheduling/*.png` — Visual references (various views)
+- `product-plan/sections/calendar-and-scheduling/screenshot.png` — Visual reference
 
 ## Expected User Flows
 
-When fully implemented, users should be able to complete these flows:
-
 ### Flow 1: Create a New Event
 
-1. User clicks "Add Event" button in calendar header
-2. User selects event type (custody, activity, medical, school, holiday)
-3. User fills in title, date/time, selects child(ren), chooses category
-4. User optionally adds location and notes
-5. User clicks "Create Event" to save
-6. **Outcome:** New event appears on calendar in correct date cell(s), color-coded by parent
+1. User clicks **“Add Event”**
+2. User fills **Title**, selects **Event type**, and chooses **Category**
+3. User clicks **“Save Event”**
+4. **Outcome:** New event appears in the calendar view
 
 ### Flow 2: Request a Schedule Change
 
-1. User clicks on an existing custody event
-2. User clicks "Request Change" button
-3. User selects change type (swap, extend, modify dates)
-4. User specifies new dates/times and provides a reason
-5. User submits the request
-6. **Outcome:** Request appears in pending requests for other parent, notification badge updates
+1. User opens **“Request Schedule Change”** on a custody event
+2. User chooses **“Swap Days”** or **“Adjust Time”**
+3. User enters a **Reason for Request** and clicks **“Send Request”**
+4. **Outcome:** Request appears as **pending**
 
-### Flow 3: Approve a Schedule Change Request
+### Flow 3: Approve/Decline a Request
 
-1. User sees pending request badge on calendar
-2. User clicks to view pending requests
-3. User reviews request details (original vs. proposed schedule)
-4. User optionally adds a response note
-5. User clicks "Approve" to accept the change
-6. **Outcome:** Calendar updates with new schedule, request marked as approved, requester is notified
+1. User selects a pending request in **Schedule Change Approvals**
+2. User enters **Response note (optional)**
+3. User clicks **“Approve change”** or **“Decline”**
+4. **Outcome:** Request status updates and response is saved
 
-### Flow 4: Manage Custom Categories
-
-1. User clicks "Manage Categories" button
-2. User clicks "Add Category" to create new category
-3. User enters category name, selects icon and color
-4. User saves the category
-5. **Outcome:** New category appears in event creation form dropdown
 
 ## Done When
 
 - [ ] Tests written for key user flows (success and failure paths)
 - [ ] All tests pass
-- [ ] Components render with real data from MongoDB
-- [ ] Empty states display properly when no events/requests/categories exist
-- [ ] All event CRUD operations work (create, read, update, delete)
-- [ ] Schedule change approval workflow functions correctly
-- [ ] Custom categories can be created, edited, and deleted
-- [ ] Calendar correctly displays events in month, week, and day views
-- [ ] Events are color-coded by parent
-- [ ] User can switch between views and navigate dates
-- [ ] Pending request badge shows accurate count
+- [ ] Components render with real data
+- [ ] Empty states display properly when no records exist
+- [ ] All user actions work
+- [ ] User can complete all expected flows end-to-end
 - [ ] Matches the visual design
-- [ ] Responsive on mobile, tablet, and desktop
+- [ ] Responsive on mobile

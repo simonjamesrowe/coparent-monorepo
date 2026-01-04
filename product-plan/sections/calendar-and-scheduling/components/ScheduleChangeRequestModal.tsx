@@ -1,8 +1,8 @@
-import type { Event, Parent, ProposedChange } from '../../../../product/sections/calendar-and-scheduling/types'
+import type { Event, Parent, ProposedChange } from '../types'
 import { useState, useMemo } from 'react'
 
 export interface ScheduleChangeRequestModalProps {
-  /** Whether the modal is open */
+  /** Whether the drawer is open */
   isOpen: boolean
   /** The custody event being modified */
   originalEvent: Event | null
@@ -10,7 +10,7 @@ export interface ScheduleChangeRequestModalProps {
   parents: Record<string, Parent>
   /** ID of the current logged-in parent (the requester) */
   currentParentId: string
-  /** Called when the modal should close */
+  /** Called when the drawer should close */
   onClose?: () => void
   /** Called when the user submits the request */
   onSubmit?: (data: { proposedChange: ProposedChange; reason: string }) => void
@@ -55,7 +55,7 @@ export function ScheduleChangeRequestModal({
   const [reason, setReason] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Reset form when modal opens with new event
+  // Reset form when drawer opens with new event
   useMemo(() => {
     if (originalEvent) {
       setNewStartDate(originalEvent.startDate)
@@ -107,12 +107,11 @@ export function ScheduleChangeRequestModal({
         onClick={onClose}
       />
 
-      {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Drawer */}
+      <div className="fixed inset-0 z-50 flex justify-end">
         <div
-          className="w-full max-w-lg bg-white dark:bg-slate-800 rounded-2xl shadow-2xl
-                     border border-slate-200/60 dark:border-slate-700/60
-                     animate-in zoom-in-95 slide-in-from-bottom-4 duration-300"
+          className="h-full w-full bg-white dark:bg-slate-800 shadow-2xl border-l border-slate-200/60
+                     dark:border-slate-700/60 animate-in slide-in-from-right duration-300 sm:w-3/4 flex flex-col"
           onClick={e => e.stopPropagation()}
         >
           {/* Header */}
@@ -142,7 +141,7 @@ export function ScheduleChangeRequestModal({
           </div>
 
           {/* Body */}
-          <div className="px-6 py-5 space-y-5 max-h-[60vh] overflow-y-auto">
+          <div className="px-6 py-5 space-y-5 flex-1 overflow-y-auto">
             {/* Original Schedule Card */}
             <div className="relative">
               <div className="absolute -left-3 top-0 bottom-0 w-1 bg-slate-300 dark:bg-slate-600 rounded-full" />
@@ -334,7 +333,7 @@ export function ScheduleChangeRequestModal({
           </div>
 
           {/* Footer */}
-          <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 rounded-b-2xl">
+          <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
             <div className="flex items-center justify-end gap-3">
               <button
                 onClick={onClose}

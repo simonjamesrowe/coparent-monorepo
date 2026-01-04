@@ -3,7 +3,7 @@ import type {
   ScheduleChangeRequest,
   Event,
   Parent,
-} from '../../../../product/sections/calendar-and-scheduling/types'
+} from '../types'
 import { useMemo, useState } from 'react'
 
 type FilterMode = 'all' | 'pending' | 'approved' | 'declined'

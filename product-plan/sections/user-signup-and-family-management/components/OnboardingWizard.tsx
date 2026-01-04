@@ -4,7 +4,7 @@ import type {
   OnboardingStep,
   Child,
   ParentRole,
-} from '../../../../product/sections/user-signup-and-family-management/types'
+} from '../types'
 
 type WizardStep = 'account' | 'family' | 'child' | 'invite' | 'review'
 

@@ -1,4 +1,4 @@
-import type { Child, Event, EventCategory, Parent, RecurringPattern } from '../../../../product/sections/calendar-and-scheduling/types'
+import type { Child, Event, EventCategory, Parent, RecurringPattern } from '../types'
 import { useMemo, useState } from 'react'
 import { EventPill } from './EventPill'
 

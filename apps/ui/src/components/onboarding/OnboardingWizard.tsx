@@ -86,9 +86,13 @@ export function OnboardingWizard({
   onCompleteOnboarding,
 }: OnboardingWizardProps) {
   const activeOnboarding = onboardingStates.find((state) => state.familyId === activeFamilyId);
-  const initialStep = STEPS.some((step) => step.id === activeOnboarding?.currentStep)
-    ? (activeOnboarding?.currentStep as WizardStep)
-    : 'family';
+  const familyInvitations = invitations.filter((invite) => invite.familyId === activeFamilyId);
+  const shouldForceInviteStep = activeOnboarding?.isComplete && familyInvitations.length === 0;
+  const initialStep = shouldForceInviteStep
+    ? 'invite'
+    : STEPS.some((step) => step.id === activeOnboarding?.currentStep)
+      ? (activeOnboarding?.currentStep as WizardStep)
+      : 'family';
 
   const [currentStep, setCurrentStep] = useState<WizardStep>(initialStep);
   const [fullName, setFullName] = useState('');
@@ -108,10 +112,14 @@ export function OnboardingWizard({
   const [familyError, setFamilyError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (shouldForceInviteStep) {
+      setCurrentStep('invite');
+      return;
+    }
     if (!activeOnboarding?.currentStep) return;
     if (!STEPS.some((step) => step.id === activeOnboarding.currentStep)) return;
     setCurrentStep(activeOnboarding.currentStep as WizardStep);
-  }, [activeOnboarding?.currentStep]);
+  }, [activeOnboarding?.currentStep, shouldForceInviteStep]);
 
   const currentStepIndex = STEPS.findIndex((step) => step.id === currentStep);
   const completedSteps = activeOnboarding?.completedSteps || [];
@@ -210,7 +218,6 @@ export function OnboardingWizard({
     });
     return merged;
   })();
-  const familyInvitations = invitations.filter((i) => i.familyId === activeFamilyId);
   const pendingInvites = familyInvitations.filter((i) => i.status === 'pending');
 
   return (

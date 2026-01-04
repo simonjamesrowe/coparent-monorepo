@@ -1,4 +1,4 @@
-import type { Event, Parent, EventCategory } from '../../../../product/sections/calendar-and-scheduling/types'
+import type { Event, Parent, EventCategory } from '../types'
 import { useMemo } from 'react'
 import { EventPill } from './EventPill'
 
