@@ -79,6 +79,8 @@ VITE_API_URL=http://localhost:3000
 VITE_AUTH0_DOMAIN=your-tenant.auth0.com
 VITE_AUTH0_CLIENT_ID=your_client_id
 VITE_AUTH0_REDIRECT_URI=http://localhost:5173/auth/callback
+VITE_IDLE_TIMEOUT_MINUTES=3
+VITE_IDLE_TIMEOUT_SHOW_COUNTDOWN=true
 ```
 
 ## Standards
