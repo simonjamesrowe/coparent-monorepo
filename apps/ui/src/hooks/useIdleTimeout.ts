@@ -62,14 +62,11 @@ export function useIdleTimeout({
     [onTimeout, stopTimer, timeout, warningTime],
   );
 
-  const setLastActivity = useCallback(
-    (timestamp: number) => {
-      lastActivityRef.current = timestamp;
-      timeoutTriggeredRef.current = false;
-      localStorage.setItem(LAST_ACTIVITY_KEY, String(timestamp));
-    },
-    [],
-  );
+  const setLastActivity = useCallback((timestamp: number) => {
+    lastActivityRef.current = timestamp;
+    timeoutTriggeredRef.current = false;
+    localStorage.setItem(LAST_ACTIVITY_KEY, String(timestamp));
+  }, []);
 
   const resetTimer = useCallback(() => {
     if (!enabled) return;

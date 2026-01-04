@@ -11,7 +11,12 @@ import {
 import { useEffect } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
-import { AuthCallback, ProtectedRoute, OnboardingGuard, IdleTimeoutWarning } from './components/auth';
+import {
+  AuthCallback,
+  ProtectedRoute,
+  OnboardingGuard,
+  IdleTimeoutWarning,
+} from './components/auth';
 import { UpdateNotification, OfflineIndicator, InstallPrompt } from './components/pwa';
 import type { NavigationItem } from './components/shell';
 import { AppShell } from './components/shell';
