@@ -11,11 +11,17 @@ import {
 import { useEffect } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
-import { AuthCallback, ProtectedRoute, OnboardingGuard } from './components/auth';
+import {
+  AuthCallback,
+  ProtectedRoute,
+  OnboardingGuard,
+  IdleTimeoutWarning,
+} from './components/auth';
 import { UpdateNotification, OfflineIndicator, InstallPrompt } from './components/pwa';
 import type { NavigationItem } from './components/shell';
 import { AppShell } from './components/shell';
 import { useApiClient } from './hooks/api';
+import { useIdleTimeout } from './hooks/useIdleTimeout';
 import { initDB, initSync } from './lib/pwa';
 import CalendarPage from './pages/CalendarPage';
 import DashboardPage from './pages/DashboardPage';
@@ -56,6 +62,24 @@ const App = () => {
   const handleLogout = () => {
     logout({ logoutParams: { returnTo: window.location.origin } });
   };
+
+  const configuredTimeoutMinutes = Number(import.meta.env.VITE_IDLE_TIMEOUT_MINUTES);
+  const idleTimeoutMinutes = Number.isFinite(configuredTimeoutMinutes)
+    ? Math.max(1, configuredTimeoutMinutes)
+    : import.meta.env.DEV
+      ? 3
+      : 10;
+  const idleTimeoutMs = idleTimeoutMinutes * 60 * 1000;
+  const warningTimeMs = 60 * 1000;
+  const showIdleCountdown =
+    import.meta.env.DEV || import.meta.env.VITE_IDLE_TIMEOUT_SHOW_COUNTDOWN === 'true';
+
+  const { showWarning, remainingSeconds, resetTimer } = useIdleTimeout({
+    timeout: idleTimeoutMs,
+    warningTime: warningTimeMs,
+    onTimeout: handleLogout,
+    enabled: isAuthenticated,
+  });
 
   const handleNavigate = (href: string) => {
     navigate(href);
@@ -121,6 +145,8 @@ const App = () => {
                   user={user}
                   onNavigate={handleNavigate}
                   onLogout={handleLogout}
+                  showIdleCountdown={showIdleCountdown}
+                  idleCountdownSeconds={remainingSeconds}
                 >
                   <Routes>
                     <Route path="/" element={<DashboardPage />} />
@@ -146,6 +172,12 @@ const App = () => {
           <UpdateNotification />
           <OfflineIndicator />
           <InstallPrompt />
+          <IdleTimeoutWarning
+            isOpen={showWarning}
+            remainingSeconds={remainingSeconds}
+            onStayLoggedIn={resetTimer}
+            onLogout={handleLogout}
+          />
         </>
       )}
     </>

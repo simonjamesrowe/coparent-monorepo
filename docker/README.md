@@ -13,7 +13,7 @@ This directory contains Docker configuration for running the entire CoParent sta
    ```bash
    cp .env.example .env
    ```
-   Then edit `.env` with your Auth0 credentials.
+   Then edit `.env` with your Auth0 credentials (and optional UI idle timeout settings).
 
 2. **Start all services:**
    ```bash

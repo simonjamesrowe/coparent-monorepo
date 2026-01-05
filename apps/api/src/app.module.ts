@@ -13,6 +13,8 @@ import { ChildrenModule } from './children/children.module';
 import { InvitationsModule } from './invitations/invitations.module';
 import { OnboardingModule } from './onboarding/onboarding.module';
 import { EmailModule } from './email/email.module';
+import { EventsModule } from './events/events.module';
+import { ScheduleChangeRequestsModule } from './schedule-change-requests/schedule-change-requests.module';
 import { MessagingModule } from './messaging/messaging.module';
 
 @Module({
@@ -47,6 +49,8 @@ import { MessagingModule } from './messaging/messaging.module';
     InvitationsModule,
     OnboardingModule,
     EmailModule,
+    EventsModule,
+    ScheduleChangeRequestsModule,
     MessagingModule,
   ],
   controllers: [AppController],

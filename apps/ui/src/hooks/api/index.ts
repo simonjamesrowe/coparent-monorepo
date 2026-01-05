@@ -5,3 +5,5 @@ export * from './useParents';
 export * from './useInvitations';
 export * from './useOnboarding';
 export * from './useConversations';
+export * from './useEvents';
+export * from './useScheduleChangeRequests';
