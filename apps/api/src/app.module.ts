@@ -15,6 +15,7 @@ import { OnboardingModule } from './onboarding/onboarding.module';
 import { EmailModule } from './email/email.module';
 import { EventsModule } from './events/events.module';
 import { ScheduleChangeRequestsModule } from './schedule-change-requests/schedule-change-requests.module';
+import { MessagingModule } from './messaging/messaging.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { ScheduleChangeRequestsModule } from './schedule-change-requests/schedul
     EmailModule,
     EventsModule,
     ScheduleChangeRequestsModule,
+    MessagingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

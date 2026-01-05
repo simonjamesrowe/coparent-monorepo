@@ -56,6 +56,9 @@ export { apiClient };
 export type ParentRole = 'primary' | 'co-parent';
 export type InvitationStatus = 'pending' | 'accepted' | 'expired' | 'canceled';
 export type OnboardingStep = 'family' | 'child' | 'invite' | 'review' | 'complete';
+export type ConversationType = 'message' | 'permission';
+export type PermissionRequestType = 'medical' | 'travel' | 'schedule' | 'extracurricular';
+export type PermissionStatus = 'pending' | 'approved' | 'denied';
 
 export interface Family {
   id: string;
@@ -125,6 +128,47 @@ export interface CurrentUser {
   isNewUser: boolean;
 }
 
+export interface ConversationParticipant {
+  id: string;
+  name: string;
+  avatarUrl?: string | null;
+}
+
+export interface Message {
+  id: string;
+  senderId: string;
+  content: string;
+  timestamp: string;
+  isRead: boolean;
+}
+
+export interface PermissionRequest {
+  id: string;
+  type: PermissionRequestType;
+  childId: string;
+  childName: string;
+  description: string;
+  requestedBy: string;
+  status: PermissionStatus;
+  createdAt: string;
+  resolvedAt: string | null;
+  response: string | null;
+}
+
+export interface Conversation {
+  id: string;
+  type: ConversationType;
+  subject: string;
+  lastMessageAt: string;
+  unreadCount: number;
+  participants: {
+    parent1: ConversationParticipant;
+    parent2: ConversationParticipant;
+  };
+  messages?: Message[];
+  permissionRequest?: PermissionRequest;
+}
+
 // API request/response types
 export interface CreateFamilyRequest {
   name: string;
@@ -168,4 +212,26 @@ export interface CompleteStepRequest {
 
 export interface UpdateParentRoleRequest {
   role: ParentRole;
+}
+
+export interface CreateMessageConversationRequest {
+  subject?: string;
+  message: string;
+  recipientId?: string;
+}
+
+export interface CreatePermissionConversationRequest {
+  subject?: string;
+  type: PermissionRequestType;
+  childId?: string;
+  childName?: string;
+  description: string;
+}
+
+export interface SendMessageRequest {
+  content: string;
+}
+
+export interface PermissionResponseRequest {
+  response?: string;
 }

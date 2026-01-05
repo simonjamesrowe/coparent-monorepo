@@ -32,6 +32,7 @@
 
 ---
 
+
 ## Goal
 
 Set up the foundational elements: design tokens, data model types, routing structure, and application shell.
@@ -46,12 +47,6 @@ Configure your styling system with these tokens:
 - See `product-plan/design-system/tailwind-colors.md` for Tailwind configuration
 - See `product-plan/design-system/fonts.md` for Google Fonts setup
 
-**Design System Summary:**
-- **Primary Color:** Teal (for buttons, links, active states)
-- **Secondary Color:** Rose (for notifications, alerts)
-- **Neutral Color:** Slate (for backgrounds, text, borders)
-- **Fonts:** Inter (heading and body), IBM Plex Mono (monospace)
-
 ### 2. Data Model Types
 
 Create TypeScript interfaces for your core entities:
@@ -59,27 +54,16 @@ Create TypeScript interfaces for your core entities:
 - See `product-plan/data-model/types.ts` for interface definitions
 - See `product-plan/data-model/README.md` for entity relationships
 
-**Core Entities:**
-- Family, Parent, Child
-- Event, Message, PermissionRequest
-- Expense, Document, Milestone
-- AuditEntry
-
-**Note:** This product uses MongoDB (document database). The data model reflects document-based relationships.
-
 ### 3. Routing Structure
 
 Create placeholder routes for each section:
 
-- `/` or `/dashboard` — Dashboard/home (default landing)
-- `/calendar` — Calendar & Scheduling section
-- `/messages` — Messaging & Permissions section
-- `/expenses` — Expenses & Finances section
-- `/documents` — Information Repository section
-- `/timeline` — Timeline & Photos section
-- `/settings` — User preferences
-- `/onboarding` — User signup and family setup (for new users)
-- `/family-setup` — Family setup hub (for existing users)
+- /calendar-scheduling — Calendar & Scheduling
+- /messaging-permissions — Messaging & Permissions
+- /expenses-finances — Expenses & Finances
+- /information-repository — Information Repository
+- /timeline-photos — Timeline & Photos
+- /user-signup-family-management — User Signup & Family Management
 
 ### 4. Application Shell
 
@@ -91,27 +75,25 @@ Copy the shell components from `product-plan/shell/components/` to your project:
 
 **Wire Up Navigation:**
 
-Connect navigation to your routing. The shell includes these nav items:
+Connect navigation to your routing:
 
-- **Dashboard** → `/` or `/dashboard`
-- **Calendar** → `/calendar`
-- **Messages** → `/messages`
-- **Expenses** → `/expenses`
-- **Documents** → `/documents`
-- **Timeline** → `/timeline`
-- **Settings** → `/settings` (separated at bottom)
+- Dashboard
+- Calendar
+- Messages
+- Expenses
+- Documents
+- Timeline
+- Settings
+- Desktop (1024px+):
+- Tablet (768px-1023px):
+- Mobile (<768px):
 
 **User Menu:**
 
 The user menu expects:
-- User name (string)
-- Avatar URL (optional string, shows initials if not provided)
-- `onLogout` callback (function)
-
-**Responsive Behavior:**
-- **Desktop (1024px+):** Fixed 260px sidebar, content fills remaining space
-- **Tablet (768px-1023px):** Collapsible sidebar with hamburger toggle
-- **Mobile (<768px):** Sidebar becomes slide-out drawer
+- User name
+- Avatar URL (optional)
+- Logout callback
 
 ## Files to Reference
 
@@ -119,15 +101,14 @@ The user menu expects:
 - `product-plan/data-model/` — Type definitions
 - `product-plan/shell/README.md` — Shell design intent
 - `product-plan/shell/components/` — Shell React components
-- `product-plan/shell/screenshot.png` — Shell visual reference (if available)
+- `product-plan/shell/screenshot.png` — Shell visual reference
 
 ## Done When
 
 - [ ] Design tokens are configured
-- [ ] Data model types are defined in your project
+- [ ] Data model types are defined
 - [ ] Routes exist for all sections (can be placeholder pages)
 - [ ] Shell renders with navigation
 - [ ] Navigation links to correct routes
-- [ ] User menu shows user info and logout works
-- [ ] Responsive on mobile, tablet, and desktop
-- [ ] Active nav item is highlighted based on current route
+- [ ] User menu shows user info
+- [ ] Responsive on mobile

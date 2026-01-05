@@ -1,4 +1,4 @@
-import type { CalendarSchedulingProps, EventCategory } from '../../../../product/sections/calendar-and-scheduling/types'
+import type { CalendarSchedulingProps, EventCategory } from '../types'
 import { useMemo, useState } from 'react'
 
 const COLOR_STYLES: Record<string, { ring: string; bg: string; text: string }> = {
