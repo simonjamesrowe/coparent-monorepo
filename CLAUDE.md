@@ -38,6 +38,14 @@ cp apps/ui/.env.example apps/ui/.env
 
 ## Common Development Commands
 
+## Workflow Expectations
+
+- Always run relevant tests after making code changes to verify behavior before reporting completion.
+- Run lint for the affected app(s) to match CI: `pnpm --filter coparent-ui lint` and/or `pnpm --filter coparent-api lint`.
+- Align local checks with CI when touching an app:
+  - UI: `pnpm --filter coparent-ui lint` + `pnpm --filter coparent-ui test -- --run` (+ `pnpm --filter coparent-ui build` if needed).
+  - API: `pnpm --filter coparent-api lint` + `pnpm --filter coparent-api type-check` (+ `pnpm --filter coparent-api build` if needed).
+
 ### Development & Running
 
 ```bash

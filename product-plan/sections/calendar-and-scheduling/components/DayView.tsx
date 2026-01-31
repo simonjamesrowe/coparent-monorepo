@@ -1,4 +1,4 @@
-import type { Event, Parent, EventCategory, Child } from '../../../../product/sections/calendar-and-scheduling/types'
+import type { Event, Parent, EventCategory, Child } from '../types'
 import { useMemo } from 'react'
 
 interface DayViewProps {

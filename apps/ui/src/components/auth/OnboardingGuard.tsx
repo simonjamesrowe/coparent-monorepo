@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useFamilies, useOnboarding } from '../../hooks/api';
+import { useFamilies, useInvitations, useOnboarding } from '../../hooks/api';
 
 interface OnboardingGuardProps {
   children: React.ReactNode;
@@ -15,6 +15,7 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
 
   // Get onboarding state for the active family
   const { data: onboarding, isLoading: onboardingLoading } = useOnboarding(activeFamilyId);
+  const { data: invitations = [], isLoading: invitationsLoading } = useInvitations(activeFamilyId);
 
   // Set active family to first family
   useEffect(() => {
@@ -26,7 +27,7 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
   // Check onboarding status and redirect if needed
   useEffect(() => {
     // Don't redirect while loading
-    if (familiesLoading || onboardingLoading) return;
+    if (familiesLoading || onboardingLoading || invitationsLoading) return;
 
     // Allow access to onboarding page itself
     if (location.pathname === '/onboarding') return;
@@ -48,18 +49,26 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
       navigate('/onboarding', { replace: true });
       return;
     }
+
+    // If onboarding is complete but no invitations exist yet, return to onboarding
+    if (onboarding?.isComplete && activeFamilyId && invitations.length === 0) {
+      navigate('/onboarding', { replace: true });
+      return;
+    }
   }, [
     familiesLoading,
     onboardingLoading,
+    invitationsLoading,
     families,
     onboarding,
     activeFamilyId,
+    invitations.length,
     location.pathname,
     navigate,
   ]);
 
   // Show loading state while checking onboarding status
-  if (familiesLoading || onboardingLoading) {
+  if (familiesLoading || onboardingLoading || invitationsLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-teal-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-teal-950/20">
         <div className="text-center">

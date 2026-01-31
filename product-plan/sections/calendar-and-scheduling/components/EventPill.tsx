@@ -1,4 +1,4 @@
-import type { Event, EventCategory } from '../../../../product/sections/calendar-and-scheduling/types'
+import type { Event, EventCategory } from '../types'
 
 interface EventPillProps {
   event: Event
