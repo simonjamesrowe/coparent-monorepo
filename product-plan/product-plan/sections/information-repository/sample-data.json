@@ -1,0 +1,395 @@
+{
+  "_meta": {
+    "models": {
+      "family": "Top-level container for all shared family information and records.",
+      "children": "Each child has their own documents and emergency contacts organized by category.",
+      "documents": "Stored files like medical records or school documents, with metadata for quick lookup.",
+      "emergencyContacts": "People to contact in an emergency for a child, with phone, email, and address details.",
+      "categorySummaries": "Per-child rollups that show counts and the most recent updates by category."
+    },
+    "relationships": [
+      "Family includes multiple Children",
+      "Documents belong to a Family and are linked to a specific Child",
+      "Emergency Contacts belong to a Child (and by extension the Family)",
+      "Category Summaries roll up Documents and Contacts per Child"
+    ]
+  },
+  "family": {
+    "id": "fam-001",
+    "name": "Rowe-Williams Family",
+    "primaryParentId": "parent-001",
+    "secondaryParentId": "parent-002"
+  },
+  "children": [
+    {
+      "id": "child-001",
+      "familyId": "fam-001",
+      "name": "Evelyn Rowe",
+      "birthdate": "2016-04-09",
+      "avatarUrl": "/avatars/child-001.png",
+      "categoryStats": {
+        "medicalCount": 3,
+        "schoolCount": 2,
+        "contactCount": 2,
+        "lastUpdatedAt": "2025-11-18"
+      },
+      "recentDocumentIds": ["doc-004", "doc-002", "doc-001"]
+    },
+    {
+      "id": "child-002",
+      "familyId": "fam-001",
+      "name": "Miles Rowe",
+      "birthdate": "2019-08-22",
+      "avatarUrl": "/avatars/child-002.png",
+      "categoryStats": {
+        "medicalCount": 2,
+        "schoolCount": 1,
+        "contactCount": 2,
+        "lastUpdatedAt": "2025-10-02"
+      },
+      "recentDocumentIds": ["doc-006", "doc-005"]
+    },
+    {
+      "id": "child-003",
+      "familyId": "fam-001",
+      "name": "Sofia Rowe",
+      "birthdate": "2022-01-31",
+      "avatarUrl": "/avatars/child-003.png",
+      "categoryStats": {
+        "medicalCount": 1,
+        "schoolCount": 0,
+        "contactCount": 1,
+        "lastUpdatedAt": "2025-09-10"
+      },
+      "recentDocumentIds": []
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc-001",
+      "familyId": "fam-001",
+      "childId": "child-001",
+      "category": "medical",
+      "title": "Annual Physical - 2025",
+      "documentType": "medical-record",
+      "description": "Routine annual physical with growth chart and updated vitals.",
+      "provider": "Little Rock Pediatrics",
+      "dateOfService": "2025-05-12",
+      "uploadedAt": "2025-05-15",
+      "updatedAt": "2025-05-15",
+      "file": {
+        "fileName": "evelyn-physical-2025.pdf",
+        "fileType": "application/pdf",
+        "fileSizeKb": 842,
+        "fileUrl": "/files/evelyn-physical-2025.pdf"
+      },
+      "tags": ["physical", "pediatrics"],
+      "attachments": []
+    },
+    {
+      "id": "doc-002",
+      "familyId": "fam-001",
+      "childId": "child-001",
+      "category": "medical",
+      "title": "Vaccination Record",
+      "documentType": "immunization",
+      "description": "Updated immunization history including 2025 boosters.",
+      "provider": "Arkansas Department of Health",
+      "dateOfService": "2025-08-20",
+      "uploadedAt": "2025-08-21",
+      "updatedAt": "2025-08-21",
+      "file": {
+        "fileName": "evelyn-immunization-2025.pdf",
+        "fileType": "application/pdf",
+        "fileSizeKb": 512,
+        "fileUrl": "/files/evelyn-immunization-2025.pdf"
+      },
+      "tags": ["immunization"],
+      "attachments": [
+        {
+          "id": "att-001",
+          "label": "Clinic summary",
+          "fileName": "vaccine-visit-summary.jpg",
+          "fileType": "image/jpeg",
+          "fileSizeKb": 226,
+          "fileUrl": "/files/vaccine-visit-summary.jpg"
+        }
+      ]
+    },
+    {
+      "id": "doc-003",
+      "familyId": "fam-001",
+      "childId": "child-001",
+      "category": "school",
+      "title": "504 Plan - Fall 2025",
+      "documentType": "school-plan",
+      "description": "School accommodation plan outlining classroom supports and testing adjustments.",
+      "provider": "Jefferson Elementary",
+      "dateOfService": "2025-08-30",
+      "uploadedAt": "2025-09-02",
+      "updatedAt": "2025-09-02",
+      "file": {
+        "fileName": "evelyn-504-plan-2025.pdf",
+        "fileType": "application/pdf",
+        "fileSizeKb": 1024,
+        "fileUrl": "/files/evelyn-504-plan-2025.pdf"
+      },
+      "tags": ["school", "accommodations"],
+      "attachments": []
+    },
+    {
+      "id": "doc-004",
+      "familyId": "fam-001",
+      "childId": "child-001",
+      "category": "school",
+      "title": "Parent-Teacher Conference Notes",
+      "documentType": "school-report",
+      "description": "Notes from fall conference including reading progress, math goals, and recommended resources. Evelyn is meeting grade-level benchmarks but benefits from additional reading practice at home. Teacher recommended a 15-minute nightly read-aloud routine and weekly library visits. Next check-in scheduled for December.",
+      "provider": "Jefferson Elementary",
+      "dateOfService": "2025-11-14",
+      "uploadedAt": "2025-11-18",
+      "updatedAt": "2025-11-18",
+      "file": {
+        "fileName": "evelyn-conference-notes-2025.pdf",
+        "fileType": "application/pdf",
+        "fileSizeKb": 355,
+        "fileUrl": "/files/evelyn-conference-notes-2025.pdf"
+      },
+      "tags": ["school", "conference"],
+      "attachments": []
+    },
+    {
+      "id": "doc-005",
+      "familyId": "fam-001",
+      "childId": "child-002",
+      "category": "medical",
+      "title": "Dental Exam - Spring 2025",
+      "documentType": "medical-record",
+      "description": "Routine dental exam and cleaning. No cavities noted.",
+      "provider": "River Valley Dental",
+      "dateOfService": "2025-03-10",
+      "uploadedAt": "2025-03-12",
+      "updatedAt": "2025-03-12",
+      "file": {
+        "fileName": "miles-dental-2025.pdf",
+        "fileType": "application/pdf",
+        "fileSizeKb": 298,
+        "fileUrl": "/files/miles-dental-2025.pdf"
+      },
+      "tags": ["dental"],
+      "attachments": []
+    },
+    {
+      "id": "doc-006",
+      "familyId": "fam-001",
+      "childId": "child-002",
+      "category": "medical",
+      "title": "Asthma Action Plan",
+      "documentType": "emergency-plan",
+      "description": "Action plan with triggers, medications, and emergency steps for mild intermittent asthma.",
+      "provider": "Little Rock Pediatrics",
+      "dateOfService": "2025-09-28",
+      "uploadedAt": "2025-10-02",
+      "updatedAt": "2025-10-02",
+      "file": {
+        "fileName": "miles-asthma-plan-2025.pdf",
+        "fileType": "application/pdf",
+        "fileSizeKb": 612,
+        "fileUrl": "/files/miles-asthma-plan-2025.pdf"
+      },
+      "tags": ["asthma", "emergency"],
+      "attachments": [
+        {
+          "id": "att-002",
+          "label": "Medication list",
+          "fileName": "miles-medications.png",
+          "fileType": "image/png",
+          "fileSizeKb": 184,
+          "fileUrl": "/files/miles-medications.png"
+        },
+        {
+          "id": "att-003",
+          "label": "Peak flow chart",
+          "fileName": "peak-flow-chart.pdf",
+          "fileType": "application/pdf",
+          "fileSizeKb": 74,
+          "fileUrl": "/files/peak-flow-chart.pdf"
+        }
+      ]
+    },
+    {
+      "id": "doc-007",
+      "familyId": "fam-001",
+      "childId": "child-002",
+      "category": "school",
+      "title": "Preschool Enrollment Packet",
+      "documentType": "school-report",
+      "description": "Enrollment forms and pickup authorization for Little Rock Early Learning.",
+      "provider": "Little Rock Early Learning",
+      "dateOfService": "2025-07-01",
+      "uploadedAt": "2025-07-03",
+      "updatedAt": "2025-07-03",
+      "file": {
+        "fileName": "miles-preschool-enrollment-2025.pdf",
+        "fileType": "application/pdf",
+        "fileSizeKb": 1200,
+        "fileUrl": "/files/miles-preschool-enrollment-2025.pdf"
+      },
+      "tags": ["school", "enrollment"],
+      "attachments": []
+    },
+    {
+      "id": "doc-008",
+      "familyId": "fam-001",
+      "childId": "child-003",
+      "category": "medical",
+      "title": "Newborn Hearing Screen",
+      "documentType": "medical-record",
+      "description": "Hospital screening results from newborn hearing test.",
+      "provider": "UAMS Medical Center",
+      "dateOfService": "2022-02-01",
+      "uploadedAt": "2025-09-10",
+      "updatedAt": "2025-09-10",
+      "file": {
+        "fileName": "sofia-hearing-screen.pdf",
+        "fileType": "application/pdf",
+        "fileSizeKb": 144,
+        "fileUrl": "/files/sofia-hearing-screen.pdf"
+      },
+      "tags": ["newborn"],
+      "attachments": []
+    }
+  ],
+  "emergencyContacts": [
+    {
+      "id": "contact-001",
+      "familyId": "fam-001",
+      "childId": "child-001",
+      "name": "Lydia Rowe",
+      "relationship": "grandmother",
+      "phone": "501-555-0147",
+      "email": "lydia.rowe@example.com",
+      "address": "302 Hillcrest Ave, Little Rock, AR 72205",
+      "notes": "Lives 10 minutes away and is authorized for pickup.",
+      "isPrimary": true,
+      "updatedAt": "2025-08-21"
+    },
+    {
+      "id": "contact-002",
+      "familyId": "fam-001",
+      "childId": "child-001",
+      "name": "Dr. Aisha Patel",
+      "relationship": "pediatrician",
+      "phone": "501-555-0192",
+      "email": "apatel@lrpeds.com",
+      "address": "1400 Markham St, Little Rock, AR 72201",
+      "notes": "Primary care physician for routine visits and urgent care guidance.",
+      "isPrimary": false,
+      "updatedAt": "2025-05-15"
+    },
+    {
+      "id": "contact-003",
+      "familyId": "fam-001",
+      "childId": "child-002",
+      "name": "Marcus Williams",
+      "relationship": "uncle",
+      "phone": "501-555-0110",
+      "email": "",
+      "address": "88 South University Ave, Little Rock, AR 72207",
+      "notes": "Backup contact during weekdays; prefers text before phone calls.",
+      "isPrimary": false,
+      "updatedAt": "2025-10-02"
+    },
+    {
+      "id": "contact-004",
+      "familyId": "fam-001",
+      "childId": "child-002",
+      "name": "Renee Caldwell",
+      "relationship": "family friend",
+      "phone": "501-555-0168",
+      "email": "renee.caldwell@example.com",
+      "address": "17 Rockwood Rd, Little Rock, AR 72205",
+      "notes": "Authorized to pick up from preschool; has a spare car seat in her vehicle.",
+      "isPrimary": true,
+      "updatedAt": "2025-07-03"
+    },
+    {
+      "id": "contact-005",
+      "familyId": "fam-001",
+      "childId": "child-003",
+      "name": "Olivia Chen",
+      "relationship": "step-parent",
+      "phone": "501-555-0181",
+      "email": "olivia.chen@example.com",
+      "address": "302 Hillcrest Ave, Little Rock, AR 72205",
+      "notes": "Supports weekday daycare pickups; prefers afternoon updates.",
+      "isPrimary": true,
+      "updatedAt": "2025-09-10"
+    }
+  ],
+  "categorySummaries": [
+    {
+      "childId": "child-001",
+      "category": "medical",
+      "itemCount": 2,
+      "lastUpdatedAt": "2025-08-21",
+      "recentItemIds": ["doc-002", "doc-001"]
+    },
+    {
+      "childId": "child-001",
+      "category": "school",
+      "itemCount": 2,
+      "lastUpdatedAt": "2025-11-18",
+      "recentItemIds": ["doc-004", "doc-003"]
+    },
+    {
+      "childId": "child-001",
+      "category": "contacts",
+      "itemCount": 2,
+      "lastUpdatedAt": "2025-08-21",
+      "recentItemIds": ["contact-001", "contact-002"]
+    },
+    {
+      "childId": "child-002",
+      "category": "medical",
+      "itemCount": 2,
+      "lastUpdatedAt": "2025-10-02",
+      "recentItemIds": ["doc-006", "doc-005"]
+    },
+    {
+      "childId": "child-002",
+      "category": "school",
+      "itemCount": 1,
+      "lastUpdatedAt": "2025-07-03",
+      "recentItemIds": ["doc-007"]
+    },
+    {
+      "childId": "child-002",
+      "category": "contacts",
+      "itemCount": 2,
+      "lastUpdatedAt": "2025-10-02",
+      "recentItemIds": ["contact-003", "contact-004"]
+    },
+    {
+      "childId": "child-003",
+      "category": "medical",
+      "itemCount": 1,
+      "lastUpdatedAt": "2025-09-10",
+      "recentItemIds": ["doc-008"]
+    },
+    {
+      "childId": "child-003",
+      "category": "school",
+      "itemCount": 0,
+      "lastUpdatedAt": "",
+      "recentItemIds": []
+    },
+    {
+      "childId": "child-003",
+      "category": "contacts",
+      "itemCount": 1,
+      "lastUpdatedAt": "2025-09-10",
+      "recentItemIds": ["contact-005"]
+    }
+  ]
+}
