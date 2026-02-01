@@ -36,7 +36,7 @@ See `screenshot.png` for the target UI design.
 
 ## Components Provided
 
-- `MessagingAndPermissions` — Combined messaging and permission request workspace
+- `MessagingAndPermissions` — Supporting UI component
 
 ## Callback Props
 

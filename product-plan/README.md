@@ -10,7 +10,7 @@ This folder contains everything needed to implement CoParent.
 
 **Instructions:**
 - `product-overview.md` — Product summary (provide with every implementation)
-- `instructions/one-shot-instructions.md` — All milestones combined for full implementation
+- `instructions/one-shot-instructions.md` — All milestones combined
 - `instructions/incremental/` — Milestone-by-milestone instructions (foundation, then sections)
 
 **Design Assets:**
@@ -23,10 +23,8 @@ This folder contains everything needed to implement CoParent.
 
 ### Option A: Incremental (Recommended)
 
-Build your app milestone by milestone for better control:
-
 1. Copy the `product-plan/` folder to your codebase
-2. Start with Foundation (`instructions/incremental/01-foundation.md`) — includes design tokens, data model, routing, and application shell
+2. Start with Foundation (`instructions/incremental/01-foundation.md`)
 3. For each section:
    - Open `prompts/section-prompt.md`
    - Fill in the section variables at the top (SECTION_NAME, SECTION_ID, NN)
@@ -35,8 +33,6 @@ Build your app milestone by milestone for better control:
 4. Review and test after each milestone
 
 ### Option B: One-Shot
-
-Build the entire app in one session:
 
 1. Copy the `product-plan/` folder to your codebase
 2. Open `prompts/one-shot-prompt.md`
@@ -47,22 +43,7 @@ Build the entire app in one session:
 
 ## Test-Driven Development
 
-Each section includes a `tests.md` file with test-writing instructions. For best results:
-
-1. Read `sections/[section-id]/tests.md` before implementing
-2. Write failing tests based on the instructions
-3. Implement the feature to make tests pass
-4. Refactor while keeping tests green
-
-The test instructions are **framework-agnostic** — they describe WHAT to test, not HOW. Adapt to your testing setup (Jest, Vitest, Playwright, Cypress, RSpec, Minitest, PHPUnit, etc.).
-
-## Tips
-
-- **Use the pre-written prompts** — They include important clarifying questions about auth and data modeling.
-- **Add your own notes** — Customize prompts with project-specific context when needed.
-- **Build on your designs** — Use completed sections as the starting point for future feature development.
-- **Review thoroughly** — Check plans and implementations carefully to catch details and inconsistencies.
-- **Fill in the gaps** — Backend business logic may need manual additions. Incremental implementation helps you identify these along the way.
+Each section includes a `tests.md` file with test-writing instructions. These are framework-agnostic and describe WHAT to test, not HOW. Adapt to your testing setup.
 
 ---
 

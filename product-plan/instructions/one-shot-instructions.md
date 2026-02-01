@@ -28,24 +28,9 @@
 - The components are props-based and ready to integrate — focus on the backend and data layer
 
 ---
-
 ## Test-Driven Development
 
-Each section includes a `tests.md` file with detailed test-writing instructions. These are **framework-agnostic** — adapt them to your testing setup (Jest, Vitest, Playwright, Cypress, RSpec, Minitest, PHPUnit, etc.).
-
-**For each section:**
-1. Read `product-plan/sections/[section-id]/tests.md`
-2. Write failing tests for key user flows (success and failure paths)
-3. Implement the feature to make tests pass
-4. Refactor while keeping tests green
-
-The test instructions include:
-- Specific UI elements, button labels, and interactions to verify
-- Expected success and failure behaviors
-- Empty state handling (when no records exist yet)
-- Data assertions and state validations
-
----
+Each section includes a `tests.md` file with detailed test-writing instructions.
 
 # CoParent — Product Overview
 
@@ -55,6 +40,7 @@ CoParent is a unified digital platform that helps separated and divorced parents
 
 ## Planned Sections
 
+1. **Dashboard** — Central hub providing at-a-glance family status, quick actions for profile and children management, invitation tracking, and key metrics across calendar, expenses, and messaging.
 1. **Calendar & Scheduling** — Shared calendar for custody schedules, activities, appointments, and important dates with real-time sync between parents.
 1. **Messaging & Permissions** — Professional parent-to-parent communication with threading, plus formal permission request workflows for approvals and decisions.
 1. **Expenses & Finances** — Expense tracking with receipt uploads, reimbursement requests, approval workflows, and spending analytics.
@@ -83,15 +69,20 @@ Family, Parent, Child, Event, Message, PermissionRequest, Expense, Document, Mil
 Build this product in milestones:
 
 1. **Foundation** — Set up design tokens, data model types, and application shell
-2. **Calendar & Scheduling** — Shared calendar for custody schedules, activities, appointments, and important dates with real-time sync between parents.
-3. **Messaging & Permissions** — Professional parent-to-parent communication with threading, plus formal permission request workflows for approvals and decisions.
-4. **User Signup & Family Management** — Account creation, child profile setup, family roles, and invite flow to bring a non-registered co-parent into the platform.
+2. **Dashboard** — Central hub providing at-a-glance family status, quick actions for profile and children management, invitation tracking, and key metrics across calendar, expenses, and messaging.
+3. **Calendar & Scheduling** — Shared calendar for custody schedules, activities, appointments, and important dates with real-time sync between parents.
+4. **Messaging & Permissions** — Professional parent-to-parent communication with threading, plus formal permission request workflows for approvals and decisions.
+5. **Expenses & Finances** — Expense tracking with receipt uploads, reimbursement requests, approval workflows, and spending analytics.
+6. **Information Repository** — Centralized storage for medical records, school documents, emergency contacts, and critical family information.
+7. **User Signup & Family Management** — Account creation, child profile setup, family roles, and invite flow to bring a non-registered co-parent into the platform.
 
 Each milestone has a dedicated instruction document in `product-plan/instructions/`.
+
 
 ---
 
 # Milestone 1: Foundation
+
 
 > **Provide alongside:** `product-overview.md`
 > **Prerequisites:** None
@@ -124,8 +115,6 @@ Each milestone has a dedicated instruction document in `product-plan/instruction
 - The components are props-based and ready to integrate — focus on the backend and data layer
 
 ---
-
-
 ## Goal
 
 Set up the foundational elements: design tokens, data model types, routing structure, and application shell.
@@ -151,12 +140,13 @@ Create TypeScript interfaces for your core entities:
 
 Create placeholder routes for each section:
 
-- /calendar-scheduling — Calendar & Scheduling
-- /messaging-permissions — Messaging & Permissions
-- /expenses-finances — Expenses & Finances
-- /information-repository — Information Repository
-- /timeline-photos — Timeline & Photos
-- /user-signup-family-management — User Signup & Family Management
+- `/dashboard`
+- `/calendar-and-scheduling`
+- `/messaging-and-permissions`
+- `/expenses-and-finances`
+- `/information-repository`
+- `/timeline-and-photos`
+- `/user-signup-and-family-management`
 
 ### 4. Application Shell
 
@@ -171,15 +161,12 @@ Copy the shell components from `product-plan/shell/components/` to your project:
 Connect navigation to your routing:
 
 - Dashboard
-- Calendar
-- Messages
-- Expenses
-- Documents
-- Timeline
-- Settings
-- Desktop (1024px+):
-- Tablet (768px-1023px):
-- Mobile (<768px):
+- Calendar & Scheduling
+- Messaging & Permissions
+- Expenses & Finances
+- Information Repository
+- Timeline & Photos
+- User Signup & Family Management
 
 **User Menu:**
 
@@ -194,7 +181,6 @@ The user menu expects:
 - `product-plan/data-model/` — Type definitions
 - `product-plan/shell/README.md` — Shell design intent
 - `product-plan/shell/components/` — Shell React components
-- `product-plan/shell/screenshot.png` — Shell visual reference
 
 ## Done When
 
@@ -206,43 +192,134 @@ The user menu expects:
 - [ ] User menu shows user info
 - [ ] Responsive on mobile
 
+
 ---
 
-# Milestone 2: Calendar & Scheduling
+# Milestone 2: Dashboard
 
 > **Provide alongside:** `product-overview.md`
 > **Prerequisites:** Milestone 1 (Foundation) complete, plus any prior section milestones
 
 ## Goal
 
-Implement the Calendar & Scheduling feature — Shared calendar for custody schedules, activities, appointments, and important dates with real-time sync between parents..
+Implement the Dashboard feature — Central hub providing at-a-glance family status, quick actions for profile and children management, invitation tracking, and key metrics across calendar, expenses, and messaging.
+
+## Overview
+
+The Dashboard is the central hub of the app, presenting family status at a glance through a bento-box layout of mixed-size widget cards. Users can manage their profile, children, and invitations via slide-out drawers, take quick actions from a prominent top bar, and navigate to full sections by clicking on summary widgets.
+
+**Key Functionality:**
+
+- View dashboard with bento-box layout of stat widgets and management cards
+- Edit own profile (name, email, notifications) via slide-out drawer
+- Add/edit children via slide-out drawer
+- View pending invitations and resend/cancel them via slide-out drawer
+- Use quick action buttons at top to add expense, create event, or send message
+- Click any widget to navigate to its full section (Calendar, Expenses, Messaging, etc.)
+
+## Recommended Approach: Test-Driven Development
+
+See `product-plan/sections/dashboard/tests.md` for detailed test-writing instructions.
+
+## What to Implement
+
+### Components
+
+Copy the section components from `product-plan/sections/dashboard/components/`:
+
+- `ChildrenDrawer`
+- `DashboardOverview`
+- `InvitationsDrawer`
+- `ProfileDrawer`
+
+### Data Layer
+
+The components expect these data shapes:
+
+- NotificationPreferences, Parent, Child, Family, Event, Expense, PermissionRequest, Message, Invitation, ActivityFeedItem, BudgetCategory, BudgetSummary, ApprovalsSummary, SetupChecklistItem, SetupChecklist, WidgetCard, QuickAction, ParentProfileUpdate
+
+### Callbacks
+
+Wire up these user actions:
+
+- `onClose` — Callback triggered by user action.
+- `onSaveProfile` — Save profile updates for the parent
+
+### Empty States
+
+Implement empty state UI for when no records exist yet.
+
+## Files to Reference
+
+- `product-plan/sections/dashboard/README.md` — Feature overview and design intent
+- `product-plan/sections/dashboard/tests.md` — Test-writing instructions (use for TDD)
+- `product-plan/sections/dashboard/components/` — React components
+- `product-plan/sections/dashboard/types.ts` — TypeScript interfaces
+- `product-plan/sections/dashboard/sample-data.json` — Test data
+- `product-plan/sections/dashboard/screenshot.png` — Visual reference
+
+## Expected User Flows
+
+### Flow 1: View dashboard with bento-box layout of stat widgets and management cards
+
+1. User initiates the flow
+2. User completes the required inputs
+3. User confirms the action
+4. **Outcome:** UI updates and data is saved
+
+### Flow 2: Edit own profile (name, email, notifications) via slide-out drawer
+
+1. User initiates the flow
+2. User completes the required inputs
+3. User confirms the action
+4. **Outcome:** UI updates and data is saved
+
+### Flow 3: Add/edit children via slide-out drawer
+
+1. User initiates the flow
+2. User completes the required inputs
+3. User confirms the action
+4. **Outcome:** UI updates and data is saved
+
+## Done When
+
+- [ ] Tests written for key user flows (success and failure paths)
+- [ ] All tests pass
+- [ ] Components render with real data
+- [ ] Empty states display properly when no records exist
+- [ ] All user actions work
+- [ ] User can complete all expected flows end-to-end
+- [ ] Matches the visual design
+- [ ] Responsive on mobile
+
+
+---
+
+# Milestone 3: Calendar & Scheduling
+
+> **Provide alongside:** `product-overview.md`
+> **Prerequisites:** Milestone 1 (Foundation) complete, plus any prior section milestones
+
+## Goal
+
+Implement the Calendar & Scheduling feature — Shared calendar for custody schedules, activities, appointments, and important dates with real-time sync between parents.
 
 ## Overview
 
 A shared calendar system that enables co-parents to manage custody schedules, activities, appointments, and important dates. Parents can view time in monthly, weekly, or daily views with color-coding to clearly distinguish which parent has custody. Schedule changes require approval from the other parent.
 
 **Key Functionality:**
+
 - View calendar in monthly, weekly, or daily view with parent-colored custody blocks
 - Create and edit custody schedules with custom day-by-day configuration
 - Add events (activities, medical appointments, school events, holidays, custom categories)
 - Request schedule changes (swap days, adjust times) which require other parent's approval
 - Approve or decline incoming schedule change requests
+- Create and manage custom event categories
 
 ## Recommended Approach: Test-Driven Development
 
-Before implementing this section, **write tests first** based on the test specifications provided.
-
-See `product-plan/sections/calendar-and-scheduling/tests.md` for detailed test-writing instructions including:
-- Key user flows to test (success and failure paths)
-- Specific UI elements, button labels, and interactions to verify
-- Expected behaviors and assertions
-
-The test instructions are framework-agnostic — adapt them to your testing setup (Jest, Vitest, Playwright, Cypress, RSpec, Minitest, PHPUnit, etc.).
-
-**TDD Workflow:**
-1. Read `tests.md` and write failing tests for the key user flows
-2. Implement the feature to make tests pass
-3. Refactor while keeping tests green
+See `product-plan/sections/calendar-and-scheduling/tests.md` for detailed test-writing instructions.
 
 ## What to Implement
 
@@ -266,11 +343,7 @@ Copy the section components from `product-plan/sections/calendar-and-scheduling/
 
 The components expect these data shapes:
 
-Parent, Child, EventCategory, RecurringPattern, Event, ProposedChange, ScheduleChangeRequest
-
-You'll need to:
-- Create API endpoints or data fetching logic
-- Connect real data to the components
+- Parent, Child, EventCategory, RecurringPattern, Event, ProposedChange, ScheduleChangeRequest
 
 ### Callbacks
 
@@ -292,13 +365,7 @@ Wire up these user actions:
 
 ### Empty States
 
-Implement empty state UI for when no records exist yet:
-
-- **No data yet:** Show a helpful message and call-to-action when the primary list/collection is empty
-- **No related records:** Handle cases where associated records don't exist (e.g., a project with no tasks)
-- **First-time user experience:** Guide users to create their first item with clear CTAs
-
-The provided components include empty state designs — make sure to render them when data is empty rather than showing blank screens.
+Implement empty state UI for when no records exist yet.
 
 ## Files to Reference
 
@@ -311,27 +378,26 @@ The provided components include empty state designs — make sure to render them
 
 ## Expected User Flows
 
-### Flow 1: Create a New Event
+### Flow 1: View calendar in monthly, weekly, or daily view with parent-colored custody blocks
 
-1. User clicks **“Add Event”**
-2. User fills **Title**, selects **Event type**, and chooses **Category**
-3. User clicks **“Save Event”**
-4. **Outcome:** New event appears in the calendar view
+1. User initiates the flow
+2. User completes the required inputs
+3. User confirms the action
+4. **Outcome:** UI updates and data is saved
 
-### Flow 2: Request a Schedule Change
+### Flow 2: Create and edit custody schedules with custom day-by-day configuration
 
-1. User opens **“Request Schedule Change”** on a custody event
-2. User chooses **“Swap Days”** or **“Adjust Time”**
-3. User enters a **Reason for Request** and clicks **“Send Request”**
-4. **Outcome:** Request appears as **pending**
+1. User initiates the flow
+2. User completes the required inputs
+3. User confirms the action
+4. **Outcome:** UI updates and data is saved
 
-### Flow 3: Approve/Decline a Request
+### Flow 3: Add events (activities, medical appointments, school events, holidays, custom categories)
 
-1. User selects a pending request in **Schedule Change Approvals**
-2. User enters **Response note (optional)**
-3. User clicks **“Approve change”** or **“Decline”**
-4. **Outcome:** Request status updates and response is saved
-
+1. User initiates the flow
+2. User completes the required inputs
+3. User confirms the action
+4. **Outcome:** UI updates and data is saved
 
 ## Done When
 
@@ -344,43 +410,34 @@ The provided components include empty state designs — make sure to render them
 - [ ] Matches the visual design
 - [ ] Responsive on mobile
 
+
 ---
 
-# Milestone 3: Messaging & Permissions
+# Milestone 4: Messaging & Permissions
 
 > **Provide alongside:** `product-overview.md`
 > **Prerequisites:** Milestone 1 (Foundation) complete, plus any prior section milestones
 
 ## Goal
 
-Implement the Messaging & Permissions feature — Professional parent-to-parent communication with threading, plus formal permission request workflows for approvals and decisions..
+Implement the Messaging & Permissions feature — Professional parent-to-parent communication with threading, plus formal permission request workflows for approvals and decisions.
 
 ## Overview
 
 Professional parent-to-parent communication platform combining threaded messaging with formal permission request workflows. Parents can send messages, create permission requests for decisions requiring approval, and track the status of all communications in a unified interface.
 
 **Key Functionality:**
+
 - Send and receive messages in chat-style conversations with threading
 - Mark messages as read/unread to track communication status
 - Create permission requests for medical decisions, travel plans, schedule changes, or extracurricular activities
 - Submit permission request → Awaiting response → Approve/Deny with status tracking
 - Filter between messages and permission requests in combined view
+- View conversation history and permission request outcomes
 
 ## Recommended Approach: Test-Driven Development
 
-Before implementing this section, **write tests first** based on the test specifications provided.
-
-See `product-plan/sections/messaging-and-permissions/tests.md` for detailed test-writing instructions including:
-- Key user flows to test (success and failure paths)
-- Specific UI elements, button labels, and interactions to verify
-- Expected behaviors and assertions
-
-The test instructions are framework-agnostic — adapt them to your testing setup (Jest, Vitest, Playwright, Cypress, RSpec, Minitest, PHPUnit, etc.).
-
-**TDD Workflow:**
-1. Read `tests.md` and write failing tests for the key user flows
-2. Implement the feature to make tests pass
-3. Refactor while keeping tests green
+See `product-plan/sections/messaging-and-permissions/tests.md` for detailed test-writing instructions.
 
 ## What to Implement
 
@@ -394,11 +451,7 @@ Copy the section components from `product-plan/sections/messaging-and-permission
 
 The components expect these data shapes:
 
-Parent, Message, PermissionRequest, Conversation
-
-You'll need to:
-- Create API endpoints or data fetching logic
-- Connect real data to the components
+- Parent, Message, PermissionRequest, Conversation
 
 ### Callbacks
 
@@ -415,13 +468,7 @@ Wire up these user actions:
 
 ### Empty States
 
-Implement empty state UI for when no records exist yet:
-
-- **No data yet:** Show a helpful message and call-to-action when the primary list/collection is empty
-- **No related records:** Handle cases where associated records don't exist (e.g., a project with no tasks)
-- **First-time user experience:** Guide users to create their first item with clear CTAs
-
-The provided components include empty state designs — make sure to render them when data is empty rather than showing blank screens.
+Implement empty state UI for when no records exist yet.
 
 ## Files to Reference
 
@@ -434,25 +481,26 @@ The provided components include empty state designs — make sure to render them
 
 ## Expected User Flows
 
-### Flow 1: Send a Message
+### Flow 1: Send and receive messages in chat-style conversations with threading
 
-1. User selects a conversation in **Threads**
-2. User types in the message box
-3. User clicks **“Send”**
-4. **Outcome:** Message appears in the thread
+1. User initiates the flow
+2. User completes the required inputs
+3. User confirms the action
+4. **Outcome:** UI updates and data is saved
 
-### Flow 2: Approve a Permission Request
+### Flow 2: Mark messages as read/unread to track communication status
 
-1. User selects a permission conversation
-2. User adds a response in **“Your response”**
-3. User clicks **“Approve request”**
-4. **Outcome:** Status badge updates and response is shown
+1. User initiates the flow
+2. User completes the required inputs
+3. User confirms the action
+4. **Outcome:** UI updates and data is saved
 
-### Flow 3: Filter Conversations
+### Flow 3: Create permission requests for medical decisions, travel plans, schedule changes, or extracurricular activities
 
-1. User selects **Messages** or **Permissions** filter
-2. **Outcome:** Conversation list updates to match the filter
-
+1. User initiates the flow
+2. User completes the required inputs
+3. User confirms the action
+4. **Outcome:** UI updates and data is saved
 
 ## Done When
 
@@ -465,22 +513,246 @@ The provided components include empty state designs — make sure to render them
 - [ ] Matches the visual design
 - [ ] Responsive on mobile
 
+
 ---
 
-# Milestone 4: User Signup & Family Management
+# Milestone 5: Expenses & Finances
 
 > **Provide alongside:** `product-overview.md`
 > **Prerequisites:** Milestone 1 (Foundation) complete, plus any prior section milestones
 
 ## Goal
 
-Implement the User Signup & Family Management feature — Account creation, child profile setup, family roles, and invite flow to bring a non-registered co-parent into the platform..
+Implement the Expenses & Finances feature — Expense tracking with receipt uploads, reimbursement requests, approval workflows, and spending analytics.
+
+## Overview
+
+A comprehensive expense tracking and budgeting system that allows parents to manage bank accounts and credit cards, upload statements, identify child-related expenses to share with co-parents, and track spending against category budgets.
+
+**Key Functionality:**
+
+- Add Bank Account - User adds a savings account with bank name, account name, last 4 digits, and assigns an owner
+- Add Credit Card - User adds a credit card with bank name, last 4 digits, card type (Visa/Mastercard/Amex), and assigns an owner
+- Upload Statement - User uploads a CSV statement for an account, then maps CSV columns to fields (date, description, amount, etc.) and saves the mapping as a reusable template for that account
+- Mark Statement Line as Child Expense - User reviews statement lines and marks relevant ones as child expenses, choosing whether co-parent approval is required; this creates a shared expense visible to both parents
+- Add Manual Expense - User adds an expense directly without linking to a bank account or statement
+- Manage Categories - User views predefined expense categories and can add custom categories
+
+## Recommended Approach: Test-Driven Development
+
+See `product-plan/sections/expenses-and-finances/tests.md` for detailed test-writing instructions.
+
+## What to Implement
+
+### Components
+
+Copy the section components from `product-plan/sections/expenses-and-finances/components/`:
+
+- `AccountList`
+- `AccountsOverview`
+- `BudgetSetup`
+- `CategoryManagement`
+- `CsvUploadMapping`
+- `Dashboard`
+- `ExpenseList`
+- `FinanceDashboard`
+- `StatementLineReview`
+
+### Data Layer
+
+The components expect these data shapes:
+
+- Family, Parent, Child, Account, CsvMappings, CsvMappingTemplate, Statement, StatementLine, Category, Budget, Expense, CategoryBreakdown, AccountSpend, DashboardSummary
+
+### Callbacks
+
+Wire up these user actions:
+
+- `onAddBankAccount` — Called when a user adds a new bank account
+- `onAddCreditCard` — Called when a user adds a new credit card
+- `onUploadStatement` — Called when a user uploads a statement file
+- `onSaveMappingTemplate` — Called when a user saves a CSV mapping template
+- `onMarkLineAsChildExpense` — Called when a statement line is marked as a child expense
+- `onAddManualExpense` — Called when a user adds a manual expense
+- `onAddCategory` — Called when a user adds a custom category
+- `onSetBudgetLimit` — Called when a user sets or updates a budget limit
+- `onViewExpense` — Called when a user selects an expense from the list
+
+### Empty States
+
+Implement empty state UI for when no records exist yet.
+
+## Files to Reference
+
+- `product-plan/sections/expenses-and-finances/README.md` — Feature overview and design intent
+- `product-plan/sections/expenses-and-finances/tests.md` — Test-writing instructions (use for TDD)
+- `product-plan/sections/expenses-and-finances/components/` — React components
+- `product-plan/sections/expenses-and-finances/types.ts` — TypeScript interfaces
+- `product-plan/sections/expenses-and-finances/sample-data.json` — Test data
+- `product-plan/sections/expenses-and-finances/screenshot.png` — Visual reference
+
+## Expected User Flows
+
+### Flow 1: Add Bank Account - User adds a savings account with bank name, account name, last 4 digits, and assigns an owner
+
+1. User initiates the flow
+2. User completes the required inputs
+3. User confirms the action
+4. **Outcome:** UI updates and data is saved
+
+### Flow 2: Add Credit Card - User adds a credit card with bank name, last 4 digits, card type (Visa/Mastercard/Amex), and assigns an owner
+
+1. User initiates the flow
+2. User completes the required inputs
+3. User confirms the action
+4. **Outcome:** UI updates and data is saved
+
+### Flow 3: Upload Statement - User uploads a CSV statement for an account, then maps CSV columns to fields (date, description, amount, etc.) and saves the mapping as a reusable template for that account
+
+1. User initiates the flow
+2. User completes the required inputs
+3. User confirms the action
+4. **Outcome:** UI updates and data is saved
+
+## Done When
+
+- [ ] Tests written for key user flows (success and failure paths)
+- [ ] All tests pass
+- [ ] Components render with real data
+- [ ] Empty states display properly when no records exist
+- [ ] All user actions work
+- [ ] User can complete all expected flows end-to-end
+- [ ] Matches the visual design
+- [ ] Responsive on mobile
+
+
+---
+
+# Milestone 6: Information Repository
+
+> **Provide alongside:** `product-overview.md`
+> **Prerequisites:** Milestone 1 (Foundation) complete, plus any prior section milestones
+
+## Goal
+
+Implement the Information Repository feature — Centralized storage for medical records, school documents, emergency contacts, and critical family information.
+
+## Overview
+
+A centralized repository for storing critical family information organized by child. Parents can manage medical records, school documents, and emergency contacts with full file attachment support. Both parents have equal access to view, add, and edit all stored information.
+
+**Key Functionality:**
+
+- View dashboard showing all children with quick stats (document counts, recent updates)
+- Select a child to see their categories (Medical, School, Emergency Contacts)
+- Browse items within a category and view details
+- Add new records with text fields and file attachments
+- Edit or delete existing records
+- Add/edit emergency contacts with name, phone, relationship, address, email, and notes
+
+## Recommended Approach: Test-Driven Development
+
+See `product-plan/sections/information-repository/tests.md` for detailed test-writing instructions.
+
+## What to Implement
+
+### Components
+
+Copy the section components from `product-plan/sections/information-repository/components/`:
+
+- `ChildCard`
+- `ChildDetail`
+- `DocumentDetail`
+- `DocumentRow`
+- `EmergencyContactCard`
+- `RepositoryDashboard`
+
+### Data Layer
+
+The components expect these data shapes:
+
+- Family, ChildCategoryStats, Child, DocumentFile, Attachment, Document, EmergencyContact, CategorySummary
+
+### Callbacks
+
+Wire up these user actions:
+
+- `onSelectChild` — Called when a child is selected from the dashboard
+- `onSelectCategory` — Called when a category is selected for a child
+- `onViewDocument` — Called when a document is opened for viewing
+- `onCreateDocument` — Called when a new document is created
+- `onEditDocument` — Called when a document is edited
+- `onDeleteDocument` — Called when a document is deleted
+- `onUploadDocumentFile` — Called when a user uploads or replaces a document file
+- `onCreateContact` — Called when a new emergency contact is added
+- `onEditContact` — Called when an emergency contact is edited
+- `onDeleteContact` — Called when an emergency contact is deleted
+
+### Empty States
+
+Implement empty state UI for when no records exist yet.
+
+## Files to Reference
+
+- `product-plan/sections/information-repository/README.md` — Feature overview and design intent
+- `product-plan/sections/information-repository/tests.md` — Test-writing instructions (use for TDD)
+- `product-plan/sections/information-repository/components/` — React components
+- `product-plan/sections/information-repository/types.ts` — TypeScript interfaces
+- `product-plan/sections/information-repository/sample-data.json` — Test data
+- `product-plan/sections/information-repository/screenshot.png` — Visual reference
+
+## Expected User Flows
+
+### Flow 1: View dashboard showing all children with quick stats (document counts, recent updates)
+
+1. User initiates the flow
+2. User completes the required inputs
+3. User confirms the action
+4. **Outcome:** UI updates and data is saved
+
+### Flow 2: Select a child to see their categories (Medical, School, Emergency Contacts)
+
+1. User initiates the flow
+2. User completes the required inputs
+3. User confirms the action
+4. **Outcome:** UI updates and data is saved
+
+### Flow 3: Browse items within a category and view details
+
+1. User initiates the flow
+2. User completes the required inputs
+3. User confirms the action
+4. **Outcome:** UI updates and data is saved
+
+## Done When
+
+- [ ] Tests written for key user flows (success and failure paths)
+- [ ] All tests pass
+- [ ] Components render with real data
+- [ ] Empty states display properly when no records exist
+- [ ] All user actions work
+- [ ] User can complete all expected flows end-to-end
+- [ ] Matches the visual design
+- [ ] Responsive on mobile
+
+
+---
+
+# Milestone 7: User Signup & Family Management
+
+> **Provide alongside:** `product-overview.md`
+> **Prerequisites:** Milestone 1 (Foundation) complete, plus any prior section milestones
+
+## Goal
+
+Implement the User Signup & Family Management feature — Account creation, child profile setup, family roles, and invite flow to bring a non-registered co-parent into the platform.
 
 ## Overview
 
 This section covers initial account creation and family setup, guiding a parent through creating a family, adding a child profile, and inviting a co-parent. After onboarding, a family setup hub summarizes key entities and invitation status so users can complete or revise setup details.
 
 **Key Functionality:**
+
 - Complete onboarding wizard: create account → create family → add child profile → invite co-parent → review & finish.
 - View family setup hub with cards for Family, Children, Invitations, and Roles.
 - Manage invites: send, resend, or cancel a co-parent invitation and see status badges.
@@ -489,19 +761,7 @@ This section covers initial account creation and family setup, guiding a parent 
 
 ## Recommended Approach: Test-Driven Development
 
-Before implementing this section, **write tests first** based on the test specifications provided.
-
-See `product-plan/sections/user-signup-and-family-management/tests.md` for detailed test-writing instructions including:
-- Key user flows to test (success and failure paths)
-- Specific UI elements, button labels, and interactions to verify
-- Expected behaviors and assertions
-
-The test instructions are framework-agnostic — adapt them to your testing setup (Jest, Vitest, Playwright, Cypress, RSpec, Minitest, PHPUnit, etc.).
-
-**TDD Workflow:**
-1. Read `tests.md` and write failing tests for the key user flows
-2. Implement the feature to make tests pass
-3. Refactor while keeping tests green
+See `product-plan/sections/user-signup-and-family-management/tests.md` for detailed test-writing instructions.
 
 ## What to Implement
 
@@ -516,11 +776,7 @@ Copy the section components from `product-plan/sections/user-signup-and-family-m
 
 The components expect these data shapes:
 
-ParentRole, ParentStatus, InvitationStatus, OnboardingStep, Family, Parent, Child, Invitation, OnboardingState
-
-You'll need to:
-- Create API endpoints or data fetching logic
-- Connect real data to the components
+- Family, Parent, Child, Invitation, OnboardingState
 
 ### Callbacks
 
@@ -540,13 +796,7 @@ Wire up these user actions:
 
 ### Empty States
 
-Implement empty state UI for when no records exist yet:
-
-- **No data yet:** Show a helpful message and call-to-action when the primary list/collection is empty
-- **No related records:** Handle cases where associated records don't exist (e.g., a project with no tasks)
-- **First-time user experience:** Guide users to create their first item with clear CTAs
-
-The provided components include empty state designs — make sure to render them when data is empty rather than showing blank screens.
+Implement empty state UI for when no records exist yet.
 
 ## Files to Reference
 
@@ -559,21 +809,26 @@ The provided components include empty state designs — make sure to render them
 
 ## Expected User Flows
 
-### Flow 1: Complete Onboarding Wizard
+### Flow 1: Complete onboarding wizard: create account → create family → add child profile → invite co-parent → review & finish.
 
-1. User fills **Full Name**, **Email Address**, **Password**
-2. User clicks **“Create Account”**, then **“Continue”**
-3. User adds a child and clicks **“Add Child”** then **“Continue”**
-4. User sends invite or chooses **“Skip for now”**
-5. User clicks **“Complete Setup”**
-6. **Outcome:** Onboarding completes
+1. User initiates the flow
+2. User completes the required inputs
+3. User confirms the action
+4. **Outcome:** UI updates and data is saved
 
-### Flow 2: Manage Invitations
+### Flow 2: View family setup hub with cards for Family, Children, Invitations, and Roles.
 
-1. User visits **Co-Parent Invitations**
-2. User clicks **“Resend”** or **“Cancel”**
-3. **Outcome:** Invitation status updates
+1. User initiates the flow
+2. User completes the required inputs
+3. User confirms the action
+4. **Outcome:** UI updates and data is saved
 
+### Flow 3: Manage invites: send, resend, or cancel a co-parent invitation and see status badges.
+
+1. User initiates the flow
+2. User completes the required inputs
+3. User confirms the action
+4. **Outcome:** UI updates and data is saved
 
 ## Done When
 

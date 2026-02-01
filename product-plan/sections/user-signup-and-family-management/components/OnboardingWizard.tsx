@@ -4,7 +4,7 @@ import type {
   OnboardingStep,
   Child,
   ParentRole,
-} from '../types'
+} from '../../../../../types'
 
 type WizardStep = 'account' | 'family' | 'child' | 'invite' | 'review'
 

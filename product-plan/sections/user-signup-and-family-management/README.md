@@ -22,7 +22,7 @@ This section covers initial account creation and family setup, guiding a parent 
 
 ## Data Used
 
-**Entities:** ParentRole, ParentStatus, InvitationStatus, OnboardingStep, Family, Parent, Child, Invitation, OnboardingState
+**Entities:** Family, Parent, Child, Invitation, OnboardingState
 
 **From global model:** Family, Parent, Child
 
@@ -32,8 +32,8 @@ See `screenshot.png` for the target UI design.
 
 ## Components Provided
 
-- `FamilySetupHub` — Family setup hub for managing roles, children, and invites
-- `OnboardingWizard` — Multi-step onboarding wizard for account and family setup
+- `FamilySetupHub` — Supporting UI component
+- `OnboardingWizard` — Multi-step onboarding flow
 
 ## Callback Props
 

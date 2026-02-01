@@ -2,7 +2,7 @@ import type {
   UserSignupAndFamilyManagementProps,
   InvitationStatus,
   ParentRole,
-} from '../types'
+} from '../../../../../types'
 
 interface FamilySetupHubProps
   extends Pick<
