@@ -1,0 +1,527 @@
+{
+  "_meta": {
+    "models": {
+      "family": "A co-parenting unit containing two parents and their shared children. The top-level container for all family data.",
+      "parents": "A user of the system, either the primary or secondary caregiver. Has authentication credentials, profile information, and notification preferences.",
+      "children": "A child being co-parented, with their own calendar events, expenses, documents, and timeline. Contains basic info like name and birthdate.",
+      "expenses": "A tracked cost with category, amount, date, description, and optional receipt. Supports reimbursement workflow with approval status.",
+      "accounts": "A bank account or credit card used to import statements and track spending.",
+      "statements": "An uploaded CSV statement tied to an account for a specific date range.",
+      "statementLines": "Individual transactions parsed from a statement.",
+      "csvMappingTemplates": "Saved column mappings for a specific account's CSV uploads.",
+      "categories": "Expense categories used for filtering, budgeting, and reporting.",
+      "budgets": "Monthly spending limits per category with current spend tracking.",
+      "dashboardSummary": "Aggregated spending totals and budget progress used by the dashboard charts."
+    },
+    "relationships": [
+      "Family has many Parents (exactly two) and many Children",
+      "Accounts and Expenses belong to a Family and are owned/created by a Parent",
+      "Statements belong to an Account; each Statement contains many Statement Lines",
+      "Statement Lines can be marked as child expenses, creating an Expense",
+      "Expenses use a Category and can optionally link to a Child",
+      "Budgets are set per Category and month, and DashboardSummary aggregates that data"
+    ]
+  },
+  "family": {
+    "id": "fam-mesa-verde",
+    "name": "Mesa Verde Family",
+    "timezone": "America/Denver"
+  },
+  "parents": [
+    {
+      "id": "par-1",
+      "name": "Jamie Rowe",
+      "email": "jamie.rowe@example.com",
+      "role": "primary"
+    },
+    {
+      "id": "par-2",
+      "name": "Alex Chen",
+      "email": "alex.chen@example.com",
+      "role": "secondary"
+    }
+  ],
+  "children": [
+    {
+      "id": "chi-1",
+      "name": "Mia Rowe",
+      "birthdate": "2016-04-18"
+    },
+    {
+      "id": "chi-2",
+      "name": "Evan Rowe",
+      "birthdate": "2019-09-03"
+    }
+  ],
+  "accounts": [
+    {
+      "id": "acc-001",
+      "type": "bank-account",
+      "bankName": "First Ridge Bank",
+      "accountName": "Household Checking",
+      "last4": "2381",
+      "accountSubtype": "checking",
+      "ownerParentId": "par-1"
+    },
+    {
+      "id": "acc-002",
+      "type": "bank-account",
+      "bankName": "Summit Federal",
+      "accountName": "Savings for School",
+      "last4": "6044",
+      "accountSubtype": "savings",
+      "ownerParentId": "par-2"
+    },
+    {
+      "id": "acc-003",
+      "type": "credit-card",
+      "bankName": "Northline Card Services",
+      "accountName": "Family Rewards",
+      "last4": "1149",
+      "cardType": "visa",
+      "ownerParentId": "par-1"
+    },
+    {
+      "id": "acc-004",
+      "type": "credit-card",
+      "bankName": "Canyon Credit",
+      "accountName": "Travel + Activities",
+      "last4": "7720",
+      "cardType": "mastercard",
+      "ownerParentId": "par-2"
+    },
+    {
+      "id": "acc-005",
+      "type": "credit-card",
+      "bankName": "Prairie Bank",
+      "accountName": "Medical Copays",
+      "last4": "3307",
+      "cardType": "amex",
+      "ownerParentId": "par-1"
+    }
+  ],
+  "csvMappingTemplates": [
+    {
+      "id": "map-001",
+      "accountId": "acc-003",
+      "name": "Northline CSV v2",
+      "mappings": {
+        "dateColumn": "Posting Date",
+        "descriptionColumn": "Description",
+        "amountColumn": "Amount",
+        "categoryColumn": "Category"
+      },
+      "delimiter": ",",
+      "hasHeaderRow": true,
+      "createdAt": "2025-12-28"
+    },
+    {
+      "id": "map-002",
+      "accountId": "acc-001",
+      "name": "First Ridge Statement",
+      "mappings": {
+        "dateColumn": "Date",
+        "descriptionColumn": "Memo",
+        "amountColumn": "Debit",
+        "categoryColumn": "Type"
+      },
+      "delimiter": ",",
+      "hasHeaderRow": true,
+      "createdAt": "2025-11-30"
+    }
+  ],
+  "statements": [
+    {
+      "id": "stm-001",
+      "accountId": "acc-003",
+      "fileName": "northline-dec-2025.csv",
+      "uploadedAt": "2025-12-31",
+      "periodStart": "2025-12-01",
+      "periodEnd": "2025-12-31",
+      "mappingTemplateId": "map-001"
+    },
+    {
+      "id": "stm-002",
+      "accountId": "acc-001",
+      "fileName": "firstridge-nov-2025.csv",
+      "uploadedAt": "2025-12-02",
+      "periodStart": "2025-11-01",
+      "periodEnd": "2025-11-30",
+      "mappingTemplateId": "map-002"
+    },
+    {
+      "id": "stm-003",
+      "accountId": "acc-002",
+      "fileName": "summit-dec-2025.csv",
+      "uploadedAt": "2025-12-29",
+      "periodStart": "2025-12-01",
+      "periodEnd": "2025-12-31",
+      "mappingTemplateId": null
+    }
+  ],
+  "statementLines": [
+    {
+      "id": "line-001",
+      "statementId": "stm-001",
+      "date": "2025-12-03",
+      "description": "Little Oaks Daycare - December tuition",
+      "amount": 940.0,
+      "currency": "USD",
+      "categoryGuess": "Childcare",
+      "isChildExpense": true,
+      "requiresApproval": true,
+      "linkedExpenseId": "exp-003"
+    },
+    {
+      "id": "line-002",
+      "statementId": "stm-001",
+      "date": "2025-12-05",
+      "description": "REI Kids snow gear",
+      "amount": 182.47,
+      "currency": "USD",
+      "categoryGuess": "Clothing",
+      "isChildExpense": true,
+      "requiresApproval": false,
+      "linkedExpenseId": "exp-004"
+    },
+    {
+      "id": "line-003",
+      "statementId": "stm-001",
+      "date": "2025-12-06",
+      "description": "Evergreen Pharmacy",
+      "amount": 24.18,
+      "currency": "USD",
+      "categoryGuess": "Medical",
+      "isChildExpense": true,
+      "requiresApproval": false,
+      "linkedExpenseId": "exp-005"
+    },
+    {
+      "id": "line-004",
+      "statementId": "stm-001",
+      "date": "2025-12-08",
+      "description": "City of Mesa Verde Parks",
+      "amount": 65.0,
+      "currency": "USD",
+      "categoryGuess": "Activities",
+      "isChildExpense": false,
+      "requiresApproval": false,
+      "linkedExpenseId": null
+    },
+    {
+      "id": "line-005",
+      "statementId": "stm-002",
+      "date": "2025-11-15",
+      "description": "Mesa Verde Swim School - winter session",
+      "amount": 210.0,
+      "currency": "USD",
+      "categoryGuess": "Activities",
+      "isChildExpense": true,
+      "requiresApproval": true,
+      "linkedExpenseId": "exp-006"
+    },
+    {
+      "id": "line-006",
+      "statementId": "stm-002",
+      "date": "2025-11-18",
+      "description": "Target - school supplies",
+      "amount": 36.92,
+      "currency": "USD",
+      "categoryGuess": "School",
+      "isChildExpense": true,
+      "requiresApproval": false,
+      "linkedExpenseId": "exp-007"
+    },
+    {
+      "id": "line-007",
+      "statementId": "stm-002",
+      "date": "2025-11-22",
+      "description": "Gas Station",
+      "amount": 41.35,
+      "currency": "USD",
+      "categoryGuess": "Transportation",
+      "isChildExpense": false,
+      "requiresApproval": false,
+      "linkedExpenseId": null
+    }
+  ],
+  "categories": [
+    {
+      "id": "cat-001",
+      "name": "Childcare",
+      "type": "predefined",
+      "color": "lime"
+    },
+    {
+      "id": "cat-002",
+      "name": "Medical",
+      "type": "predefined",
+      "color": "sky"
+    },
+    {
+      "id": "cat-003",
+      "name": "School",
+      "type": "predefined",
+      "color": "amber"
+    },
+    {
+      "id": "cat-004",
+      "name": "Activities",
+      "type": "predefined",
+      "color": "violet"
+    },
+    {
+      "id": "cat-005",
+      "name": "Clothing",
+      "type": "predefined",
+      "color": "rose"
+    },
+    {
+      "id": "cat-006",
+      "name": "Transportation",
+      "type": "predefined",
+      "color": "cyan"
+    },
+    {
+      "id": "cat-007",
+      "name": "Food",
+      "type": "predefined",
+      "color": "orange"
+    },
+    {
+      "id": "cat-008",
+      "name": "Extracurricular",
+      "type": "custom",
+      "color": "emerald"
+    },
+    {
+      "id": "cat-009",
+      "name": "Special Purchases",
+      "type": "custom",
+      "color": "fuchsia"
+    },
+    {
+      "id": "cat-010",
+      "name": "Other",
+      "type": "predefined",
+      "color": "stone"
+    }
+  ],
+  "budgets": [
+    {
+      "id": "bud-001",
+      "categoryId": "cat-001",
+      "month": "2025-12",
+      "limit": 1100.0,
+      "spent": 940.0,
+      "status": "near_limit"
+    },
+    {
+      "id": "bud-002",
+      "categoryId": "cat-004",
+      "month": "2025-12",
+      "limit": 300.0,
+      "spent": 275.0,
+      "status": "near_limit"
+    },
+    {
+      "id": "bud-003",
+      "categoryId": "cat-002",
+      "month": "2025-12",
+      "limit": 150.0,
+      "spent": 24.18,
+      "status": "on_track"
+    },
+    {
+      "id": "bud-004",
+      "categoryId": "cat-003",
+      "month": "2025-11",
+      "limit": 200.0,
+      "spent": 36.92,
+      "status": "on_track"
+    },
+    {
+      "id": "bud-005",
+      "categoryId": "cat-005",
+      "month": "2025-12",
+      "limit": 150.0,
+      "spent": 182.47,
+      "status": "over"
+    },
+    {
+      "id": "bud-006",
+      "categoryId": "cat-009",
+      "month": "2025-12",
+      "limit": 0.0,
+      "spent": 0.0,
+      "status": "on_track"
+    }
+  ],
+  "expenses": [
+    {
+      "id": "exp-001",
+      "familyId": "fam-mesa-verde",
+      "childId": "chi-1",
+      "createdByParentId": "par-1",
+      "categoryId": "cat-002",
+      "amount": 85.0,
+      "date": "2025-12-10",
+      "description": "Pediatrician co-pay and rapid strep test",
+      "status": "approved",
+      "requiresApproval": true,
+      "source": "manual",
+      "receiptUrl": "https://example.com/receipts/exp-001.pdf"
+    },
+    {
+      "id": "exp-002",
+      "familyId": "fam-mesa-verde",
+      "childId": "chi-2",
+      "createdByParentId": "par-2",
+      "categoryId": "cat-004",
+      "amount": 120.0,
+      "date": "2025-12-12",
+      "description": "Winter art camp registration (two half-day sessions)",
+      "status": "pending_approval",
+      "requiresApproval": true,
+      "source": "manual",
+      "receiptUrl": null
+    },
+    {
+      "id": "exp-003",
+      "familyId": "fam-mesa-verde",
+      "childId": "chi-2",
+      "createdByParentId": "par-1",
+      "categoryId": "cat-001",
+      "amount": 940.0,
+      "date": "2025-12-03",
+      "description": "Little Oaks Daycare tuition for December",
+      "status": "approved",
+      "requiresApproval": true,
+      "source": "statement",
+      "sourceStatementLineId": "line-001",
+      "receiptUrl": null
+    },
+    {
+      "id": "exp-004",
+      "familyId": "fam-mesa-verde",
+      "childId": "chi-1",
+      "createdByParentId": "par-1",
+      "categoryId": "cat-005",
+      "amount": 182.47,
+      "date": "2025-12-05",
+      "description": "Snow jacket, gloves, and boots (long-wear set purchased early for upcoming school ski program and winter weekends; includes replacement boots because the previous pair no longer fit)",
+      "status": "reimbursed",
+      "requiresApproval": false,
+      "source": "statement",
+      "sourceStatementLineId": "line-002",
+      "receiptUrl": null
+    },
+    {
+      "id": "exp-005",
+      "familyId": "fam-mesa-verde",
+      "childId": "chi-1",
+      "createdByParentId": "par-1",
+      "categoryId": "cat-002",
+      "amount": 24.18,
+      "date": "2025-12-06",
+      "description": "Over-the-counter allergy medicine",
+      "status": "approved",
+      "requiresApproval": false,
+      "source": "statement",
+      "sourceStatementLineId": "line-003",
+      "receiptUrl": null
+    },
+    {
+      "id": "exp-006",
+      "familyId": "fam-mesa-verde",
+      "childId": "chi-1",
+      "createdByParentId": "par-2",
+      "categoryId": "cat-004",
+      "amount": 210.0,
+      "date": "2025-11-15",
+      "description": "Swim school winter session",
+      "status": "pending_approval",
+      "requiresApproval": true,
+      "source": "statement",
+      "sourceStatementLineId": "line-005",
+      "receiptUrl": null
+    },
+    {
+      "id": "exp-007",
+      "familyId": "fam-mesa-verde",
+      "childId": null,
+      "createdByParentId": "par-2",
+      "categoryId": "cat-003",
+      "amount": 36.92,
+      "date": "2025-11-18",
+      "description": "School supplies and craft paper",
+      "status": "approved",
+      "requiresApproval": false,
+      "source": "statement",
+      "sourceStatementLineId": "line-006",
+      "receiptUrl": null
+    },
+    {
+      "id": "exp-008",
+      "familyId": "fam-mesa-verde",
+      "childId": "chi-2",
+      "createdByParentId": "par-1",
+      "categoryId": "cat-008",
+      "amount": 45.0,
+      "date": "2025-12-20",
+      "description": "Robotics club monthly fee",
+      "status": "denied",
+      "requiresApproval": true,
+      "source": "manual",
+      "receiptUrl": null
+    }
+  ],
+  "dashboardSummary": {
+    "month": "2025-12",
+    "totalSpent": 1331.65,
+    "totalChildExpenses": 1316.65,
+    "reimbursementsDue": 151.0,
+    "categoryBreakdown": [
+      {
+        "categoryId": "cat-001",
+        "spent": 940.0,
+        "budgetLimit": 1100.0
+      },
+      {
+        "categoryId": "cat-004",
+        "spent": 185.0,
+        "budgetLimit": 300.0
+      },
+      {
+        "categoryId": "cat-005",
+        "spent": 182.47,
+        "budgetLimit": 150.0
+      },
+      {
+        "categoryId": "cat-002",
+        "spent": 24.18,
+        "budgetLimit": 150.0
+      },
+      {
+        "categoryId": "cat-008",
+        "spent": 45.0,
+        "budgetLimit": null
+      }
+    ],
+    "accountSpend": [
+      {
+        "accountId": "acc-003",
+        "spent": 1241.65
+      },
+      {
+        "accountId": "acc-001",
+        "spent": 246.92
+      },
+      {
+        "accountId": "acc-005",
+        "spent": 85.0
+      }
+    ]
+  },
+  "pendingApprovals": []
+}

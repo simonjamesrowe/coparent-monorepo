@@ -1,0 +1,622 @@
+{
+  "_meta": {
+    "models": {
+      "family": "A co-parenting household that contains two parents and their shared children.",
+      "parent": "A caregiver in the family with profile and notification preferences.",
+      "child": "A child profile with basic info and care context.",
+      "event": "A calendar item such as custody periods, activities, appointments, or school dates.",
+      "expense": "A tracked cost that can be approved and reimbursed.",
+      "permissionRequest": "A formal approval request for schedule changes, activities, or purchases.",
+      "message": "A parent-to-parent communication preview used in the dashboard feed.",
+      "invitation": "An invitation sent to a co-parent or caregiver to join the family.",
+      "activityFeedItem": "A recent activity entry that references key actions across the product.",
+      "budgetSummary": "A monthly snapshot of spending versus limits, with category breakdowns.",
+      "setupChecklist": "A progress tracker showing steps to finish family setup.",
+      "widgetCard": "A dashboard tile with a metric and a navigation target.",
+      "quickAction": "A top-bar action for common tasks like expenses, events, and messages."
+    },
+    "relationships": [
+      "A Family contains Parents and Children.",
+      "Events, Expenses, Permission Requests, and Messages belong to a Family and may reference a Child.",
+      "Invitations are sent by a Parent to bring another caregiver into the Family.",
+      "Activity Feed items reference core entities by type and ID.",
+      "Budget Summary and Setup Checklist are derived from Family activity."
+    ]
+  },
+  "family": {
+    "id": "fam-001",
+    "name": "Rowe Family",
+    "timezone": "America/Los_Angeles",
+    "primaryParentId": "par-001",
+    "secondaryParentId": "par-002",
+    "childIds": ["chi-001", "chi-002"],
+    "createdAt": "2024-06-12T14:18:00Z",
+    "setupProgress": 0.75
+  },
+  "parents": [
+    {
+      "id": "par-001",
+      "fullName": "Alex Rowe",
+      "email": "alex.rowe@email.com",
+      "role": "primary",
+      "phone": "+1 (415) 555-0134",
+      "avatarUrl": "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=facearea&w=96&h=96",
+      "lastActiveAt": "2026-01-31T08:12:00Z",
+      "notificationPreferences": {
+        "email": true,
+        "sms": false,
+        "push": true
+      }
+    },
+    {
+      "id": "par-002",
+      "fullName": "Jordan Lee",
+      "email": "jordan.lee@email.com",
+      "role": "secondary",
+      "phone": "+1 (415) 555-0188",
+      "avatarUrl": "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=facearea&w=96&h=96",
+      "lastActiveAt": "2026-01-30T21:44:00Z",
+      "notificationPreferences": {
+        "email": true,
+        "sms": true,
+        "push": false
+      }
+    }
+  ],
+  "children": [
+    {
+      "id": "chi-001",
+      "firstName": "Maya",
+      "lastName": "Rowe",
+      "birthdate": "2015-04-09",
+      "grade": "4th",
+      "school": "Sutter Creek Elementary",
+      "avatarUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=facearea&w=96&h=96",
+      "medicalNotes": "Seasonal allergies; carries inhaler during PE.",
+      "allergies": ["pollen"]
+    },
+    {
+      "id": "chi-002",
+      "firstName": "Theo",
+      "lastName": "Rowe",
+      "birthdate": "2019-11-22",
+      "grade": "Pre-K",
+      "school": "Bright Steps Preschool",
+      "avatarUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=facearea&w=96&h=96",
+      "medicalNotes": "No known conditions.",
+      "allergies": []
+    }
+  ],
+  "events": [
+    {
+      "id": "evt-101",
+      "title": "Week A Custody Transfer",
+      "type": "custody",
+      "startAt": "2026-02-01T18:00:00-08:00",
+      "endAt": "2026-02-08T18:00:00-08:00",
+      "location": "Neutral drop-off point",
+      "childId": null,
+      "status": "confirmed",
+      "notes": "Meet at the community center parking lot."
+    },
+    {
+      "id": "evt-102",
+      "title": "Piano Lesson",
+      "type": "activity",
+      "startAt": "2026-02-03T16:30:00-08:00",
+      "endAt": "2026-02-03T17:15:00-08:00",
+      "location": "Oak Street Music Studio",
+      "childId": "chi-001",
+      "status": "confirmed",
+      "notes": "Bring lesson book and practice log."
+    },
+    {
+      "id": "evt-103",
+      "title": "Dental Checkup",
+      "type": "appointment",
+      "startAt": "2026-02-06T09:00:00-08:00",
+      "endAt": "2026-02-06T10:00:00-08:00",
+      "location": "River City Dental",
+      "childId": "chi-002",
+      "status": "tentative",
+      "notes": "Need to confirm insurance details."
+    },
+    {
+      "id": "evt-104",
+      "title": "School Holiday - Teacher Work Day",
+      "type": "school",
+      "startAt": "2026-02-14T00:00:00-08:00",
+      "endAt": "2026-02-14T23:59:00-08:00",
+      "location": "",
+      "childId": "chi-001",
+      "status": "confirmed",
+      "notes": "No classes; plan childcare coverage."
+    },
+    {
+      "id": "evt-105",
+      "title": "Soccer Game vs. Blue Hawks",
+      "type": "activity",
+      "startAt": "2026-02-15T11:00:00-08:00",
+      "endAt": "2026-02-15T12:30:00-08:00",
+      "location": "Willow Park Field 2",
+      "childId": "chi-001",
+      "status": "confirmed",
+      "notes": "Arrive 20 minutes early for warm-ups."
+    }
+  ],
+  "upcomingEvents": [
+    {
+      "id": "evt-101",
+      "title": "Week A Custody Transfer",
+      "type": "custody",
+      "startAt": "2026-02-01T18:00:00-08:00",
+      "endAt": "2026-02-08T18:00:00-08:00",
+      "location": "Neutral drop-off point",
+      "childId": null,
+      "status": "confirmed",
+      "notes": "Meet at the community center parking lot."
+    },
+    {
+      "id": "evt-102",
+      "title": "Piano Lesson",
+      "type": "activity",
+      "startAt": "2026-02-03T16:30:00-08:00",
+      "endAt": "2026-02-03T17:15:00-08:00",
+      "location": "Oak Street Music Studio",
+      "childId": "chi-001",
+      "status": "confirmed",
+      "notes": "Bring lesson book and practice log."
+    },
+    {
+      "id": "evt-103",
+      "title": "Dental Checkup",
+      "type": "appointment",
+      "startAt": "2026-02-06T09:00:00-08:00",
+      "endAt": "2026-02-06T10:00:00-08:00",
+      "location": "River City Dental",
+      "childId": "chi-002",
+      "status": "tentative",
+      "notes": "Need to confirm insurance details."
+    },
+    {
+      "id": "evt-105",
+      "title": "Soccer Game vs. Blue Hawks",
+      "type": "activity",
+      "startAt": "2026-02-15T11:00:00-08:00",
+      "endAt": "2026-02-15T12:30:00-08:00",
+      "location": "Willow Park Field 2",
+      "childId": "chi-001",
+      "status": "confirmed",
+      "notes": "Arrive 20 minutes early for warm-ups."
+    }
+  ],
+  "expenses": [
+    {
+      "id": "exp-201",
+      "title": "Piano lesson tuition",
+      "category": "Activities",
+      "amount": 120.0,
+      "currency": "USD",
+      "date": "2026-01-22",
+      "status": "approved",
+      "paidByParentId": "par-001",
+      "childId": "chi-001",
+      "receiptUrls": ["https://files.example.com/receipts/piano-jan.pdf"],
+      "description": "Monthly tuition for private piano lessons."
+    },
+    {
+      "id": "exp-202",
+      "title": "Dental co-pay",
+      "category": "Medical",
+      "amount": 45.5,
+      "currency": "USD",
+      "date": "2026-01-18",
+      "status": "pending",
+      "paidByParentId": "par-002",
+      "childId": "chi-002",
+      "receiptUrls": [],
+      "description": "Awaiting receipt upload; follow-up visit scheduled."
+    },
+    {
+      "id": "exp-203",
+      "title": "School supplies restock",
+      "category": "Education",
+      "amount": 68.25,
+      "currency": "USD",
+      "date": "2026-01-12",
+      "status": "reimbursed",
+      "paidByParentId": "par-001",
+      "childId": "chi-001",
+      "receiptUrls": ["https://files.example.com/receipts/supplies-jan.pdf"],
+      "description": "Notebooks, art materials, and replacement headphones."
+    },
+    {
+      "id": "exp-204",
+      "title": "Winter coat",
+      "category": "Clothing",
+      "amount": 89.99,
+      "currency": "USD",
+      "date": "2026-01-05",
+      "status": "approved",
+      "paidByParentId": "par-002",
+      "childId": "chi-002",
+      "receiptUrls": ["https://files.example.com/receipts/coat-jan.pdf"],
+      "description": "Bought during seasonal sale; includes matching gloves."
+    },
+    {
+      "id": "exp-205",
+      "title": "Field trip fee",
+      "category": "Education",
+      "amount": 25.0,
+      "currency": "USD",
+      "date": "2026-01-29",
+      "status": "pending",
+      "paidByParentId": "par-001",
+      "childId": "chi-001",
+      "receiptUrls": [],
+      "description": "Long description edge case: The science center trip includes transportation, lunch, and a hands-on workshop that lasts the full school day, so an early drop-off is required and Maya will need a packed water bottle."
+    },
+    {
+      "id": "exp-206",
+      "title": "After-school care",
+      "category": "Childcare",
+      "amount": 160.0,
+      "currency": "USD",
+      "date": "2026-01-15",
+      "status": "denied",
+      "paidByParentId": "par-002",
+      "childId": "chi-001",
+      "receiptUrls": ["https://files.example.com/receipts/aftercare-jan.pdf"],
+      "description": "Denied due to missing approval before booking."
+    }
+  ],
+  "permissionRequests": [
+    {
+      "id": "pr-301",
+      "title": "Swap custody weekend",
+      "type": "schedule-change",
+      "status": "pending",
+      "requestedByParentId": "par-002",
+      "resolvedByParentId": null,
+      "requestedAt": "2026-01-28T10:15:00Z",
+      "resolvedAt": null,
+      "summary": "Requesting to swap Feb 7-8 weekend due to work travel.",
+      "relatedEntityType": "event",
+      "relatedEntityId": "evt-101"
+    },
+    {
+      "id": "pr-302",
+      "title": "Approve soccer tournament fee",
+      "type": "purchase",
+      "status": "approved",
+      "requestedByParentId": "par-001",
+      "resolvedByParentId": "par-002",
+      "requestedAt": "2026-01-14T13:20:00Z",
+      "resolvedAt": "2026-01-15T09:05:00Z",
+      "summary": "Tournament fee due by Feb 10; includes uniforms and travel.",
+      "relatedEntityType": "expense",
+      "relatedEntityId": "exp-201"
+    },
+    {
+      "id": "pr-303",
+      "title": "Overnight field trip",
+      "type": "activity",
+      "status": "denied",
+      "requestedByParentId": "par-001",
+      "resolvedByParentId": "par-002",
+      "requestedAt": "2026-01-08T15:30:00Z",
+      "resolvedAt": "2026-01-09T12:00:00Z",
+      "summary": "Denied due to missing chaperone details.",
+      "relatedEntityType": "event",
+      "relatedEntityId": "evt-104"
+    },
+    {
+      "id": "pr-304",
+      "title": "Travel consent for grandparents visit",
+      "type": "travel",
+      "status": "pending",
+      "requestedByParentId": "par-001",
+      "resolvedByParentId": null,
+      "requestedAt": "2026-01-30T17:45:00Z",
+      "resolvedAt": null,
+      "summary": "Short weekend trip to Sacramento; itinerary attached.",
+      "relatedEntityType": "document",
+      "relatedEntityId": "doc-912"
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg-401",
+      "threadId": "thr-100",
+      "fromParentId": "par-002",
+      "toParentId": "par-001",
+      "subject": "School pickup swap",
+      "preview": "Can you cover pickup on Tuesday? I have a late meeting.",
+      "sentAt": "2026-01-30T18:22:00Z",
+      "unread": true
+    },
+    {
+      "id": "msg-402",
+      "threadId": "thr-101",
+      "fromParentId": "par-001",
+      "toParentId": "par-002",
+      "subject": "Dental insurance card",
+      "preview": "Uploading the updated card tonight.",
+      "sentAt": "2026-01-29T07:18:00Z",
+      "unread": false
+    },
+    {
+      "id": "msg-403",
+      "threadId": "thr-102",
+      "fromParentId": "par-002",
+      "toParentId": "par-001",
+      "subject": "Piano recital details",
+      "preview": "It starts at 6:30 PM; should we arrive early?",
+      "sentAt": "2026-01-27T20:05:00Z",
+      "unread": false
+    },
+    {
+      "id": "msg-404",
+      "threadId": "thr-103",
+      "fromParentId": "par-001",
+      "toParentId": "par-002",
+      "subject": "Field trip payment",
+      "preview": "I covered the fee; can you reimburse half?",
+      "sentAt": "2026-01-26T09:44:00Z",
+      "unread": false
+    },
+    {
+      "id": "msg-405",
+      "threadId": "thr-104",
+      "fromParentId": "par-002",
+      "toParentId": "par-001",
+      "subject": "Childcare coverage",
+      "preview": "I can take Theo after school on Thursday.",
+      "sentAt": "2026-01-25T16:10:00Z",
+      "unread": true
+    }
+  ],
+  "invitations": [
+    {
+      "id": "inv-501",
+      "email": "co.parent@example.com",
+      "role": "co-parent",
+      "status": "pending",
+      "sentAt": "2026-01-20T12:00:00Z",
+      "lastSentAt": "2026-01-27T09:00:00Z",
+      "expiresAt": "2026-02-20T12:00:00Z",
+      "invitedByParentId": "par-001"
+    },
+    {
+      "id": "inv-502",
+      "email": "caregiver@example.com",
+      "role": "caregiver",
+      "status": "accepted",
+      "sentAt": "2026-01-10T12:00:00Z",
+      "lastSentAt": "2026-01-10T12:00:00Z",
+      "expiresAt": "2026-02-10T12:00:00Z",
+      "invitedByParentId": "par-002"
+    }
+  ],
+  "activityFeed": [
+    {
+      "id": "act-601",
+      "type": "permission",
+      "title": "Approval needed: Swap custody weekend",
+      "timestamp": "2026-01-30T17:45:00Z",
+      "summary": "Jordan requested a schedule swap for Feb 7-8.",
+      "actorParentId": "par-002",
+      "entityType": "permissionRequest",
+      "entityId": "pr-301"
+    },
+    {
+      "id": "act-602",
+      "type": "expense",
+      "title": "Expense submitted: Field trip fee",
+      "timestamp": "2026-01-29T07:20:00Z",
+      "summary": "Alex added a $25.00 education expense for Maya.",
+      "actorParentId": "par-001",
+      "entityType": "expense",
+      "entityId": "exp-205"
+    },
+    {
+      "id": "act-603",
+      "type": "message",
+      "title": "New message: School pickup swap",
+      "timestamp": "2026-01-30T18:22:00Z",
+      "summary": "Jordan asked for Tuesday pickup coverage.",
+      "actorParentId": "par-002",
+      "entityType": "message",
+      "entityId": "msg-401"
+    },
+    {
+      "id": "act-604",
+      "type": "event",
+      "title": "Event updated: Dental checkup",
+      "timestamp": "2026-01-28T12:10:00Z",
+      "summary": "Tentative appointment added for Theo.",
+      "actorParentId": "par-001",
+      "entityType": "event",
+      "entityId": "evt-103"
+    },
+    {
+      "id": "act-605",
+      "type": "expense",
+      "title": "Expense approved: Piano lesson tuition",
+      "timestamp": "2026-01-23T08:05:00Z",
+      "summary": "Reimbursement approved for January lessons.",
+      "actorParentId": "par-002",
+      "entityType": "expense",
+      "entityId": "exp-201"
+    },
+    {
+      "id": "act-606",
+      "type": "permission",
+      "title": "Permission denied: Overnight field trip",
+      "timestamp": "2026-01-09T12:00:00Z",
+      "summary": "Request denied due to missing chaperone details.",
+      "actorParentId": "par-002",
+      "entityType": "permissionRequest",
+      "entityId": "pr-303"
+    },
+    {
+      "id": "act-607",
+      "type": "event",
+      "title": "Upcoming: Soccer game vs. Blue Hawks",
+      "timestamp": "2026-01-31T09:00:00Z",
+      "summary": "Game day reminder for Feb 15. Pack water and shin guards.",
+      "actorParentId": "par-001",
+      "entityType": "event",
+      "entityId": "evt-105"
+    }
+  ],
+  "budgetSummary": {
+    "month": "January 2026",
+    "totalLimit": 950.0,
+    "totalSpent": 508.74,
+    "remaining": 441.26,
+    "categories": [
+      {
+        "category": "Education",
+        "limit": 200.0,
+        "spent": 93.25
+      },
+      {
+        "category": "Medical",
+        "limit": 150.0,
+        "spent": 45.5
+      },
+      {
+        "category": "Activities",
+        "limit": 250.0,
+        "spent": 120.0
+      },
+      {
+        "category": "Childcare",
+        "limit": 250.0,
+        "spent": 160.0
+      },
+      {
+        "category": "Clothing",
+        "limit": 100.0,
+        "spent": 89.99
+      }
+    ]
+  },
+  "approvalsSummary": {
+    "totalPending": 2,
+    "byType": {
+      "expenses": 1,
+      "scheduleChanges": 1,
+      "permissions": 0
+    }
+  },
+  "setupChecklist": {
+    "completedCount": 3,
+    "totalCount": 4,
+    "items": [
+      {
+        "id": "setup-1",
+        "label": "Complete parent profiles",
+        "completed": true
+      },
+      {
+        "id": "setup-2",
+        "label": "Add children",
+        "completed": true
+      },
+      {
+        "id": "setup-3",
+        "label": "Invite co-parent",
+        "completed": true
+      },
+      {
+        "id": "setup-4",
+        "label": "Upload first document",
+        "completed": false
+      }
+    ]
+  },
+  "widgetCards": [
+    {
+      "id": "wid-1",
+      "title": "Upcoming Events",
+      "value": "4",
+      "description": "Next 14 days",
+      "trend": "up",
+      "delta": "+1",
+      "size": "lg",
+      "sectionId": "calendar"
+    },
+    {
+      "id": "wid-2",
+      "title": "Pending Approvals",
+      "value": "2",
+      "description": "Requires response",
+      "trend": "flat",
+      "delta": "0",
+      "size": "md",
+      "sectionId": "permissions"
+    },
+    {
+      "id": "wid-3",
+      "title": "Monthly Spend",
+      "value": "$509",
+      "description": "$441 remaining",
+      "trend": "down",
+      "delta": "-8%",
+      "size": "md",
+      "sectionId": "expenses"
+    },
+    {
+      "id": "wid-4",
+      "title": "Unread Messages",
+      "value": "2",
+      "description": "Last 24 hours",
+      "trend": "up",
+      "delta": "+2",
+      "size": "sm",
+      "sectionId": "messaging"
+    },
+    {
+      "id": "wid-5",
+      "title": "Family Setup",
+      "value": "75%",
+      "description": "1 step remaining",
+      "trend": "up",
+      "delta": "+25%",
+      "size": "sm",
+      "sectionId": "family"
+    },
+    {
+      "id": "wid-6",
+      "title": "Recent Activity",
+      "value": "7",
+      "description": "This week",
+      "trend": "flat",
+      "delta": "0",
+      "size": "lg",
+      "sectionId": "dashboard"
+    }
+  ],
+  "quickActions": [
+    {
+      "id": "add-expense",
+      "label": "Add Expense",
+      "helper": "Upload a receipt",
+      "shortcut": "E"
+    },
+    {
+      "id": "create-event",
+      "label": "Create Event",
+      "helper": "Schedule custody or activity",
+      "shortcut": "C"
+    },
+    {
+      "id": "send-message",
+      "label": "Send Message",
+      "helper": "Start a new thread",
+      "shortcut": "M"
+    }
+  ]
+}

@@ -1,0 +1,382 @@
+{
+  "_meta": {
+    "models": {
+      "parents": "The two co-parents who share custody. Each has a display name, color for calendar visualization, and avatar.",
+      "children": "The children being co-parented. Events can optionally be linked to a specific child.",
+      "events": "Calendar entries including custody blocks, activities, appointments, school events, and holidays. Each event has a type, time range, and optional child association.",
+      "eventCategories": "Categories for organizing events. Includes default types (custody, medical, school, activity) plus custom user-created categories.",
+      "scheduleChangeRequests": "Requests from one parent to modify the custody schedule. Requires approval from the other parent before taking effect."
+    },
+    "relationships": [
+      "Each Event belongs to the Family and may optionally be linked to a specific Child",
+      "Events are color-coded by the Parent who has custody (for custody-type events)",
+      "Each Event has an EventCategory that determines its icon and color",
+      "ScheduleChangeRequests reference the original Event and propose a modification",
+      "ScheduleChangeRequests are created by one Parent and resolved by the other"
+    ]
+  },
+  "parents": [
+    {
+      "id": "parent-001",
+      "name": "Sarah",
+      "fullName": "Sarah Mitchell",
+      "email": "sarah.mitchell@email.com",
+      "color": "violet",
+      "avatarUrl": null
+    },
+    {
+      "id": "parent-002",
+      "name": "James",
+      "fullName": "James Mitchell",
+      "email": "james.mitchell@email.com",
+      "color": "sky",
+      "avatarUrl": null
+    }
+  ],
+  "children": [
+    {
+      "id": "child-001",
+      "name": "Emma",
+      "fullName": "Emma Mitchell",
+      "birthdate": "2017-03-15",
+      "avatarUrl": null
+    },
+    {
+      "id": "child-002",
+      "name": "Liam",
+      "fullName": "Liam Mitchell",
+      "birthdate": "2019-08-22",
+      "avatarUrl": null
+    }
+  ],
+  "eventCategories": [
+    {
+      "id": "cat-custody",
+      "name": "Custody",
+      "icon": "home",
+      "isDefault": true,
+      "isSystem": true
+    },
+    {
+      "id": "cat-medical",
+      "name": "Medical",
+      "icon": "heart-pulse",
+      "color": "red",
+      "isDefault": true,
+      "isSystem": false
+    },
+    {
+      "id": "cat-school",
+      "name": "School",
+      "icon": "graduation-cap",
+      "color": "amber",
+      "isDefault": true,
+      "isSystem": false
+    },
+    {
+      "id": "cat-activity",
+      "name": "Activity",
+      "icon": "trophy",
+      "color": "green",
+      "isDefault": true,
+      "isSystem": false
+    },
+    {
+      "id": "cat-holiday",
+      "name": "Holiday",
+      "icon": "cake",
+      "color": "pink",
+      "isDefault": true,
+      "isSystem": false
+    },
+    {
+      "id": "cat-soccer",
+      "name": "Soccer",
+      "icon": "circle",
+      "color": "emerald",
+      "isDefault": false,
+      "isSystem": false
+    },
+    {
+      "id": "cat-piano",
+      "name": "Piano Lessons",
+      "icon": "music",
+      "color": "indigo",
+      "isDefault": false,
+      "isSystem": false
+    }
+  ],
+  "events": [
+    {
+      "id": "evt-001",
+      "type": "custody",
+      "title": "With Mom",
+      "startDate": "2025-01-06",
+      "endDate": "2025-01-10",
+      "allDay": true,
+      "parentId": "parent-001",
+      "childIds": ["child-001", "child-002"],
+      "categoryId": "cat-custody",
+      "notes": null,
+      "recurring": null
+    },
+    {
+      "id": "evt-002",
+      "type": "custody",
+      "title": "With Dad",
+      "startDate": "2025-01-10",
+      "endDate": "2025-01-13",
+      "allDay": true,
+      "parentId": "parent-002",
+      "childIds": ["child-001", "child-002"],
+      "categoryId": "cat-custody",
+      "notes": null,
+      "recurring": null
+    },
+    {
+      "id": "evt-003",
+      "type": "custody",
+      "title": "With Mom",
+      "startDate": "2025-01-13",
+      "endDate": "2025-01-17",
+      "allDay": true,
+      "parentId": "parent-001",
+      "childIds": ["child-001", "child-002"],
+      "categoryId": "cat-custody",
+      "notes": null,
+      "recurring": null
+    },
+    {
+      "id": "evt-004",
+      "type": "custody",
+      "title": "With Dad",
+      "startDate": "2025-01-17",
+      "endDate": "2025-01-20",
+      "allDay": true,
+      "parentId": "parent-002",
+      "childIds": ["child-001", "child-002"],
+      "categoryId": "cat-custody",
+      "notes": null,
+      "recurring": null
+    },
+    {
+      "id": "evt-005",
+      "type": "activity",
+      "title": "Soccer Practice",
+      "startDate": "2025-01-07",
+      "startTime": "16:00",
+      "endTime": "17:30",
+      "allDay": false,
+      "parentId": null,
+      "childIds": ["child-001"],
+      "categoryId": "cat-soccer",
+      "location": "Riverside Sports Complex",
+      "notes": "Bring water bottle and shin guards",
+      "recurring": {
+        "frequency": "weekly",
+        "days": ["tuesday"]
+      }
+    },
+    {
+      "id": "evt-006",
+      "type": "activity",
+      "title": "Piano Lesson",
+      "startDate": "2025-01-08",
+      "startTime": "15:30",
+      "endTime": "16:15",
+      "allDay": false,
+      "parentId": null,
+      "childIds": ["child-001"],
+      "categoryId": "cat-piano",
+      "location": "Harmony Music Academy",
+      "notes": "Practicing Fur Elise for spring recital",
+      "recurring": {
+        "frequency": "weekly",
+        "days": ["wednesday"]
+      }
+    },
+    {
+      "id": "evt-007",
+      "type": "medical",
+      "title": "Emma - Dental Checkup",
+      "startDate": "2025-01-14",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "allDay": false,
+      "parentId": null,
+      "childIds": ["child-001"],
+      "categoryId": "cat-medical",
+      "location": "Bright Smiles Pediatric Dentistry",
+      "notes": "6-month cleaning and checkup. May need to discuss braces timeline.",
+      "recurring": null
+    },
+    {
+      "id": "evt-008",
+      "type": "medical",
+      "title": "Liam - Pediatrician Appointment",
+      "startDate": "2025-01-22",
+      "startTime": "14:30",
+      "endTime": "15:15",
+      "allDay": false,
+      "parentId": null,
+      "childIds": ["child-002"],
+      "categoryId": "cat-medical",
+      "location": "Children's Health Partners",
+      "notes": "Annual wellness check. Bring vaccination records.",
+      "recurring": null
+    },
+    {
+      "id": "evt-009",
+      "type": "school",
+      "title": "Parent-Teacher Conference",
+      "startDate": "2025-01-16",
+      "startTime": "18:00",
+      "endTime": "19:00",
+      "allDay": false,
+      "parentId": null,
+      "childIds": ["child-001"],
+      "categoryId": "cat-school",
+      "location": "Oakwood Elementary School",
+      "notes": "Meeting with Mrs. Johnson about Emma's reading progress",
+      "recurring": null
+    },
+    {
+      "id": "evt-010",
+      "type": "school",
+      "title": "Liam - Preschool Art Show",
+      "startDate": "2025-01-24",
+      "startTime": "10:00",
+      "endTime": "11:30",
+      "allDay": false,
+      "parentId": null,
+      "childIds": ["child-002"],
+      "categoryId": "cat-school",
+      "location": "Little Explorers Preschool",
+      "notes": "Liam's winter art project will be displayed",
+      "recurring": null
+    },
+    {
+      "id": "evt-011",
+      "type": "holiday",
+      "title": "Martin Luther King Jr. Day",
+      "startDate": "2025-01-20",
+      "allDay": true,
+      "parentId": null,
+      "childIds": ["child-001", "child-002"],
+      "categoryId": "cat-holiday",
+      "notes": "No school - kids will be with Dad",
+      "recurring": null
+    },
+    {
+      "id": "evt-012",
+      "type": "activity",
+      "title": "Emma's Birthday Party",
+      "startDate": "2025-03-15",
+      "startTime": "14:00",
+      "endTime": "17:00",
+      "allDay": false,
+      "parentId": null,
+      "childIds": ["child-001"],
+      "categoryId": "cat-holiday",
+      "location": "Jump Zone Trampoline Park",
+      "notes": "8th birthday! Invitations sent to 12 classmates. Cake ordered from Sweet Delights.",
+      "recurring": null
+    },
+    {
+      "id": "evt-013",
+      "type": "activity",
+      "title": "Soccer Game",
+      "startDate": "2025-01-11",
+      "startTime": "09:00",
+      "endTime": "10:30",
+      "allDay": false,
+      "parentId": null,
+      "childIds": ["child-001"],
+      "categoryId": "cat-soccer",
+      "location": "Central Park Field 3",
+      "notes": "First game of the season vs. Northside Tigers",
+      "recurring": null
+    },
+    {
+      "id": "evt-014",
+      "type": "custody",
+      "title": "With Mom",
+      "startDate": "2025-01-20",
+      "endDate": "2025-01-24",
+      "allDay": true,
+      "parentId": "parent-001",
+      "childIds": ["child-001", "child-002"],
+      "categoryId": "cat-custody",
+      "notes": null,
+      "recurring": null
+    },
+    {
+      "id": "evt-015",
+      "type": "custody",
+      "title": "With Dad",
+      "startDate": "2025-01-24",
+      "endDate": "2025-01-27",
+      "allDay": true,
+      "parentId": "parent-002",
+      "childIds": ["child-001", "child-002"],
+      "categoryId": "cat-custody",
+      "notes": null,
+      "recurring": null
+    }
+  ],
+  "scheduleChangeRequests": [
+    {
+      "id": "req-001",
+      "status": "pending",
+      "requestedBy": "parent-002",
+      "requestedAt": "2025-01-05T14:32:00Z",
+      "resolvedBy": null,
+      "resolvedAt": null,
+      "originalEventId": "evt-004",
+      "proposedChange": {
+        "type": "swap",
+        "originalStartDate": "2025-01-17",
+        "originalEndDate": "2025-01-20",
+        "newStartDate": "2025-01-18",
+        "newEndDate": "2025-01-21"
+      },
+      "reason": "I have a work conference on Friday the 17th that I can't reschedule. Could we shift the weekend by one day? I can pick up the kids Saturday morning instead.",
+      "responseNote": null
+    },
+    {
+      "id": "req-002",
+      "status": "approved",
+      "requestedBy": "parent-001",
+      "requestedAt": "2024-12-28T09:15:00Z",
+      "resolvedBy": "parent-002",
+      "resolvedAt": "2024-12-28T18:42:00Z",
+      "originalEventId": "evt-002",
+      "proposedChange": {
+        "type": "extend",
+        "originalStartDate": "2025-01-10",
+        "originalEndDate": "2025-01-13",
+        "newStartDate": "2025-01-10",
+        "newEndDate": "2025-01-12"
+      },
+      "reason": "My parents are visiting from out of state on the 12th and would love to see the kids. Could you bring them back a day early?",
+      "responseNote": "That works for me. Tell your parents I said hi!"
+    },
+    {
+      "id": "req-003",
+      "status": "declined",
+      "requestedBy": "parent-002",
+      "requestedAt": "2024-12-20T11:05:00Z",
+      "resolvedBy": "parent-001",
+      "resolvedAt": "2024-12-21T08:30:00Z",
+      "originalEventId": null,
+      "proposedChange": {
+        "type": "add",
+        "newStartDate": "2024-12-25",
+        "newEndDate": "2024-12-26"
+      },
+      "reason": "I'd like to have the kids on Christmas morning this year since you had them last year.",
+      "responseNote": "We already agreed to alternate years and this year is my turn per our custody agreement. Let's stick to the schedule we set."
+    }
+  ],
+  "currentParentId": "parent-001"
+}
