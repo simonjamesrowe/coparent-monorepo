@@ -3,7 +3,7 @@ import type {
   ScheduleChangeRequest,
   Event,
   Parent,
-} from '../types'
+} from '../../../../../types'
 import { useMemo, useState } from 'react'
 
 type FilterMode = 'all' | 'pending' | 'approved' | 'declined'

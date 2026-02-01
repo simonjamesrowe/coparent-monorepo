@@ -4,7 +4,7 @@ import type {
   Message,
   PermissionRequest,
   MessagingAndPermissionsProps
-} from '../types'
+} from '../../../../../types'
 
 type FilterMode = 'all' | 'message' | 'permission'
 

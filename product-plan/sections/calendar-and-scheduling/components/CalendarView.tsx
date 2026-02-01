@@ -1,4 +1,4 @@
-import type { CalendarSchedulingProps, Event, Parent } from '../types'
+import type { CalendarSchedulingProps, Event, Parent } from '../../../../../types'
 import { useState, useMemo } from 'react'
 import { CalendarHeader } from './CalendarHeader'
 import { MonthView } from './MonthView'

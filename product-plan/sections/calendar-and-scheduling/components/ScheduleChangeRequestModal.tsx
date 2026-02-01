@@ -1,5 +1,6 @@
-import type { Event, Parent, ProposedChange } from '../types'
+import type { Event, Parent, ProposedChange } from '../../../../../types'
 import { useState, useMemo } from 'react'
+import { Sheet, SheetContent } from '../../../components/ui/sheet'
 
 export interface ScheduleChangeRequestModalProps {
   /** Whether the drawer is open */
@@ -100,20 +101,9 @@ export function ScheduleChangeRequestModal({
   const isFormValid = newStartDate && newEndDate && reason.trim().length >= 10
 
   return (
-    <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 animate-in fade-in duration-200"
-        onClick={onClose}
-      />
-
-      {/* Drawer */}
-      <div className="fixed inset-0 z-50 flex justify-end">
-        <div
-          className="h-full w-full bg-white dark:bg-slate-800 shadow-2xl border-l border-slate-200/60
-                     dark:border-slate-700/60 animate-in slide-in-from-right duration-300 sm:w-3/4 flex flex-col"
-          onClick={e => e.stopPropagation()}
-        >
+    <Sheet open={isOpen} onOpenChange={(open) => { if (!open) onClose?.() }}>
+      <SheetContent side="right" className="w-full sm:w-3/4 sm:max-w-none p-0 gap-0">
+        <div className="flex h-full flex-col">
           {/* Header */}
           <div className="relative px-6 pt-6 pb-4 border-b border-slate-200 dark:border-slate-700">
             {/* Decorative gradient accent */}
@@ -128,15 +118,6 @@ export function ScheduleChangeRequestModal({
                   Request approval from {otherParent?.name || 'the other parent'}
                 </p>
               </div>
-              <button
-                onClick={onClose}
-                className="p-2 -m-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300
-                         transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
             </div>
           </div>
 
@@ -372,7 +353,7 @@ export function ScheduleChangeRequestModal({
             </div>
           </div>
         </div>
-      </div>
-    </>
+      </SheetContent>
+    </Sheet>
   )
 }

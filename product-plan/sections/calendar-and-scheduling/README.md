@@ -36,17 +36,17 @@ See `screenshot.png` for the target UI design.
 
 ## Components Provided
 
-- `CalendarHeader` — Navigation header with Today and view switcher
-- `CalendarView` — Primary calendar experience with view toggles and stats
-- `CategoryManagement` — Manage custom event categories and usage
-- `DayView` — Detailed day agenda view
-- `EventCreationForm` — Form to create new events and custody blocks
-- `EventPill` — Compact event badge used across views
-- `MonthView` — Month grid view with event pills
-- `PendingRequestsBadge` — Badge showing pending schedule requests
-- `ScheduleChangeApproval` — Review and approve/decline schedule change requests
-- `ScheduleChangeRequestModal` — Modal for proposing custody schedule changes
-- `WeekView` — Week layout with time blocks
+- `CalendarHeader` — Supporting UI component
+- `CalendarView` — Main view component
+- `CategoryManagement` — Supporting UI component
+- `DayView` — Main view component
+- `EventCreationForm` — Form layout
+- `EventPill` — Supporting UI component
+- `MonthView` — Main view component
+- `PendingRequestsBadge` — Supporting UI component
+- `ScheduleChangeApproval` — Supporting UI component
+- `ScheduleChangeRequestModal` — Modal dialog
+- `WeekView` — Main view component
 
 ## Callback Props
 

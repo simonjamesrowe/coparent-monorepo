@@ -1,23 +1,9 @@
 # Application Shell
 
-## Overview
+The shell provides navigation and layout chrome for the product. Copy these components into your implementation codebase and wire navigation to your routing system.
 
-The CoParent shell provides a calm, professional navigation experience that wraps all sections. It uses a sidebar pattern that keeps navigation accessible while maximizing content space. The design emphasizes trust and clarity, reflecting the "Calm Harbor" aesthetic.
+## Components
 
-## Navigation Items
-
-- Dashboard
-- Calendar
-- Messages
-- Expenses
-- Documents
-- Timeline
-- Settings
-- Desktop (1024px+):
-- Tablet (768px-1023px):
-- Mobile (<768px):
-
-## Notes
-
-- Sidebar layout with responsive behavior (desktop fixed, tablet collapsible, mobile drawer)
-- Uses teal for active states and accents
+- `AppShell.tsx` — layout wrapper for navigation + content
+- `MainNav.tsx` — primary navigation items
+- `UserMenu.tsx` — user avatar and logout

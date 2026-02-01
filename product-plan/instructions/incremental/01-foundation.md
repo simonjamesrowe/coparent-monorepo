@@ -31,8 +31,6 @@
 - The components are props-based and ready to integrate — focus on the backend and data layer
 
 ---
-
-
 ## Goal
 
 Set up the foundational elements: design tokens, data model types, routing structure, and application shell.
@@ -58,12 +56,13 @@ Create TypeScript interfaces for your core entities:
 
 Create placeholder routes for each section:
 
-- /calendar-scheduling — Calendar & Scheduling
-- /messaging-permissions — Messaging & Permissions
-- /expenses-finances — Expenses & Finances
-- /information-repository — Information Repository
-- /timeline-photos — Timeline & Photos
-- /user-signup-family-management — User Signup & Family Management
+- `/dashboard`
+- `/calendar-and-scheduling`
+- `/messaging-and-permissions`
+- `/expenses-and-finances`
+- `/information-repository`
+- `/timeline-and-photos`
+- `/user-signup-and-family-management`
 
 ### 4. Application Shell
 
@@ -78,15 +77,12 @@ Copy the shell components from `product-plan/shell/components/` to your project:
 Connect navigation to your routing:
 
 - Dashboard
-- Calendar
-- Messages
-- Expenses
-- Documents
-- Timeline
-- Settings
-- Desktop (1024px+):
-- Tablet (768px-1023px):
-- Mobile (<768px):
+- Calendar & Scheduling
+- Messaging & Permissions
+- Expenses & Finances
+- Information Repository
+- Timeline & Photos
+- User Signup & Family Management
 
 **User Menu:**
 
@@ -101,7 +97,6 @@ The user menu expects:
 - `product-plan/data-model/` — Type definitions
 - `product-plan/shell/README.md` — Shell design intent
 - `product-plan/shell/components/` — Shell React components
-- `product-plan/shell/screenshot.png` — Shell visual reference
 
 ## Done When
 

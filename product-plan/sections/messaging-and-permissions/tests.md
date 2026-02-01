@@ -1,140 +1,159 @@
 # Test Instructions: Messaging & Permissions
 
-These test-writing instructions are **framework-agnostic**. Adapt them to your testing setup (Jest, Vitest, Playwright, Cypress, React Testing Library, RSpec, Minitest, PHPUnit, etc.).
+These test-writing instructions are framework-agnostic. Adapt them to your testing setup.
 
 ## Overview
 
-Validate the unified communications workspace that blends chat-style messaging with permission approvals. Key UI labels include **“New message”**, **“New permission”**, **“All / Messages / Permissions”**, **“Send”**, and **“Approve request.”**
+Professional parent-to-parent communication platform combining threaded messaging with formal permission request workflows. Parents can send messages, create permission requests for decisions requiring approval, and track the status of all communications in a unified interface.
 
 ---
 
 ## User Flow Tests
 
-### Flow 1: Send a Message
+### Flow 1: Send and receive messages in chat-style conversations with threading
 
-**Scenario:** User sends a new message in an existing conversation.
+**Scenario:** Send and receive messages in chat-style conversations with threading
 
 #### Success Path
 
 **Setup:**
-- Conversations list includes at least one `type: "message"` thread.
+- Seed sample data from `sample-data.json`
 
 **Steps:**
-1. Select a conversation in **Threads**.
-2. Enter text into the message box (placeholder: “Write a message or follow up on a decision...” ).
-3. Click **“Send.”**
+1. User navigates to the section
+2. User performs the action described in the flow
+3. User confirms the change
 
 **Expected Results:**
-- [ ] `onSendMessage` called with conversation id and message text.
-- [ ] Draft message clears after send.
-- [ ] Message appears in the thread with timestamp.
+- [ ] UI updates to reflect the completed action
+- [ ] Relevant callbacks fire with correct IDs
+- [ ] Success state is visible
 
-#### Failure Path: Empty Message
+#### Failure Path
 
 **Setup:**
-- Leave draft empty.
+- Simulate a failed API response
 
 **Steps:**
-1. Click **“Send.”**
+1. Repeat the same action
 
 **Expected Results:**
-- [ ] Message is not sent.
-- [ ] No new message is appended.
+- [ ] Error message is displayed
+- [ ] UI remains stable and user can retry
 
-### Flow 2: Approve a Permission Request
+### Flow 2: Mark messages as read/unread to track communication status
 
-**Scenario:** User approves a pending permission request.
+**Scenario:** Mark messages as read/unread to track communication status
+
+#### Success Path
+
+**Setup:**
+- Seed sample data from `sample-data.json`
 
 **Steps:**
-1. Select a conversation labeled **“Permission.”**
-2. Enter response text in **“Your response”** textarea (placeholder: “Share any notes or conditions...” ).
-3. Click **“Approve request.”**
+1. User navigates to the section
+2. User performs the action described in the flow
+3. User confirms the change
 
 **Expected Results:**
-- [ ] `onApprovePermission` called with permission id and response.
-- [ ] Status badge updates to approved.
-- [ ] “Resolved …” text appears if `resolvedAt` is set.
+- [ ] UI updates to reflect the completed action
+- [ ] Relevant callbacks fire with correct IDs
+- [ ] Success state is visible
 
-### Flow 3: Filter Conversations
+#### Failure Path
 
-**Scenario:** User filters between all, messages only, and permission requests.
+**Setup:**
+- Simulate a failed API response
 
 **Steps:**
-1. Click filter **“Messages.”**
-2. Click filter **“Permissions.”**
+1. Repeat the same action
 
 **Expected Results:**
-- [ ] Conversation list updates to match filter.
-- [ ] “No conversations found” appears if filter yields zero results.
+- [ ] Error message is displayed
+- [ ] UI remains stable and user can retry
+
+### Flow 3: Create permission requests for medical decisions, travel plans, schedule changes, or extracurricular activities
+
+**Scenario:** Create permission requests for medical decisions, travel plans, schedule changes, or extracurricular activities
+
+#### Success Path
+
+**Setup:**
+- Seed sample data from `sample-data.json`
+
+**Steps:**
+1. User navigates to the section
+2. User performs the action described in the flow
+3. User confirms the change
+
+**Expected Results:**
+- [ ] UI updates to reflect the completed action
+- [ ] Relevant callbacks fire with correct IDs
+- [ ] Success state is visible
+
+#### Failure Path
+
+**Setup:**
+- Simulate a failed API response
+
+**Steps:**
+1. Repeat the same action
+
+**Expected Results:**
+- [ ] Error message is displayed
+- [ ] UI remains stable and user can retry
 
 ---
 
 ## Empty State Tests
 
-### Empty Conversations
+### Primary Empty State
 
-**Scenario:** No conversations exist.
-
-**Expected Results:**
-- [ ] “No conversations found” message appears.
-- [ ] Helper text suggests creating a new message thread.
-
-### Permission Details Missing
-
-**Scenario:** A permission conversation lacks permissionRequest data.
+**Scenario:** Primary list is empty
 
 **Expected Results:**
-- [ ] “Permission details unavailable.” is shown in the panel.
+- [ ] Empty state message is visible
+- [ ] Primary CTA is visible and functional
+
+### Filtered/Search Empty State
+
+**Scenario:** Filters return no results
+
+**Expected Results:**
+- [ ] Clear 'no results' message appears
+- [ ] Reset option is available
 
 ---
 
 ## Component Interaction Tests
 
-- [ ] **“Mark read”** and **“Mark unread”** buttons call respective callbacks.
-- [ ] Unread badge count displays when `unreadCount > 0`.
-- [ ] Status badges show **pending/approved/denied** for permissions.
+### Main Component
+
+**Renders correctly:**
+- [ ] Key data points are visible
+
+**User interactions:**
+- [ ] Primary CTA triggers expected callback
+- [ ] Secondary actions work as expected
 
 ---
 
 ## Edge Cases
 
-- [ ] Very long subjects truncate in the thread list.
-- [ ] Mixed message + permission conversations render correct previews.
-- [ ] Switching filters preserves selected conversation where possible.
+- [ ] Handles long text content without layout breaks
+- [ ] Works with single-item and large datasets
+- [ ] Transitions between empty and populated states
 
 ---
 
 ## Accessibility Checks
 
-- [ ] Filters and buttons are keyboard accessible.
-- [ ] Textarea has visible placeholder and focus state.
-- [ ] Status badges have sufficient color contrast in light/dark modes.
+- [ ] All interactive elements are keyboard accessible
+- [ ] Focus states are visible
+- [ ] Form fields have associated labels
 
 ---
 
 ## Sample Test Data
 
-```typescript
-const messageConversation = {
-  id: 'conv-004',
-  type: 'message',
-  subject: 'School Parent-Teacher Conference',
-  messages: [
-    { id: 'msg-001', senderId: 'parent-002', content: 'Hey, got the reminder...', timestamp: '2024-01-26T15:20:00Z', isRead: true }
-  ],
-  unreadCount: 0
-}
-
-const permissionConversation = {
-  id: 'conv-001',
-  type: 'permission',
-  subject: 'Soccer Camp Registration',
-  permissionRequest: {
-    id: 'perm-001',
-    type: 'extracurricular',
-    childName: 'Emma Martinez',
-    status: 'pending',
-    description: 'Register for summer soccer camp...'
-  }
-}
-```
+Use data from `sample-data.json` as a baseline.
