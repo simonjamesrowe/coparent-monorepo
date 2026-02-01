@@ -263,7 +263,7 @@ CoParent's authentication and multi-tenant system consists of:
 2. **Frontend Application** (React + Vite): Handles Auth0 redirects, JWT storage, route guards, family context management
 3. **Backend API** (NestJS (Node.js/TypeScript)): Validates JWTs, enforces RBAC, applies tenant isolation
 4. **Database** (MongoDB): Stores Users, Families, Parents, Invitations, Children, Expenses with family_id partitioning
-5. **Email Service** (SendGrid/SES): Sends invitation emails and password reset emails (Auth0 integration)
+5. **Email Service** (Brevo/SES): Sends invitation emails and password reset emails (Auth0 integration)
 
 ### Auth0 Integration Points
 
@@ -855,7 +855,7 @@ Create and send a parent invitation.
 - Invitation token valid for 7 days (expires_at = now + 7 days)
 - Email sent to invitee with invitation link
 - Email includes family name, children information, message from inviting parent
-- Sends via email service (SendGrid/SES)
+- Sends via email service (Brevo/SES)
 
 ---
 
@@ -1582,9 +1582,13 @@ FRONTEND_URL=https://coparent.app (for Auth0 callback redirects)
 MONGODB_URI=mongodb://localhost:27017/coparent
 DATABASE_POOL_SIZE=20
 
-# Email Service Configuration
-SENDGRID_API_KEY=your_sendgrid_key
-SENDGRID_FROM_EMAIL=noreply@coparent.app
+# Email Service Configuration (Brevo SMTP)
+BREVO_SMTP_HOST=smtp-relay.brevo.com
+BREVO_SMTP_PORT=587
+BREVO_SMTP_USER=a13da4001@smtp-brevo.com
+BREVO_SMTP_PASS=your_brevo_smtp_password
+BREVO_FROM_EMAIL=coparent@simonrowe.dev
+BREVO_FROM_NAME=CoParent
 
 # JWT Configuration
 JWT_SECRET=your-jwt-secret (for additional signing if needed)
@@ -1746,8 +1750,8 @@ ExpenseSchema.index({ familyId: 1, createdByUserId: 1 });
 
 ### Email Service Setup
 
-**SendGrid Configuration:**
-- [ ] Create SendGrid account
+**Brevo Configuration:**
+- [ ] Create Brevo account
 - [ ] Generate API key
 - [ ] Add API key to backend environment variables
 - [ ] Configure sender email: noreply@coparent.app
@@ -1935,14 +1939,14 @@ ExpenseSchema.index({ familyId: 1, createdByUserId: 1 });
   - Have communication plan for outages
 - **Fallback:** None (Auth0 is critical path for MVP)
 
-**Email Service (SendGrid/SES)**
+**Email Service (Brevo/SES)**
 - **Dependency:** Send invitation emails
 - **Risk:** Email service down, emails not delivered
 - **Mitigation:**
   - Monitor email delivery rate (alert if <95%)
   - Implement retry logic for failed sends (exponential backoff)
   - Queue email sends for asynchronous processing
-  - Have fallback email provider (setup SES in parallel with SendGrid)
+  - Have fallback email provider (setup SES in parallel with Brevo)
 - **Fallback:** Admin can manually resend invitations
 
 **Database (MongoDB via Mongoose)**

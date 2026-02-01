@@ -9,6 +9,7 @@ import {
   useCreateChild,
   useInvitations,
   useCreateInvitation,
+  useResendInvitation,
   useOnboarding,
   useUpdateOnboarding,
 } from '../hooks/api';
@@ -25,6 +26,7 @@ const OnboardingPage = () => {
   const createFamily = useCreateFamily();
   const createChild = useCreateChild();
   const createInvitation = useCreateInvitation();
+  const resendInvitation = useResendInvitation();
   const updateOnboarding = useUpdateOnboarding();
 
   useEffect(() => {
@@ -78,6 +80,11 @@ const OnboardingPage = () => {
     }
   };
 
+  const handleResendInvite = async (invitationId: string) => {
+    if (!activeFamilyId) return;
+    await resendInvitation.mutateAsync({ id: invitationId, familyId: activeFamilyId });
+  };
+
   const handleComplete = async (familyId: string) => {
     try {
       await updateOnboarding.mutateAsync({
@@ -110,6 +117,7 @@ const OnboardingPage = () => {
       onCreateFamily={handleCreateFamily}
       onAddChild={handleAddChild}
       onInviteCoParent={handleInvite}
+      onResendInvite={handleResendInvite}
       onCompleteOnboarding={handleComplete}
     />
   );

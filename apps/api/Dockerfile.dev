@@ -1,7 +1,7 @@
 FROM node:18-alpine
 
-# Install pnpm
-RUN npm install -g pnpm@8.12.0
+# Install curl for healthchecks + pnpm
+RUN apk add --no-cache curl && npm install -g pnpm@8.12.0
 
 WORKDIR /app
 
