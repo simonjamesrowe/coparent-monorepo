@@ -451,7 +451,7 @@ Expense {
   - Message from inviting parent (optional)
   - CTA button: "Accept Invitation"
 - Email template should match Calm Harbor design system
-- Use backend email service (SendGrid/SES) for sending
+- Use backend email service (Brevo/SES) for sending
 
 #### Error Handling & Edge Cases
 - Handle expired invitation links gracefully (show "Link expired" with resend option)

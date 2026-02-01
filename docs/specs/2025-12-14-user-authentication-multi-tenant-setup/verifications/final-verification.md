@@ -118,7 +118,7 @@ The User Authentication & Multi-Tenant Setup feature has achieved **100% complet
 ### Phase 12: Deployment, Configuration, and Monitoring (0/6 NOT STARTED)
 - [ ] 12.1 Configure Auth0 for production and staging
 - [ ] 12.2 Configure database for production
-- [ ] 12.3 Configure email service (SendGrid/SES)
+- [ ] 12.3 Configure email service (Brevo/SES)
 - [ ] 12.4 Configure environment variables for all environments
 - [ ] 12.5 Set up centralized logging and monitoring
 - [ ] 12.6 Set up CI/CD pipeline for automated testing and deployment
@@ -232,7 +232,7 @@ The User Authentication & Multi-Tenant Setup feature has achieved **100% complet
 - [x] Invitation creation with email (POST /api/v1/invitations)
 - [x] Token generation (URL-safe, unique)
 - [x] 7-day token expiration
-- [x] Email sending via SendGrid
+- [x] Email sending via Brevo
 - [x] Invitation preview (public, no auth required)
 - [x] Invitation acceptance (new or existing account)
 - [x] Invitation resend with new token
@@ -542,7 +542,7 @@ The User Authentication & Multi-Tenant Setup feature has achieved **100% complet
 |---------|--------|----------|
 | Executive Summary | PASSED | All MVP features implemented |
 | User Flows (1-9) | PASSED | Flows 1-7 fully implemented (backend), Flows 8-9 frontend complete |
-| Technical Architecture | PASSED | NestJS, MongoDB, Auth0, SendGrid as specified |
+| Technical Architecture | PASSED | NestJS, MongoDB, Auth0, Brevo as specified |
 | Data Model | PASSED | All 6 entities with correct fields and relationships |
 | API Specification | PASSED | All 8 endpoints with correct schemas and validations |
 | Frontend Implementation | PASSED | All components and state management as specified |
@@ -586,7 +586,7 @@ The User Authentication & Multi-Tenant Setup feature has achieved **100% complet
 ### Prerequisites Required
 - MongoDB 7+ database
 - Auth0 account with app configured
-- SendGrid account for email (optional for testing)
+- Brevo account for email (optional for testing)
 - Node.js 16+ and npm
 - Environment variables configured
 
@@ -604,7 +604,7 @@ The User Authentication & Multi-Tenant Setup feature has achieved **100% complet
 
 ### Service Integrations
 - [x] Auth0 integration configured
-- [x] SendGrid integration ready
+- [x] Brevo integration ready
 - [x] Database pooling configured
 - [x] Error handling for service failures
 - [x] Retry logic for email sending
