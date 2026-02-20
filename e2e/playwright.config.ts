@@ -4,6 +4,9 @@ export default defineConfig({
   testDir: "./tests",
   timeout: 60_000,
   retries: 1,
+  // Tests share a single Mongo database and run cleanup in beforeEach.
+  // Keep workers at 1 to avoid cross-test data races in CI/local runs.
+  workers: 1,
   outputDir: "test-results",
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
