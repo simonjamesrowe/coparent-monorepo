@@ -1,6 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import type { Parent, CurrentUser, UpdateParentRoleRequest } from '../../lib/api/client';
+import type {
+  Parent,
+  CurrentUser,
+  UpdateParentRoleRequest,
+  UpdateCurrentUserRequest,
+  UpdatedCurrentUserProfile,
+} from '../../lib/api/client';
 import { apiClient } from '../../lib/api/client';
 
 export const parentKeys = {
@@ -47,6 +53,21 @@ export function useUpdateParentRole() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: parentKeys.list(data.familyId) });
       queryClient.invalidateQueries({ queryKey: parentKeys.me() });
+    },
+  });
+}
+
+export function useUpdateCurrentUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (request: UpdateCurrentUserRequest) => {
+      const { data } = await apiClient.patch<UpdatedCurrentUserProfile>('/me', request);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: parentKeys.me() });
+      queryClient.invalidateQueries({ queryKey: parentKeys.lists() });
     },
   });
 }

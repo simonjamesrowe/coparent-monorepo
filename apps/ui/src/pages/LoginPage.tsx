@@ -2,6 +2,8 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { clearAuth0Cache } from '../lib/auth/clearAuth0Cache';
+
 const LoginPage = () => {
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
   const navigate = useNavigate();
@@ -22,6 +24,11 @@ const LoginPage = () => {
         screen_hint: 'signup',
       },
     });
+  };
+
+  const handleClearLoginCache = () => {
+    clearAuth0Cache();
+    window.location.reload();
   };
 
   if (isLoading) {
@@ -112,6 +119,14 @@ const LoginPage = () => {
                   />
                 </svg>
                 Sign In
+              </button>
+
+              <button
+                type="button"
+                onClick={handleClearLoginCache}
+                className="w-full rounded-xl border border-slate-200/60 bg-white/70 px-6 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 dark:border-slate-700/60 dark:bg-slate-900/40 dark:text-slate-200"
+              >
+                Clear login cache
               </button>
 
               <div className="relative">

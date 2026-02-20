@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
 import App from './App';
+import { ToastProvider } from './components/ui/ToastProvider';
 import './styles.css';
 
 const queryClient = new QueryClient({
@@ -43,14 +44,16 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       cacheLocation="localstorage"
     >
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter
-          future={{
-            v7_startTransition: true,
-            v7_relativeSplatPath: true,
-          }}
-        >
-          <App />
-        </BrowserRouter>
+        <ToastProvider>
+          <BrowserRouter
+            future={{
+              v7_startTransition: true,
+              v7_relativeSplatPath: true,
+            }}
+          >
+            <App />
+          </BrowserRouter>
+        </ToastProvider>
       </QueryClientProvider>
     </Auth0Provider>
   </React.StrictMode>,

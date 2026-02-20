@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import type {
   Family,
@@ -23,6 +23,8 @@ interface FamilySetupHubProps {
   children: Child[];
   invitations: Invitation[];
   activeFamilyId?: string;
+  childIdToEdit?: string;
+  onCloseChildEditor?: () => void;
   onUpdateFamily?: (id: string, updates: Partial<Family>) => void;
   onAddChild?: (child: ChildDraft) => void;
   onUpdateChild?: (id: string, updates: Partial<ChildDraft>) => void;
@@ -89,6 +91,8 @@ export function FamilySetupHub({
   children,
   invitations,
   activeFamilyId,
+  childIdToEdit,
+  onCloseChildEditor,
   onUpdateFamily,
   onAddChild,
   onUpdateChild,
@@ -108,6 +112,55 @@ export function FamilySetupHub({
   const [childMedicalNotes, setChildMedicalNotes] = useState('');
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<ParentRole>('co-parent');
+  const [editingChildId, setEditingChildId] = useState<string | null>(null);
+  const [editChildName, setEditChildName] = useState('');
+  const [editChildDob, setEditChildDob] = useState('');
+  const [editChildSchool, setEditChildSchool] = useState('');
+  const [editChildMedicalNotes, setEditChildMedicalNotes] = useState('');
+
+  const editingChild =
+    (editingChildId ? familyChildren.find((c) => c.id === editingChildId) : undefined) ??
+    (childIdToEdit ? familyChildren.find((c) => c.id === childIdToEdit) : undefined);
+
+  useEffect(() => {
+    if (!editingChild) return;
+    setEditChildName(editingChild.fullName);
+    setEditChildDob(editingChild.dateOfBirth);
+    setEditChildSchool(editingChild.school ?? '');
+    setEditChildMedicalNotes(editingChild.medicalNotes ?? '');
+  }, [
+    editingChild?.dateOfBirth,
+    editingChild?.fullName,
+    editingChild?.id,
+    editingChild?.medicalNotes,
+    editingChild?.school,
+  ]);
+
+  const openEditor = (child: Child) => {
+    setEditingChildId(child.id);
+    setEditChildName(child.fullName);
+    setEditChildDob(child.dateOfBirth);
+    setEditChildSchool(child.school ?? '');
+    setEditChildMedicalNotes(child.medicalNotes ?? '');
+  };
+
+  const closeEditor = () => {
+    setEditingChildId(null);
+    onCloseChildEditor?.();
+  };
+
+  const handleSaveChild = () => {
+    if (!editingChild) return;
+    const trimmedName = editChildName.trim();
+    if (!trimmedName || !editChildDob) return;
+
+    onUpdateChild?.(editingChild.id, {
+      fullName: trimmedName,
+      dateOfBirth: editChildDob,
+      school: editChildSchool || undefined,
+      medicalNotes: editChildMedicalNotes || undefined,
+    });
+  };
 
   const handleAddChild = () => {
     const trimmedName = childName.trim();
@@ -144,6 +197,115 @@ export function FamilySetupHub({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-teal-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-teal-950/20">
+      {editingChild && (
+        <div className="fixed inset-0 z-50">
+          <div
+            className="absolute inset-0 bg-slate-950/30 backdrop-blur-sm"
+            onClick={closeEditor}
+          />
+          <div className="absolute inset-x-0 bottom-0 mx-auto w-full max-w-2xl rounded-t-3xl border border-slate-200 bg-white p-6 shadow-2xl sm:inset-y-0 sm:my-auto sm:rounded-3xl dark:border-slate-700 dark:bg-slate-900">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+                  Edit child
+                </p>
+                <h3 className="mt-1 text-lg font-bold text-slate-900 dark:text-white">
+                  {editingChild.fullName}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={closeEditor}
+                className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:border-slate-300 hover:text-slate-900 dark:border-slate-700 dark:text-slate-300"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="child-edit-full-name"
+                  className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400"
+                >
+                  Full Name
+                </label>
+                <input
+                  id="child-edit-full-name"
+                  type="text"
+                  value={editChildName}
+                  onChange={(e) => setEditChildName(e.target.value)}
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="child-edit-date-of-birth"
+                  className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400"
+                >
+                  Date of Birth
+                </label>
+                <input
+                  id="child-edit-date-of-birth"
+                  type="date"
+                  value={editChildDob}
+                  onChange={(e) => setEditChildDob(e.target.value)}
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="child-edit-school"
+                  className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400"
+                >
+                  School (optional)
+                </label>
+                <input
+                  id="child-edit-school"
+                  type="text"
+                  value={editChildSchool}
+                  onChange={(e) => setEditChildSchool(e.target.value)}
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="child-edit-medical-notes"
+                  className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400"
+                >
+                  Medical Notes (optional)
+                </label>
+                <textarea
+                  id="child-edit-medical-notes"
+                  value={editChildMedicalNotes}
+                  onChange={(e) => setEditChildMedicalNotes(e.target.value)}
+                  rows={3}
+                  className="w-full resize-none rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/40 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
+                />
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={closeEditor}
+                className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-300 dark:border-slate-700 dark:text-slate-200"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveChild}
+                disabled={!editChildName.trim() || !editChildDob}
+                className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-teal-500/20 transition hover:bg-teal-700 disabled:bg-slate-300 disabled:shadow-none dark:disabled:bg-slate-700"
+              >
+                Save changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Decorative background */}
       <div
         className="pointer-events-none fixed inset-0 opacity-[0.015] dark:opacity-[0.025]"
@@ -544,7 +706,7 @@ export function FamilySetupHub({
                         </div>
                         <button
                           type="button"
-                          onClick={() => onUpdateChild?.(child.id, {})}
+                          onClick={() => openEditor(child)}
                           className="text-slate-400 opacity-0 transition hover:text-slate-600 group-hover:opacity-100 dark:hover:text-slate-300"
                         >
                           <svg

@@ -13,7 +13,8 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json,md}\"",
     "type-check": "tsc --noEmit",
-    "test": "vitest",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "test:coverage": "vitest --coverage",
     "validate": "npm run type-check && npm run lint && npm run format:check",
     "generate:icons": "node scripts/generate-icons.js"

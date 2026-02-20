@@ -37,6 +37,12 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        navigateFallback: '/index.html',
+        navigateFallbackAllowlist: [
+          // Allow SPA navigation fallback for all app routes (including Auth0 callback)
+          // while excluding API routes handled by the backend.
+          /^\/(?!api\/).*/i,
+        ],
         runtimeCaching: [
           {
             urlPattern: /^https?:\/\/.*\/api\/.*/i,

@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import { useCurrentUser } from '../../hooks/api/useParents';
+import { clearAuth0Cache } from '../../lib/auth/clearAuth0Cache';
+import { getPendingInviteToken } from '../../pages/AcceptInvitePage';
 
 export function AuthCallback() {
   const { isAuthenticated, isLoading, error } = useAuth0();
@@ -17,19 +19,26 @@ export function AuthCallback() {
     if (!isLoading) {
       if (error) {
         console.error('Auth0 callback error:', error);
-        navigate('/login', { replace: true });
       } else if (isAuthenticated) {
         // Trigger user data fetch
         setShouldFetchUser(true);
       }
     }
-  }, [isAuthenticated, isLoading, error, navigate]);
+  }, [isAuthenticated, isLoading, error]);
 
   useEffect(() => {
     // Route user once we have their data
     if (shouldFetchUser && !isLoadingUser && currentUser) {
       const state = location.state as { from?: { pathname: string } } | null;
       const returnTo = state?.from?.pathname;
+
+      // Check for pending invite token from sessionStorage
+      const pendingInviteToken = getPendingInviteToken();
+      if (pendingInviteToken) {
+        // Redirect to accept invite page with the stored token
+        navigate(`/invitations/accept?token=${pendingInviteToken}`, { replace: true });
+        return;
+      }
 
       // Check if user has accepted an invitation (has a family but no profile was created during onboarding)
       const hasAcceptedInvitation =
@@ -71,12 +80,23 @@ export function AuthCallback() {
           <p className="mb-6 text-slate-500 dark:text-slate-400">
             {error.message || 'An error occurred during authentication'}
           </p>
-          <button
-            onClick={() => navigate('/login', { replace: true })}
-            className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-6 py-3 font-semibold text-white shadow-lg shadow-teal-500/25 transition-all hover:bg-teal-700"
-          >
-            Return to Login
-          </button>
+          <div className="flex flex-col justify-center gap-3 sm:flex-row">
+            <button
+              onClick={() => navigate('/login', { replace: true })}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-6 py-3 font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+            >
+              Return to Login
+            </button>
+            <button
+              onClick={() => {
+                clearAuth0Cache();
+                window.location.assign('/login');
+              }}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-teal-600 px-6 py-3 font-semibold text-white shadow-lg shadow-teal-500/25 transition-all hover:bg-teal-700"
+            >
+              Clear login cache
+            </button>
+          </div>
         </div>
       </div>
     );
