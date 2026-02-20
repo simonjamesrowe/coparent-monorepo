@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { FamilySetupHub } from '../components/family/FamilySetupHub';
 import {
@@ -16,6 +17,7 @@ import {
 } from '../hooks/api';
 
 const FamilySetupPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const { data: families = [], isLoading: familiesLoading } = useFamilies();
   const [activeFamilyId, setActiveFamilyId] = useState<string | undefined>();
 
@@ -38,6 +40,11 @@ const FamilySetupPage = () => {
     }
   }, [activeFamilyId, families]);
 
+  const childIdToEdit = useMemo(() => {
+    const raw = searchParams.get('childId');
+    return raw && raw.trim().length > 0 ? raw : undefined;
+  }, [searchParams]);
+
   const handleAddChild = async (child: {
     fullName: string;
     dateOfBirth: string;
@@ -59,6 +66,9 @@ const FamilySetupPage = () => {
   ) => {
     if (!updates || Object.keys(updates).length === 0) return;
     await updateChild.mutateAsync({ id: childId, ...updates });
+    if (searchParams.get('childId') === childId) {
+      setSearchParams({}, { replace: true });
+    }
   };
 
   const handleUpdateFamily = async (
@@ -103,6 +113,8 @@ const FamilySetupPage = () => {
       children={children}
       invitations={invitations}
       activeFamilyId={activeFamilyId}
+      childIdToEdit={childIdToEdit}
+      onCloseChildEditor={() => setSearchParams({}, { replace: true })}
       onUpdateFamily={handleUpdateFamily}
       onAddChild={handleAddChild}
       onUpdateChild={handleUpdateChild}

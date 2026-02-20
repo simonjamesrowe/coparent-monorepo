@@ -96,26 +96,20 @@ pnpm format
 ### Docker
 
 ```bash
-# Start full stack (MongoDB + API + UI)
-docker-compose -f docker/docker-compose.yml up
+# Preferred (for automation): use the repo scripts/
+./scripts/docker-dev-up.sh       # start MongoDB + API + UI (detached)
+./scripts/docker-dev-restart.sh  # restart containers
+./scripts/docker-dev-logs.sh     # tail logs (or pass service name like "api")
+./scripts/docker-dev-down.sh     # stop containers (keeps volumes)
 
-# Start in background
-docker-compose -f docker/docker-compose.yml up -d
-
-# Start MongoDB only (for local development)
-pnpm docker:dev
-
-# Stop all services
-docker-compose -f docker/docker-compose.yml down
-
-# View logs
-docker-compose -f docker/docker-compose.yml logs -f
-
-# Rebuild containers
-docker-compose -f docker/docker-compose.yml up --build
+# Equivalent raw docker compose commands (when needed)
+docker compose -f docker/docker-compose.yml up -d
+docker compose -f docker/docker-compose.yml logs -f --tail=200
+docker compose -f docker/docker-compose.yml stop
 ```
 
 **Note:** Before running Docker Compose, copy `docker/.env.example` to `docker/.env` and configure your Auth0 credentials.
+The Docker dev scripts rely on `docker/.env` (Compose default) for settings like `VITE_*`, `AUTH0_*`, and `BREVO_*`.
 
 ## Architecture Overview
 

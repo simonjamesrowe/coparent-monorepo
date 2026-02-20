@@ -128,6 +128,14 @@ export interface CurrentUser {
   isNewUser: boolean;
 }
 
+export interface UpdatedCurrentUserProfile {
+  id: string;
+  fullName: string;
+  email?: string;
+  role: ParentRole;
+  status: string;
+}
+
 export interface ConversationParticipant {
   id: string;
   name: string;
@@ -212,6 +220,10 @@ export interface CompleteStepRequest {
 
 export interface UpdateParentRoleRequest {
   role: ParentRole;
+}
+
+export interface UpdateCurrentUserRequest {
+  fullName?: string;
 }
 
 export interface CreateMessageConversationRequest {

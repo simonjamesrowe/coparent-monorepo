@@ -23,6 +23,7 @@ import { AppShell } from './components/shell';
 import { useApiClient } from './hooks/api';
 import { useIdleTimeout } from './hooks/useIdleTimeout';
 import { initDB, initSync } from './lib/pwa';
+import AcceptInvitePage from './pages/AcceptInvitePage';
 import CalendarPage from './pages/CalendarPage';
 import DashboardPage from './pages/DashboardPage';
 import DocumentsPage from './pages/DocumentsPage';
@@ -68,7 +69,7 @@ const App = () => {
     ? Math.max(1, configuredTimeoutMinutes)
     : import.meta.env.DEV
       ? 3
-      : 10;
+      : 30;
   const idleTimeoutMs = idleTimeoutMinutes * 60 * 1000;
   const warningTimeMs = 60 * 1000;
   const showIdleCountdown =
@@ -135,6 +136,7 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/invitations/accept" element={<AcceptInvitePage />} />
         <Route
           path="/*"
           element={
