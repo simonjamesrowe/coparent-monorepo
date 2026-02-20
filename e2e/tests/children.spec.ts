@@ -7,7 +7,7 @@ test.describe('Children management', () => {
     await api.seedInvitation(family.id, 'coparent+children@coparent.dev');
 
     await authenticatedPage.goto('/family-setup');
-    await expect(authenticatedPage.getByRole('heading', { name: 'Children' })).toBeVisible();
+    await expect(authenticatedPage.getByRole('heading', { name: 'Children', exact: true })).toBeVisible();
 
     const addChildButton = authenticatedPage.getByRole('button', { name: 'Add Child' });
     await expect(addChildButton).toBeDisabled();

@@ -45,7 +45,7 @@ test.describe('Messaging', () => {
     await authenticatedPage.getByRole('button', { name: 'Send' }).click();
 
     await expect(
-      authenticatedPage.getByText('Yes, I can handle pickup and after-school care.'),
+      authenticatedPage.getByText('Yes, I can handle pickup and after-school care.').nth(1),
     ).toBeVisible();
   });
 

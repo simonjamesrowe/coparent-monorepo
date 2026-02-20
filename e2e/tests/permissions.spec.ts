@@ -46,7 +46,9 @@ test.describe('Permission requests', () => {
       .first();
     await expect(doctorConsentRequest).toBeVisible();
     await doctorConsentRequest.click();
-    await expect(authenticatedPage.getByText('Need approval for urgent pediatric visit paperwork.')).toBeVisible();
+    await expect(
+      authenticatedPage.getByText('Need approval for urgent pediatric visit paperwork.').nth(1),
+    ).toBeVisible();
     await expect(authenticatedPage.getByText('pending').first()).toBeVisible();
   });
 

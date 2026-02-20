@@ -1,5 +1,12 @@
 import { test, expect } from '../fixtures/api.fixture';
 
+function dateToYmd(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 test.describe('Calendar events', () => {
   test('creates and edits an event from the calendar drawer', async ({ authenticatedPage, api }) => {
     const family = await api.seedFamily('Calendar E2E Family');
@@ -20,21 +27,23 @@ test.describe('Calendar events', () => {
     await createEventDialog.getByPlaceholder('e.g. Emma Soccer Practice').fill('School Pickup');
     await createEventDialog.getByRole('button', { name: 'Save' }).click();
 
-    await expect(authenticatedPage.getByText('School Pickup')).toBeVisible();
+    const schoolPickupEvent = authenticatedPage.getByRole('button', { name: /School Pickup/ }).first();
+    await expect(schoolPickupEvent).toBeVisible();
 
-    await authenticatedPage.getByText('School Pickup').first().click();
+    await schoolPickupEvent.click();
     const editEventDialog = authenticatedPage.getByRole('dialog', { name: 'Edit Event' });
     await expect(editEventDialog).toBeVisible();
 
     await editEventDialog.getByPlaceholder('e.g. Emma Soccer Practice').fill('School Pickup Updated');
     await editEventDialog.getByRole('button', { name: 'Save' }).click();
 
-    await expect(authenticatedPage.getByText('School Pickup Updated')).toBeVisible();
+    await expect(authenticatedPage.getByRole('button', { name: /School Pickup Updated/ }).first()).toBeVisible();
 
+    const today = dateToYmd(new Date());
     const seeded = await api.seedEvent(family.id, {
       type: 'activity',
       title: 'To Delete',
-      startDate: '2026-03-15',
+      startDate: today,
       allDay: true,
       childIds: [child.id],
     });
@@ -45,11 +54,12 @@ test.describe('Calendar events', () => {
     }
 
     await authenticatedPage.reload();
-    await expect(authenticatedPage.getByText('To Delete')).toBeVisible();
+    const toDeleteEvent = authenticatedPage.getByRole('button', { name: /To Delete/ });
+    await expect(toDeleteEvent.first()).toBeVisible();
 
     await api.deleteEvent(family.id, seededId);
     await authenticatedPage.reload();
-    await expect(authenticatedPage.getByText('To Delete')).not.toBeVisible();
+    await expect(toDeleteEvent).toHaveCount(0);
   });
 
   test('validates required title and date fields before save', async ({ authenticatedPage, api }) => {

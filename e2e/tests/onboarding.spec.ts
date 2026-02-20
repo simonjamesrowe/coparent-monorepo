@@ -2,6 +2,7 @@ import { test, expect } from '../fixtures/api.fixture';
 
 test.describe('Onboarding', () => {
   test('completes onboarding and reaches dashboard', async ({ authenticatedPage }) => {
+    await authenticatedPage.goto('/onboarding');
     await expect(authenticatedPage.getByRole('heading', { name: 'Name Your Family' })).toBeVisible();
 
     await authenticatedPage.getByPlaceholder('Enter your full name').fill('E2E Test Parent');
@@ -15,7 +16,7 @@ test.describe('Onboarding', () => {
     await authenticatedPage.getByPlaceholder('First and last name').fill('Test Child');
     await authenticatedPage.locator('input[type="date"]').first().fill('2018-05-15');
     await authenticatedPage.getByRole('button', { name: 'Add Child' }).click();
-    await expect(authenticatedPage.getByText('Test Child')).toBeVisible();
+    await expect(authenticatedPage.getByText(/^Children added \(1\)$/)).toBeVisible();
     const childContinueButton = authenticatedPage.getByRole('button', { name: 'Continue' }).first();
     await expect(childContinueButton).toBeEnabled();
     await childContinueButton.evaluate((button: HTMLButtonElement) => button.click());
@@ -34,6 +35,7 @@ test.describe('Onboarding', () => {
   });
 
   test('requires family and child fields before progressing', async ({ authenticatedPage }) => {
+    await authenticatedPage.goto('/onboarding');
     const familyContinueButton = authenticatedPage.getByRole('button', { name: 'Continue' });
 
     await expect(familyContinueButton).toBeDisabled();
