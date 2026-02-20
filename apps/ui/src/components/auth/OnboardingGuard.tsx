@@ -15,7 +15,7 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
 
   // Get onboarding state for the active family
   const { data: onboarding, isLoading: onboardingLoading } = useOnboarding(activeFamilyId);
-  const { data: invitations = [], isLoading: invitationsLoading } = useInvitations(activeFamilyId);
+  const { isLoading: invitationsLoading } = useInvitations(activeFamilyId);
 
   // Set active family to first family
   useEffect(() => {
@@ -49,12 +49,6 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
       navigate('/onboarding', { replace: true });
       return;
     }
-
-    // If onboarding is complete but no invitations exist yet, return to onboarding
-    if (onboarding?.isComplete && activeFamilyId && invitations.length === 0) {
-      navigate('/onboarding', { replace: true });
-      return;
-    }
   }, [
     familiesLoading,
     onboardingLoading,
@@ -62,7 +56,6 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
     families,
     onboarding,
     activeFamilyId,
-    invitations.length,
     location.pathname,
     navigate,
   ]);

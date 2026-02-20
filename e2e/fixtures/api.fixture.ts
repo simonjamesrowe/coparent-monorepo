@@ -34,7 +34,11 @@ interface ApiFixture {
   };
 }
 
-export const test = base.extend<ApiFixture>({
+interface ApiAutoFixtures {
+  dbCleanup: void;
+}
+
+export const test = base.extend<ApiFixture & ApiAutoFixtures>({
   api: async ({}, use) => {
     const token = signTestJwt();
 
@@ -51,10 +55,13 @@ export const test = base.extend<ApiFixture>({
       signToken: signTestJwt,
     });
   },
-});
-
-test.beforeEach(async ({ api }) => {
-  await api.cleanupDatabase();
+  dbCleanup: [
+    async ({ api }, use) => {
+      await api.cleanupDatabase();
+      await use();
+    },
+    { auto: true },
+  ],
 });
 
 export { expect };

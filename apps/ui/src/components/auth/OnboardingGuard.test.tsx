@@ -77,6 +77,19 @@ describe('OnboardingGuard', () => {
     });
   });
 
+  it('renders children when onboarding is complete and invitations are empty', async () => {
+    mockedUseInvitations.mockReturnValue({
+      data: [],
+      isLoading: false,
+    } as unknown as ReturnType<typeof apiHooks.useInvitations>);
+
+    renderGuard();
+
+    await waitFor(() => {
+      expect(screen.getByText('Dashboard content')).toBeInTheDocument();
+    });
+  });
+
   it('redirects to onboarding when no families exist', async () => {
     mockedUseFamilies.mockReturnValue({
       data: [],

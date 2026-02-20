@@ -21,21 +21,28 @@ test.describe('Calendar events', () => {
     await expect(authenticatedPage.getByRole('heading', { name: 'Family Calendar' })).toBeVisible();
 
     await authenticatedPage.getByRole('button', { name: 'Add Event' }).click();
-    const createEventDialog = authenticatedPage.getByRole('dialog', { name: 'Create Event' });
-    await expect(createEventDialog).toBeVisible();
+    const createEventHeading = authenticatedPage
+      .getByRole('heading', { name: 'Create Event' })
+      .last();
+    await expect(createEventHeading).toBeVisible();
 
-    await createEventDialog.getByPlaceholder('e.g. Emma Soccer Practice').fill('School Pickup');
-    await createEventDialog.getByRole('button', { name: 'Save' }).click();
+    await authenticatedPage.getByPlaceholder('e.g. Emma Soccer Practice').fill('School Pickup');
+    await authenticatedPage.getByRole('button', { name: 'Save' }).click();
+    await expect(createEventHeading).toBeHidden({ timeout: 10_000 });
 
     const schoolPickupEvent = authenticatedPage.getByRole('button', { name: /School Pickup/ }).first();
     await expect(schoolPickupEvent).toBeVisible();
 
-    await schoolPickupEvent.click();
-    const editEventDialog = authenticatedPage.getByRole('dialog', { name: 'Edit Event' });
-    await expect(editEventDialog).toBeVisible();
+    await Promise.all([
+      authenticatedPage.waitForURL(/\/calendar\?edit=/, { timeout: 10_000 }),
+      schoolPickupEvent.click(),
+    ]);
+    const editEventHeading = authenticatedPage.getByRole('heading', { name: 'Edit Event' }).last();
+    await expect(editEventHeading).toBeVisible();
 
-    await editEventDialog.getByPlaceholder('e.g. Emma Soccer Practice').fill('School Pickup Updated');
-    await editEventDialog.getByRole('button', { name: 'Save' }).click();
+    await authenticatedPage.getByPlaceholder('e.g. Emma Soccer Practice').fill('School Pickup Updated');
+    await authenticatedPage.getByRole('button', { name: 'Save' }).click();
+    await expect(editEventHeading).toBeHidden({ timeout: 10_000 });
 
     await expect(authenticatedPage.getByRole('button', { name: /School Pickup Updated/ }).first()).toBeVisible();
 
