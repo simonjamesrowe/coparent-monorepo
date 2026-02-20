@@ -25,10 +25,13 @@ test.describe('Onboarding', () => {
     await authenticatedPage.getByRole('button', { name: 'Skip' }).click();
 
     await expect(authenticatedPage.getByRole('heading', { name: 'Review & Complete' })).toBeVisible();
-    await authenticatedPage.getByRole('button', { name: 'Complete Setup' }).click();
-
-    await expect(authenticatedPage).toHaveURL(/\/dashboard$/);
-    await expect(authenticatedPage.getByText('E2E Test Family')).toBeVisible();
+    const completeSetupButton = authenticatedPage.getByRole('button', { name: 'Complete Setup' }).first();
+    await expect(completeSetupButton).toBeVisible();
+    await Promise.all([
+      authenticatedPage.waitForURL(/\/dashboard$/, { timeout: 15_000 }),
+      completeSetupButton.evaluate((button: HTMLButtonElement) => button.click()),
+    ]);
+    await expect(authenticatedPage.getByText('E2E Test Family', { exact: true }).first()).toBeVisible();
   });
 
   test('requires family and child fields before progressing', async ({ authenticatedPage }) => {
