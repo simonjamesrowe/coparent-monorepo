@@ -22,8 +22,7 @@ test.describe('Onboarding', () => {
     await expect(
       authenticatedPage.getByRole('heading', { name: 'Invite Your Co-Parent' }),
     ).toBeVisible();
-    await authenticatedPage.getByLabel('Co-Parent Email').fill('coparent+onboarding@coparent.dev');
-    await authenticatedPage.getByRole('button', { name: 'Send Invite' }).click();
+    await authenticatedPage.getByRole('button', { name: 'Skip' }).click();
 
     await expect(authenticatedPage.getByRole('heading', { name: 'Review & Complete' })).toBeVisible();
     await authenticatedPage.getByRole('button', { name: 'Complete Setup' }).click();
