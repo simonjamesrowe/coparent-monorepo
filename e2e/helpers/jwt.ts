@@ -12,7 +12,7 @@ export interface TestJwtOverrides {
 export function signTestJwt(overrides: TestJwtOverrides = {}): string {
   return jwt.sign(
     {
-      sub: overrides.sub ?? 'e2e-test|user-1',
+      sub: overrides.sub ?? 'auth0|e2e-test-user',
       email: overrides.email ?? 'e2e-test@coparent.dev',
       permissions: overrides.permissions ?? [],
     },
