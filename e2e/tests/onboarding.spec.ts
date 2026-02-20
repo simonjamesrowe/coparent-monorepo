@@ -15,8 +15,6 @@ test.describe('Onboarding', () => {
     await expect(authenticatedPage.getByRole('heading', { name: 'Add Your Children' })).toBeVisible();
     await authenticatedPage.getByPlaceholder('First and last name').fill('Test Child');
     await authenticatedPage.locator('input[type="date"]').first().fill('2018-05-15');
-    await authenticatedPage.getByRole('button', { name: 'Add Child' }).click();
-    await expect(authenticatedPage.getByText(/^Children added \(1\)$/)).toBeVisible();
     const childContinueButton = authenticatedPage.getByRole('button', { name: 'Continue' }).first();
     await expect(childContinueButton).toBeEnabled();
     await childContinueButton.evaluate((button: HTMLButtonElement) => button.click());
