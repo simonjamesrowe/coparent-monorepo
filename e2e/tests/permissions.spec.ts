@@ -41,8 +41,11 @@ test.describe('Permission requests', () => {
     await authenticatedPage.getByRole('button', { name: 'New permission' }).click();
     detach();
 
-    await expect(authenticatedPage.getByText('Doctor consent form')).toBeVisible();
-    await authenticatedPage.getByRole('button', { name: 'Doctor consent form' }).click();
+    const doctorConsentRequest = authenticatedPage
+      .getByRole('button', { name: /Doctor consent form/ })
+      .first();
+    await expect(doctorConsentRequest).toBeVisible();
+    await doctorConsentRequest.click();
     await expect(authenticatedPage.getByText('Need approval for urgent pediatric visit paperwork.')).toBeVisible();
     await expect(authenticatedPage.getByText('pending').first()).toBeVisible();
   });
@@ -72,6 +75,6 @@ test.describe('Permission requests', () => {
     await authenticatedPage.getByRole('button', { name: 'New permission' }).click();
     detach();
 
-    await expect(authenticatedPage.getByText('No conversations found')).toBeVisible();
+    await expect(authenticatedPage.getByText('No conversations found').first()).toBeVisible();
   });
 });

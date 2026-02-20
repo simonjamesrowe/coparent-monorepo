@@ -14,18 +14,20 @@ test.describe('Calendar events', () => {
     await expect(authenticatedPage.getByRole('heading', { name: 'Family Calendar' })).toBeVisible();
 
     await authenticatedPage.getByRole('button', { name: 'Add Event' }).click();
-    await expect(authenticatedPage.getByRole('heading', { name: 'Create Event' })).toBeVisible();
+    const createEventDialog = authenticatedPage.getByRole('dialog', { name: 'Create Event' });
+    await expect(createEventDialog).toBeVisible();
 
-    await authenticatedPage.getByPlaceholder('e.g. Emma Soccer Practice').fill('School Pickup');
-    await authenticatedPage.getByRole('button', { name: 'Save' }).click();
+    await createEventDialog.getByPlaceholder('e.g. Emma Soccer Practice').fill('School Pickup');
+    await createEventDialog.getByRole('button', { name: 'Save' }).click();
 
     await expect(authenticatedPage.getByText('School Pickup')).toBeVisible();
 
     await authenticatedPage.getByText('School Pickup').first().click();
-    await expect(authenticatedPage.getByRole('heading', { name: 'Edit Event' })).toBeVisible();
+    const editEventDialog = authenticatedPage.getByRole('dialog', { name: 'Edit Event' });
+    await expect(editEventDialog).toBeVisible();
 
-    await authenticatedPage.getByPlaceholder('e.g. Emma Soccer Practice').fill('School Pickup Updated');
-    await authenticatedPage.getByRole('button', { name: 'Save' }).click();
+    await editEventDialog.getByPlaceholder('e.g. Emma Soccer Practice').fill('School Pickup Updated');
+    await editEventDialog.getByRole('button', { name: 'Save' }).click();
 
     await expect(authenticatedPage.getByText('School Pickup Updated')).toBeVisible();
 
@@ -62,13 +64,16 @@ test.describe('Calendar events', () => {
     await authenticatedPage.goto('/calendar');
     await authenticatedPage.getByRole('button', { name: 'Add Event' }).click();
 
-    const saveButton = authenticatedPage.getByRole('button', { name: 'Save' });
+    const createEventDialog = authenticatedPage.getByRole('dialog', { name: 'Create Event' });
+    await expect(createEventDialog).toBeVisible();
+
+    const saveButton = createEventDialog.getByRole('button', { name: 'Save' });
     await expect(saveButton).toBeDisabled();
 
-    await authenticatedPage.getByPlaceholder('e.g. Emma Soccer Practice').fill('Validation Event');
+    await createEventDialog.getByPlaceholder('e.g. Emma Soccer Practice').fill('Validation Event');
     await expect(saveButton).toBeEnabled();
 
-    await authenticatedPage.locator('input[type="date"]').first().fill('');
+    await createEventDialog.locator('input[type="date"]').first().fill('');
     await expect(saveButton).toBeDisabled();
   });
 });

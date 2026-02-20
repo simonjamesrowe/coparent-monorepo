@@ -33,8 +33,11 @@ test.describe('Messaging', () => {
     await authenticatedPage.getByRole('button', { name: 'New message' }).click();
     detach();
 
-    await expect(authenticatedPage.getByText('School handoff')).toBeVisible();
-    await authenticatedPage.getByRole('button', { name: 'School handoff' }).click();
+    const schoolHandoffConversation = authenticatedPage
+      .getByRole('button', { name: /School handoff/ })
+      .first();
+    await expect(schoolHandoffConversation).toBeVisible();
+    await schoolHandoffConversation.click();
 
     await authenticatedPage
       .getByPlaceholder('Write a message or follow up on a decision...')
@@ -63,6 +66,6 @@ test.describe('Messaging', () => {
     await authenticatedPage.getByRole('button', { name: 'New message' }).click();
     detach();
 
-    await expect(authenticatedPage.getByText('No conversations found')).toBeVisible();
+    await expect(authenticatedPage.getByText('No conversations found').first()).toBeVisible();
   });
 });

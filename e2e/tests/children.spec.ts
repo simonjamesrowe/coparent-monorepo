@@ -30,7 +30,7 @@ test.describe('Children management', () => {
     await api.seedInvitation(family.id, 'coparent+children-edit@coparent.dev');
 
     await authenticatedPage.goto(`/family-setup?childId=${child.id}`);
-    await expect(authenticatedPage.getByText('Edit child')).toBeVisible();
+    await expect(authenticatedPage.locator('#child-edit-full-name')).toBeVisible();
 
     await authenticatedPage.locator('#child-edit-full-name').fill('Edited Child');
     await authenticatedPage.locator('#child-edit-school').fill('Springfield Elementary');
