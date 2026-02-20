@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import App from './App';
 import { ToastProvider } from './components/ui/ToastProvider';
+import { TestAuthProvider } from './lib/auth/TestAuthProvider';
 import './styles.css';
 
 const queryClient = new QueryClient({
@@ -22,8 +23,9 @@ const auth0ClientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
 const auth0RedirectUri =
   import.meta.env.VITE_AUTH0_REDIRECT_URI || `${window.location.origin}/auth/callback`;
 const auth0Audience = import.meta.env.VITE_AUTH0_AUDIENCE;
+const isE2ETestMode = import.meta.env.VITE_E2E_TEST_MODE === 'true';
 
-if (!auth0Domain || !auth0ClientId) {
+if (!isE2ETestMode && (!auth0Domain || !auth0ClientId)) {
   throw new Error('Missing Auth0 configuration. Check VITE_AUTH0_DOMAIN and VITE_AUTH0_CLIENT_ID.');
 }
 
@@ -35,26 +37,38 @@ if (auth0Audience) {
   authorizationParams.audience = auth0Audience;
 }
 
+function AppProviders() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ToastProvider>
+        <BrowserRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
+          <App />
+        </BrowserRouter>
+      </ToastProvider>
+    </QueryClientProvider>
+  );
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <Auth0Provider
-      domain={auth0Domain}
-      clientId={auth0ClientId}
-      authorizationParams={authorizationParams}
-      cacheLocation="localstorage"
-    >
-      <QueryClientProvider client={queryClient}>
-        <ToastProvider>
-          <BrowserRouter
-            future={{
-              v7_startTransition: true,
-              v7_relativeSplatPath: true,
-            }}
-          >
-            <App />
-          </BrowserRouter>
-        </ToastProvider>
-      </QueryClientProvider>
-    </Auth0Provider>
+    {isE2ETestMode ? (
+      <TestAuthProvider>
+        <AppProviders />
+      </TestAuthProvider>
+    ) : (
+      <Auth0Provider
+        domain={auth0Domain!}
+        clientId={auth0ClientId!}
+        authorizationParams={authorizationParams}
+        cacheLocation="localstorage"
+      >
+        <AppProviders />
+      </Auth0Provider>
+    )}
   </React.StrictMode>,
 );

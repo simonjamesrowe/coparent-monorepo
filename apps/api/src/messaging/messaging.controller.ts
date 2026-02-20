@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -19,7 +19,7 @@ interface RequestWithUser extends Request {
 @Controller()
 @UseGuards(AuthGuard('jwt'))
 export class MessagingController {
-  constructor(private readonly messagingService: MessagingService) {}
+  constructor(@Inject(MessagingService) private readonly messagingService: MessagingService) {}
 
   @Get('families/:familyId/conversations')
   @ApiOperation({ summary: 'List conversations for a family' })

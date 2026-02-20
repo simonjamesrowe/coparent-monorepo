@@ -10,6 +10,7 @@ import {
   Req,
   HttpCode,
   HttpStatus,
+  Inject,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -23,7 +24,7 @@ import { UpdateEventDto } from './dto/update-event.dto';
 @Controller('families/:familyId/events')
 @UseGuards(AuthGuard('jwt'))
 export class EventsController {
-  constructor(private readonly eventsService: EventsService) {}
+  constructor(@Inject(EventsService) private readonly eventsService: EventsService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new event' })

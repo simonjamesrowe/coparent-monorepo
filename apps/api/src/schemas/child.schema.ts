@@ -8,19 +8,19 @@ export class Child {
   @Prop({ type: Types.ObjectId, ref: 'Family', required: true })
   familyId!: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   fullName!: string;
 
   @Prop({ required: true, type: Date })
   dateOfBirth!: Date;
 
-  @Prop()
+  @Prop({ type: String })
   school?: string;
 
-  @Prop()
+  @Prop({ type: String })
   medicalNotes?: string;
 
-  @Prop()
+  @Prop({ type: String })
   avatarUrl?: string;
 
   @Prop({ type: Date, default: null })

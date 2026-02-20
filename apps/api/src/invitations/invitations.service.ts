@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import {
+  Inject,
   Injectable,
   NotFoundException,
   ForbiddenException,
@@ -25,9 +26,13 @@ export class InvitationsService {
     private invitationModel: Model<InvitationDocument>,
     @InjectModel(Family.name) private familyModel: Model<FamilyDocument>,
     @InjectModel(Parent.name) private parentModel: Model<ParentDocument>,
-    private emailService: EmailService,
-    private auditService: AuditService,
+    @Inject(EmailService) private emailService: EmailService,
+    @Inject(AuditService) private auditService: AuditService,
   ) {}
+
+  private isValidEmail(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
 
   private async verifyFamilyAccess(
     familyId: string,
@@ -59,11 +64,16 @@ export class InvitationsService {
     createInvitationDto: CreateInvitationDto,
     user: AuthUser,
   ): Promise<InvitationDocument> {
+    const normalizedEmail = createInvitationDto.email?.toLowerCase().trim();
+    if (!normalizedEmail || !this.isValidEmail(normalizedEmail)) {
+      throw new BadRequestException('Invalid email address');
+    }
+
     const { family, parent } = await this.verifyFamilyAccess(familyId, user);
 
     // Check if email is already a parent in this family
     const existingParent = await this.parentModel.findOne({
-      email: createInvitationDto.email.toLowerCase(),
+      email: normalizedEmail,
       familyId: family._id,
     });
 
@@ -73,7 +83,7 @@ export class InvitationsService {
 
     // Check for existing pending invitation
     const existingInvitation = await this.invitationModel.findOne({
-      email: createInvitationDto.email.toLowerCase(),
+      email: normalizedEmail,
       familyId: family._id,
       status: 'pending',
     });
@@ -88,7 +98,7 @@ export class InvitationsService {
 
     const invitation = new this.invitationModel({
       familyId: family._id,
-      email: createInvitationDto.email.toLowerCase(),
+      email: normalizedEmail,
       role: createInvitationDto.role,
       status: 'pending',
       token: randomUUID(),

@@ -10,6 +10,7 @@ import {
   Req,
   HttpCode,
   HttpStatus,
+  Inject,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -23,7 +24,9 @@ import { UpdateEventCategoryDto } from './dto/update-event-category.dto';
 @Controller('families/:familyId/event-categories')
 @UseGuards(AuthGuard('jwt'))
 export class EventCategoriesController {
-  constructor(private readonly eventCategoriesService: EventCategoriesService) {}
+  constructor(
+    @Inject(EventCategoriesService) private readonly eventCategoriesService: EventCategoriesService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new event category' })

@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 
 import { AppModule } from '../../src/app.module';
+import { MongooseExceptionFilter } from '../../src/common/filters/mongoose-exception.filter';
 
 /**
  * Create a test application instance
@@ -21,6 +22,7 @@ export async function createTestApp(): Promise<INestApplication> {
       transform: true,
     }),
   );
+  app.useGlobalFilters(new MongooseExceptionFilter());
 
   await app.init();
   return app;

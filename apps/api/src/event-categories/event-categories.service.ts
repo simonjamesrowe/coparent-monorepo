@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   NotFoundException,
   ForbiddenException,
@@ -22,7 +23,7 @@ export class EventCategoriesService {
     @InjectModel(EventCategory.name) private eventCategoryModel: Model<EventCategoryDocument>,
     @InjectModel(Family.name) private familyModel: Model<FamilyDocument>,
     @InjectModel(Parent.name) private parentModel: Model<ParentDocument>,
-    private auditService: AuditService,
+    @Inject(AuditService) private auditService: AuditService,
   ) {}
 
   private async verifyFamilyAccess(familyId: string, user: AuthUser): Promise<FamilyDocument> {

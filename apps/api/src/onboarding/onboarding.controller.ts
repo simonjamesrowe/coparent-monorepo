@@ -1,4 +1,16 @@
-import { Controller, Get, Patch, Post, Body, Param, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Req,
+  Inject,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -17,7 +29,7 @@ interface RequestWithUser extends Request {
 @Controller('onboarding')
 @UseGuards(AuthGuard('jwt'))
 export class OnboardingController {
-  constructor(private readonly onboardingService: OnboardingService) {}
+  constructor(@Inject(OnboardingService) private readonly onboardingService: OnboardingService) {}
 
   @Get(':familyId')
   @ApiOperation({ summary: 'Get onboarding state for a family' })
@@ -72,6 +84,7 @@ export class OnboardingController {
   }
 
   @Post(':familyId/complete-step')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Mark a step as complete and advance' })
   @ApiResponse({ status: 200, description: 'Step completed' })
   @ApiResponse({ status: 400, description: 'Validation error' })

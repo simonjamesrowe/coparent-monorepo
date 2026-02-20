@@ -4,13 +4,13 @@ on:
   push:
     branches: [main, develop]
     paths:
-      - 'apps/ui/**'
-      - 'packages/**'
-      - 'pnpm-lock.yaml'
+      - "apps/ui/**"
+      - "packages/**"
+      - "pnpm-lock.yaml"
   pull_request:
     paths:
-      - 'apps/ui/**'
-      - 'packages/**'
+      - "apps/ui/**"
+      - "packages/**"
 
 jobs:
   build:
@@ -26,7 +26,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -35,8 +35,19 @@ jobs:
         run: pnpm --filter coparent-ui lint
 
       - name: Test
-        run: pnpm --filter coparent-ui test -- --run --reporter=verbose --no-coverage
+        run: |
+          set -o pipefail
+          pnpm --filter coparent-ui test -- --run --reporter=verbose --no-coverage 2>&1 | tee ui-test.log
         timeout-minutes: 5
+
+      - name: Upload UI test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-test-log
+          path: ui-test.log
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Build
         run: pnpm --filter coparent-ui build

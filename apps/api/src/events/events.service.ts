@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   NotFoundException,
   ForbiddenException,
@@ -24,7 +25,7 @@ export class EventsService {
     @InjectModel(Family.name) private familyModel: Model<FamilyDocument>,
     @InjectModel(Parent.name) private parentModel: Model<ParentDocument>,
     @InjectModel(Child.name) private childModel: Model<ChildDocument>,
-    private auditService: AuditService,
+    @Inject(AuditService) private auditService: AuditService,
   ) {}
 
   private async verifyFamilyAccess(familyId: string, user: AuthUser): Promise<FamilyDocument> {
@@ -55,6 +56,10 @@ export class EventsService {
     user: AuthUser,
   ): Promise<EventDocument> {
     const family = await this.verifyFamilyAccess(familyId, user);
+
+    if (!Array.isArray(createEventDto.childIds) || createEventDto.childIds.length === 0) {
+      throw new BadRequestException('At least one child is required');
+    }
 
     // Verify child IDs if provided
     if (createEventDto.childIds && createEventDto.childIds.length > 0) {

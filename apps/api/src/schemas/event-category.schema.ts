@@ -8,13 +8,13 @@ export class EventCategory {
   @Prop({ type: Types.ObjectId, ref: 'Family', required: true })
   familyId!: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   name!: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   icon!: string;
 
-  @Prop()
+  @Prop({ type: String })
   color?: string;
 
   @Prop({ type: Boolean, default: false })

@@ -44,7 +44,7 @@ export class ScheduleChangeRequest {
   @Prop({ type: Object, required: true })
   proposedChange!: ProposedChange;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   reason!: string;
 
   @Prop({ type: String, default: null })

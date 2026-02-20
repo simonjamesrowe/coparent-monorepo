@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 
@@ -10,7 +10,7 @@ import { AuditService } from '../audit/audit.service';
 export class ParentsService {
   constructor(
     @InjectModel(Parent.name) private parentModel: Model<ParentDocument>,
-    private auditService: AuditService,
+    @Inject(AuditService) private auditService: AuditService,
   ) {}
 
   async findByFamily(familyId: string, user: AuthUser): Promise<ParentDocument[]> {

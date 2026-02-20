@@ -45,6 +45,7 @@ cp apps/ui/.env.example apps/ui/.env
 - Align local checks with CI when touching an app:
   - UI: `pnpm --filter coparent-ui lint` + `pnpm --filter coparent-ui test -- --run` (+ `pnpm --filter coparent-ui build` if needed).
   - API: `pnpm --filter coparent-api lint` + `pnpm --filter coparent-api type-check` (+ `pnpm --filter coparent-api build` if needed).
+- Run `pnpm test:e2e` when changing cross-cutting flows (auth, onboarding, dashboard, calendar, messaging, invitations).
 
 ### Development & Running
 
@@ -93,6 +94,14 @@ pnpm lint
 pnpm format
 ```
 
+### E2E Testing (Playwright)
+
+```bash
+pnpm test:e2e                  # Run all Playwright E2E tests (starts MongoDB via Docker)
+pnpm test:e2e:ui               # Run with Playwright UI mode (interactive)
+npx playwright show-report      # View last Playwright HTML report
+```
+
 ### Docker
 
 ```bash
@@ -133,10 +142,17 @@ The Docker dev scripts rely on `docker/.env` (Compose default) for settings like
 - **PWA:** vite-plugin-pwa + Workbox + IndexedDB
 - **Testing:** Vitest + Testing Library + MSW
 
+### E2E Test Mode
+
+- API: `E2E_TEST_MODE=true` enables `TestJwtStrategy` (HS256 local secret: `e2e-test-secret`).
+- UI: `VITE_E2E_TEST_MODE=true` swaps to `TestAuthProvider` (no Auth0 tenant required for tests).
+- Email side effects: invitation emails run through the existing `EmailService`; without Brevo credentials they are logged, not sent.
+
 ## CI/CD Workflows
 
 - **`.github/workflows/api-ci.yml`** - Lint → type-check → build for API
 - **`.github/workflows/ui-ci.yml`** - Lint → test → build for UI
+- **`.github/workflows/e2e-ci.yml`** - Playwright E2E suite against MongoDB service on PRs to `main`
 
 ## Documentation
 
