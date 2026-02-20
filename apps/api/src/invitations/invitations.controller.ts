@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Param, Query, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+  Req,
+  Inject,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -15,7 +27,9 @@ interface RequestWithUser extends Request {
 @ApiBearerAuth('JWT-auth')
 @Controller()
 export class InvitationsController {
-  constructor(private readonly invitationsService: InvitationsService) {}
+  constructor(
+    @Inject(InvitationsService) private readonly invitationsService: InvitationsService,
+  ) {}
 
   @Post('families/:familyId/invitations')
   @UseGuards(AuthGuard('jwt'))
@@ -68,6 +82,7 @@ export class InvitationsController {
   }
 
   @Post('invitations/:id/resend')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Resend an invitation email' })
   @ApiResponse({ status: 200, description: 'Invitation resent successfully' })
@@ -89,6 +104,7 @@ export class InvitationsController {
   }
 
   @Post('invitations/:id/cancel')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Cancel a pending invitation' })
   @ApiResponse({ status: 200, description: 'Invitation canceled successfully' })

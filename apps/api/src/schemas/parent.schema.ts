@@ -8,16 +8,16 @@ export type ParentStatus = 'active' | 'inactive';
 
 @Schema({ timestamps: true })
 export class Parent {
-  @Prop({ required: true, index: true })
+  @Prop({ type: String, required: true, index: true })
   auth0Id!: string;
 
   @Prop({ type: Types.ObjectId, ref: 'Family' })
   familyId!: Types.ObjectId;
 
-  @Prop({ required: false, default: '' })
+  @Prop({ type: String, required: false, default: '' })
   fullName!: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   email!: string;
 
   @Prop({ type: String, enum: ['primary', 'co-parent'], default: 'co-parent' })
@@ -26,10 +26,10 @@ export class Parent {
   @Prop({ type: String, enum: ['active', 'inactive'], default: 'active' })
   status!: ParentStatus;
 
-  @Prop()
+  @Prop({ type: String })
   color?: string;
 
-  @Prop()
+  @Prop({ type: String })
   avatarUrl?: string;
 
   @Prop({ type: Date })

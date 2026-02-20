@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Body, Param, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param, UseGuards, Req, Inject } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -16,7 +16,7 @@ interface RequestWithUser extends Request {
 @Controller()
 @UseGuards(AuthGuard('jwt'))
 export class ParentsController {
-  constructor(private readonly parentsService: ParentsService) {}
+  constructor(@Inject(ParentsService) private readonly parentsService: ParentsService) {}
 
   @Get('families/:familyId/parents')
   @ApiOperation({ summary: 'Get all parents in a family' })

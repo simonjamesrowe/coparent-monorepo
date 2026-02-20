@@ -1,4 +1,10 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 
@@ -23,16 +29,34 @@ export class FamiliesService {
     @InjectModel(Parent.name) private parentModel: Model<ParentDocument>,
     @InjectModel(OnboardingState.name)
     private onboardingModel: Model<OnboardingStateDocument>,
-    private auditService: AuditService,
+    @Inject(AuditService) private auditService: AuditService,
   ) {}
 
+  private isValidTimeZone(timeZone: string): boolean {
+    try {
+      Intl.DateTimeFormat(undefined, { timeZone });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async create(createFamilyDto: CreateFamilyDto, user: AuthUser): Promise<FamilyDocument> {
+    const name = createFamilyDto.name?.trim();
+    if (!name) {
+      throw new BadRequestException('Family name is required');
+    }
+
+    if (!createFamilyDto.timeZone || !this.isValidTimeZone(createFamilyDto.timeZone)) {
+      throw new BadRequestException('Invalid time zone');
+    }
+
     // Find existing parent profile (should exist after first login)
     const existingParent = await this.parentModel.findOne({ auth0Id: user.auth0Id });
 
     // Create the family
     const family = new this.familyModel({
-      name: createFamilyDto.name,
+      name,
       timeZone: createFamilyDto.timeZone,
     });
     await family.save();
@@ -153,9 +177,15 @@ export class FamiliesService {
     };
 
     if (updateFamilyDto.name !== undefined) {
+      if (!updateFamilyDto.name.trim()) {
+        throw new BadRequestException('Family name is required');
+      }
       family.name = updateFamilyDto.name;
     }
     if (updateFamilyDto.timeZone !== undefined) {
+      if (!this.isValidTimeZone(updateFamilyDto.timeZone)) {
+        throw new BadRequestException('Invalid time zone');
+      }
       family.timeZone = updateFamilyDto.timeZone;
     }
 

@@ -5,10 +5,10 @@ export type FamilyDocument = Family & Document;
 
 @Schema({ timestamps: true })
 export class Family {
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   name!: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   timeZone!: string;
 
   @Prop({ type: [Types.ObjectId], ref: 'Parent', default: [] })

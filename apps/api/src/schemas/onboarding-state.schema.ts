@@ -24,7 +24,7 @@ export class OnboardingState {
   })
   completedSteps!: OnboardingStep[];
 
-  @Prop({ default: false })
+  @Prop({ type: Boolean, default: false })
   isComplete!: boolean;
 
   @Prop({ type: Date, default: Date.now })

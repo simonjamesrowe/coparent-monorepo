@@ -15,7 +15,7 @@ export class ConversationMessage {
   @Prop({ type: Types.ObjectId, ref: 'Parent', required: true })
   senderId!: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   content!: string;
 
   @Prop({ type: Date, required: true })
@@ -42,10 +42,10 @@ export class PermissionRequest {
   @Prop({ type: Types.ObjectId, ref: 'Child', required: true })
   childId!: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   childName!: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   description!: string;
 
   @Prop({ type: Types.ObjectId, ref: 'Parent', required: true })
@@ -74,7 +74,7 @@ export class Conversation {
   @Prop({ type: String, enum: ['message', 'permission'], required: true })
   type!: ConversationType;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   subject!: string;
 
   @Prop({ type: Types.ObjectId, ref: 'Parent', required: true })

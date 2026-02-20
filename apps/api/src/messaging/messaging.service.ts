@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ForbiddenException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -30,8 +31,10 @@ export class MessagingService {
     @InjectModel(Family.name) private familyModel: Model<FamilyDocument>,
     @InjectModel(Parent.name) private parentModel: Model<ParentDocument>,
     @InjectModel(Child.name) private childModel: Model<ChildDocument>,
-    private auditService: AuditService,
+    @Inject(AuditService) private auditService: AuditService,
   ) {}
+
+  private readonly permissionTypes = new Set(['medical', 'travel', 'schedule', 'extracurricular']);
 
   private async verifyFamilyAccess(
     familyId: string,
@@ -82,7 +85,7 @@ export class MessagingService {
     const messages =
       conversation.type === 'message'
         ? (conversation.messages ?? []).map((message) => ({
-            id: message._id.toString(),
+            id: (message._id ?? new Types.ObjectId()).toString(),
             senderId: message.senderId.toString(),
             content: message.content,
             timestamp: message.timestamp.toISOString(),
@@ -92,7 +95,7 @@ export class MessagingService {
 
     const permissionRequest = conversation.permissionRequest
       ? {
-          id: conversation.permissionRequest._id.toString(),
+          id: (conversation.permissionRequest._id ?? new Types.ObjectId()).toString(),
           type: conversation.permissionRequest.type,
           childId: conversation.permissionRequest.childId.toString(),
           childName: conversation.permissionRequest.childName,
@@ -176,6 +179,7 @@ export class MessagingService {
 
     const now = new Date();
     const message = {
+      _id: new Types.ObjectId(),
       senderId: parent._id,
       content: messageContent,
       timestamp: now,
@@ -229,6 +233,10 @@ export class MessagingService {
 
     if (!dto.childId) {
       throw new BadRequestException('A child is required for permission requests');
+    }
+
+    if (!this.permissionTypes.has(dto.type)) {
+      throw new BadRequestException('Invalid permission request type');
     }
 
     const child = await this.childModel.findOne({

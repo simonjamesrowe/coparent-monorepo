@@ -8,16 +8,16 @@ export class Audit {
   @Prop({ type: Types.ObjectId, ref: 'Family' })
   familyId?: Types.ObjectId | null;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   entityType!: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   entityId!: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   action!: string;
 
-  @Prop({ required: true, index: true })
+  @Prop({ type: String, required: true, index: true })
   performedBy!: string;
 
   @Prop({ type: Object, default: {} })

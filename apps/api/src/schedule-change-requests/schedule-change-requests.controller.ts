@@ -9,6 +9,7 @@ import {
   Req,
   HttpCode,
   HttpStatus,
+  Inject,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -22,7 +23,10 @@ import { RespondToRequestDto } from './dto/respond-to-request.dto';
 @Controller('families/:familyId/schedule-change-requests')
 @UseGuards(AuthGuard('jwt'))
 export class ScheduleChangeRequestsController {
-  constructor(private readonly scheduleChangeRequestsService: ScheduleChangeRequestsService) {}
+  constructor(
+    @Inject(ScheduleChangeRequestsService)
+    private readonly scheduleChangeRequestsService: ScheduleChangeRequestsService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new schedule change request' })

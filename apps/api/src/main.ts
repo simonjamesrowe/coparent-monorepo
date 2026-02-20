@@ -6,6 +6,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app.module';
+import { MongooseExceptionFilter } from './common/filters/mongoose-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
@@ -37,6 +38,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.useGlobalFilters(new MongooseExceptionFilter());
 
   const config = new DocumentBuilder()
     .setTitle('CoParent API')

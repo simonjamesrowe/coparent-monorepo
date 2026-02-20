@@ -30,6 +30,11 @@ lerna-debug.log*
 coverage/
 .nyc_output/
 jest.json
+e2e/test-results/
+test-results/
+blob-report/
+playwright-report/
+ui-test.log
 
 # IDE
 .idea/
@@ -42,3 +47,7 @@ jest.json
 # Temporary
 tmp/
 temp/
+
+# Tooling caches
+.eslintcache
+*.tsbuildinfo

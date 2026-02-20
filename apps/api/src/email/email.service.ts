@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import nodemailer from 'nodemailer';
 
@@ -13,13 +13,21 @@ export interface InvitationEmailData {
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
+  private readonly isTestMode: boolean;
+  private readonly emailSendingEnabled: boolean;
   private readonly isConfigured: boolean;
   private readonly fromEmail: string;
   private readonly fromName: string;
   private readonly appUrl: string;
   private readonly transporter?: nodemailer.Transporter;
 
-  constructor(private configService: ConfigService) {
+  constructor(@Inject(ConfigService) private configService: ConfigService) {
+    const nodeEnv = this.configService.get<string>('NODE_ENV') ?? '';
+    this.isTestMode =
+      nodeEnv === 'test' || this.configService.get<string>('E2E_TEST_MODE') === 'true';
+    this.emailSendingEnabled =
+      (this.configService.get<string>('EMAIL_SENDING_ENABLED') ?? 'true') !== 'false';
+
     const smtpHost = this.configService.get<string>('BREVO_SMTP_HOST') || 'smtp-relay.brevo.com';
     const configuredPort = Number(this.configService.get<string>('BREVO_SMTP_PORT') || 587);
     const smtpPort = Number.isNaN(configuredPort) ? 587 : configuredPort;
@@ -29,6 +37,18 @@ export class EmailService {
     this.fromEmail = this.configService.get<string>('BREVO_FROM_EMAIL') || 'coparent@simonrowe.dev';
     this.fromName = this.configService.get<string>('BREVO_FROM_NAME') || 'CoParent';
     this.appUrl = this.configService.get<string>('APP_URL') || 'http://localhost:5173';
+
+    if (!this.emailSendingEnabled) {
+      this.isConfigured = false;
+      this.logger.log('Email sending disabled via EMAIL_SENDING_ENABLED=false');
+      return;
+    }
+
+    if (this.isTestMode) {
+      this.isConfigured = false;
+      this.logger.log('Email sending disabled in test/e2e mode');
+      return;
+    }
 
     if (smtpUser && smtpPass) {
       this.transporter = nodemailer.createTransport({
@@ -49,6 +69,11 @@ export class EmailService {
   }
 
   async sendInvitation(data: InvitationEmailData): Promise<boolean> {
+    if (this.isTestMode || !this.emailSendingEnabled) {
+      this.logger.debug(`Skipping invitation email delivery to ${data.to}`);
+      return true;
+    }
+
     const acceptUrl = `${this.appUrl}/invitations/accept?token=${data.token}`;
 
     const subject = `You've been invited to join ${data.familyName} on CoParent`;

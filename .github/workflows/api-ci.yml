@@ -37,5 +37,11 @@ jobs:
       - name: Type check
         run: pnpm --filter coparent-api type-check
 
+      - name: Test
+        run: pnpm --filter coparent-api test:e2e
+        env:
+          E2E_TEST_MODE: 'true'
+        timeout-minutes: 5
+
       - name: Build
         run: pnpm --filter coparent-api build

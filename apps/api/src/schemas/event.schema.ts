@@ -18,7 +18,7 @@ export class Event {
   @Prop({ type: String, required: true })
   type!: EventType;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   title!: string;
 
   @Prop({ type: Date, required: true })
@@ -27,10 +27,10 @@ export class Event {
   @Prop({ type: Date })
   endDate?: Date;
 
-  @Prop()
+  @Prop({ type: String })
   startTime?: string;
 
-  @Prop()
+  @Prop({ type: String })
   endTime?: string;
 
   @Prop({ type: Boolean, default: true })
@@ -45,7 +45,7 @@ export class Event {
   @Prop({ type: [Types.ObjectId], ref: 'Child', default: [] })
   childIds!: Types.ObjectId[];
 
-  @Prop()
+  @Prop({ type: String })
   location?: string;
 
   @Prop({ type: String, default: null })

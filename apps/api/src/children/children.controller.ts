@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
+  Req,
+  Inject,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -17,7 +28,7 @@ interface RequestWithUser extends Request {
 @Controller()
 @UseGuards(AuthGuard('jwt'))
 export class ChildrenController {
-  constructor(private readonly childrenService: ChildrenService) {}
+  constructor(@Inject(ChildrenService) private readonly childrenService: ChildrenService) {}
 
   @Post('families/:familyId/children')
   @ApiOperation({ summary: 'Add a child to a family' })

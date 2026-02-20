@@ -12,7 +12,7 @@ export class Invitation {
   @Prop({ type: Types.ObjectId, ref: 'Family', required: true })
   familyId!: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   email!: string;
 
   @Prop({ type: String, enum: ['primary', 'co-parent'], default: 'co-parent' })
@@ -25,7 +25,7 @@ export class Invitation {
   })
   status!: InvitationStatus;
 
-  @Prop({ required: true, unique: true, index: true })
+  @Prop({ type: String, required: true, unique: true, index: true })
   token!: string;
 
   @Prop({ required: true, type: Date })
