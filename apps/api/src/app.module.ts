@@ -17,6 +17,7 @@ import { EventsModule } from './events/events.module';
 import { ScheduleChangeRequestsModule } from './schedule-change-requests/schedule-change-requests.module';
 import { MessagingModule } from './messaging/messaging.module';
 import { EventCategoriesModule } from './event-categories/event-categories.module';
+import { ExpensesModule } from './expenses/expenses.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { EventCategoriesModule } from './event-categories/event-categories.modul
     EventCategoriesModule,
     ScheduleChangeRequestsModule,
     MessagingModule,
+    ExpensesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
