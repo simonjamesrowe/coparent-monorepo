@@ -20,6 +20,15 @@ A comprehensive expense tracking and budgeting system that allows parents to man
 - Add Manual Expense - User adds an expense directly without linking to a bank account or statement
 - Manage Categories - User views predefined expense categories and can add custom categories
 
+
+Some example statements I have:
+[Report_2422026NUMERO_DE_PERSONA 81147544.xls](../../../../../../../Downloads/Report_2422026NUMERO_DE_PERSONA%2081147544.xls) - this is Santander Credit Card
+[Statements_Midata.csv](../../../../../../../Downloads/Statements_Midata.csv) - this is a santander shared savings account
+[activity.csv](../../../../../../../Downloads/activity.csv) - this is an Amex credit card.
+[StarlingStatement_17-02-2025_17-02-2026.csv](../../../../../../../Downloads/StarlingStatement_17-02-2025_17-02-2026.csv) - this is a starling savings account
+[MonzoDataExport_1Nov2024-17Feb2026_2026-02-17_113416.csv](../../../../../../../Downloads/MonzoDataExport_1Nov2024-17Feb2026_2026-02-17_113416.csv) - this is a monzo savings account
+would be good to see pre arranged import templates for all of these account types.
+
 ## Recommended Approach: Test-Driven Development
 
 See `product-plan/sections/expenses-and-finances/tests.md` for detailed test-writing instructions.
@@ -98,11 +107,11 @@ Implement empty state UI for when no records exist yet.
 
 ## Done When
 
-- [ ] Tests written for key user flows (success and failure paths)
-- [ ] All tests pass
-- [ ] Components render with real data
-- [ ] Empty states display properly when no records exist
-- [ ] All user actions work
+- [x] Tests written for key user flows (success and failure paths)
+- [x] All tests pass
+- [x] Components render with real data
+- [x] Empty states display properly when no records exist
+- [x] All user actions work
 - [ ] User can complete all expected flows end-to-end
-- [ ] Matches the visual design
-- [ ] Responsive on mobile
+- [x] Matches the visual design
+- [x] Responsive on mobile

@@ -110,6 +110,17 @@ let onboardingByFamily: Record<string, OnboardingState> = {
 let conversationsByFamily: Record<string, Conversation[]> = {
   [defaultFamily.id]: [defaultConversation],
 };
+let accountsByFamily: Record<string, Array<Record<string, unknown>>> = { [defaultFamily.id]: [] };
+let expenseCategoriesByFamily: Record<string, Array<Record<string, unknown>>> = {
+  [defaultFamily.id]: [],
+};
+let expensesByFamily: Record<string, Array<Record<string, unknown>>> = { [defaultFamily.id]: [] };
+let budgetsByFamily: Record<string, Array<Record<string, unknown>>> = { [defaultFamily.id]: [] };
+let statementsByFamily: Record<string, Array<Record<string, unknown>>> = { [defaultFamily.id]: [] };
+let csvMappingTemplatesByFamily: Record<string, Array<Record<string, unknown>>> = {
+  [defaultFamily.id]: [],
+};
+let statementLinesByStatement: Record<string, Array<Record<string, unknown>>> = {};
 
 const currentUser: CurrentUser = {
   auth0Id: 'auth0|test-user-1',
@@ -364,5 +375,272 @@ export const handlers = [
         lastUpdated: null,
       },
     );
+  }),
+
+  http.get('*/families/:familyId/accounts', ({ params }) => {
+    const familyId = params.familyId as string;
+    return HttpResponse.json(accountsByFamily[familyId] ?? []);
+  }),
+
+  http.post('*/families/:familyId/accounts', async ({ params, request }) => {
+    const familyId = params.familyId as string;
+    const body = (await request.json()) as Record<string, unknown>;
+
+    const account = {
+      id: nextId('acc'),
+      _id: nextId('acc'),
+      familyId,
+      ...body,
+    };
+
+    accountsByFamily[familyId] = [...(accountsByFamily[familyId] ?? []), account];
+    return HttpResponse.json(account, { status: 201 });
+  }),
+
+  http.delete('*/families/:familyId/accounts/:id', ({ params }) => {
+    const familyId = params.familyId as string;
+    const id = params.id as string;
+    accountsByFamily[familyId] = (accountsByFamily[familyId] ?? []).filter(
+      (a) => a.id !== id && a._id !== id,
+    );
+    return new HttpResponse(null, { status: 204 });
+  }),
+
+  http.get('*/families/:familyId/expense-categories', ({ params }) => {
+    const familyId = params.familyId as string;
+    return HttpResponse.json(expenseCategoriesByFamily[familyId] ?? []);
+  }),
+
+  http.post('*/families/:familyId/expense-categories', async ({ params, request }) => {
+    const familyId = params.familyId as string;
+    const body = (await request.json()) as Record<string, unknown>;
+
+    const category = {
+      id: nextId('cat'),
+      _id: nextId('cat'),
+      familyId,
+      type: 'custom',
+      ...body,
+    };
+
+    expenseCategoriesByFamily[familyId] = [
+      ...(expenseCategoriesByFamily[familyId] ?? []),
+      category,
+    ];
+    return HttpResponse.json(category, { status: 201 });
+  }),
+
+  http.post('*/families/:familyId/expense-categories/seed', ({ params }) => {
+    const familyId = params.familyId as string;
+
+    const predefinedCategories = [
+      { id: 'cat-1', _id: 'cat-1', familyId, name: 'Food', type: 'predefined', color: 'teal' },
+      {
+        id: 'cat-2',
+        _id: 'cat-2',
+        familyId,
+        name: 'School',
+        type: 'predefined',
+        color: 'violet',
+      },
+      {
+        id: 'cat-3',
+        _id: 'cat-3',
+        familyId,
+        name: 'Healthcare',
+        type: 'predefined',
+        color: 'rose',
+      },
+      {
+        id: 'cat-4',
+        _id: 'cat-4',
+        familyId,
+        name: 'Clothing',
+        type: 'predefined',
+        color: 'amber',
+      },
+      {
+        id: 'cat-5',
+        _id: 'cat-5',
+        familyId,
+        name: 'Activities',
+        type: 'predefined',
+        color: 'emerald',
+      },
+      {
+        id: 'cat-6',
+        _id: 'cat-6',
+        familyId,
+        name: 'Transport',
+        type: 'predefined',
+        color: 'sky',
+      },
+      {
+        id: 'cat-7',
+        _id: 'cat-7',
+        familyId,
+        name: 'Entertainment',
+        type: 'predefined',
+        color: 'fuchsia',
+      },
+      { id: 'cat-8', _id: 'cat-8', familyId, name: 'Other', type: 'predefined', color: 'stone' },
+    ];
+
+    expenseCategoriesByFamily[familyId] = predefinedCategories;
+    return HttpResponse.json(predefinedCategories, { status: 201 });
+  }),
+
+  http.get('*/families/:familyId/expenses', ({ params }) => {
+    const familyId = params.familyId as string;
+    return HttpResponse.json(expensesByFamily[familyId] ?? []);
+  }),
+
+  http.post('*/families/:familyId/expenses', async ({ params, request }) => {
+    const familyId = params.familyId as string;
+    const body = (await request.json()) as Record<string, unknown>;
+
+    const expense = {
+      id: nextId('exp'),
+      _id: nextId('exp'),
+      familyId,
+      status: 'draft',
+      source: 'manual',
+      requiresApproval: false,
+      ...body,
+    };
+
+    expensesByFamily[familyId] = [...(expensesByFamily[familyId] ?? []), expense];
+    return HttpResponse.json(expense, { status: 201 });
+  }),
+
+  http.get('*/families/:familyId/expenses/dashboard-summary', ({ params }) => {
+    const familyId = params.familyId as string;
+    const expenses = expensesByFamily[familyId] ?? [];
+
+    const summary = {
+      month: '2026-02',
+      totalSpent: expenses.reduce((sum, e) => sum + ((e.amount as number) || 0), 0),
+      totalChildExpenses: expenses
+        .filter((e) => e.childId)
+        .reduce((sum, e) => sum + ((e.amount as number) || 0), 0),
+      reimbursementsDue: 0,
+      categoryBreakdown: [],
+      accountSpend: [],
+    };
+
+    return HttpResponse.json(summary);
+  }),
+
+  http.get('*/families/:familyId/budgets', ({ params }) => {
+    const familyId = params.familyId as string;
+    return HttpResponse.json(budgetsByFamily[familyId] ?? []);
+  }),
+
+  http.post('*/families/:familyId/budgets', async ({ params, request }) => {
+    const familyId = params.familyId as string;
+    const body = (await request.json()) as Record<string, unknown>;
+
+    const budget = {
+      id: nextId('bud'),
+      _id: nextId('bud'),
+      familyId,
+      spent: 0,
+      status: 'on_track',
+      ...body,
+    };
+
+    budgetsByFamily[familyId] = [...(budgetsByFamily[familyId] ?? []), budget];
+    return HttpResponse.json(budget, { status: 201 });
+  }),
+
+  http.put('*/families/:familyId/budgets/:id', async ({ params, request }) => {
+    const familyId = params.familyId as string;
+    const id = params.id as string;
+    const body = (await request.json()) as Record<string, unknown>;
+
+    const budgets = budgetsByFamily[familyId] ?? [];
+    const index = budgets.findIndex((b) => b.id === id || b._id === id);
+
+    if (index !== -1) {
+      budgets[index] = { ...budgets[index], ...body };
+      budgetsByFamily[familyId] = budgets;
+      return HttpResponse.json(budgets[index]);
+    }
+
+    return new HttpResponse(null, { status: 404 });
+  }),
+
+  http.get('*/families/:familyId/statements', ({ params }) => {
+    const familyId = params.familyId as string;
+    return HttpResponse.json(statementsByFamily[familyId] ?? []);
+  }),
+
+  http.post('*/families/:familyId/statements', async ({ params, request }) => {
+    const familyId = params.familyId as string;
+    const body = (await request.json()) as Record<string, unknown>;
+
+    const statement = {
+      id: nextId('stm'),
+      _id: nextId('stm'),
+      familyId,
+      uploadedAt: new Date().toISOString(),
+      ...body,
+    };
+
+    statementsByFamily[familyId] = [...(statementsByFamily[familyId] ?? []), statement];
+    return HttpResponse.json(statement, { status: 201 });
+  }),
+
+  http.get('*/families/:familyId/statements/:statementId/lines', ({ params }) => {
+    const statementId = params.statementId as string;
+    return HttpResponse.json(statementLinesByStatement[statementId] ?? []);
+  }),
+
+  http.post('*/families/:familyId/statements/:statementId/lines', async ({ params, request }) => {
+    const familyId = params.familyId as string;
+    const statementId = params.statementId as string;
+    const body = (await request.json()) as { lines: Array<Record<string, unknown>> };
+
+    const created = (body.lines ?? []).map((line) => ({
+      id: nextId('line'),
+      _id: nextId('line'),
+      familyId,
+      statementId,
+      isChildExpense: false,
+      requiresApproval: false,
+      currency: 'USD',
+      ...line,
+    }));
+
+    statementLinesByStatement[statementId] = [
+      ...(statementLinesByStatement[statementId] ?? []),
+      ...created,
+    ];
+    return HttpResponse.json(created, { status: 201 });
+  }),
+
+  http.patch(
+    '*/families/:familyId/statements/:statementId/lines/:lineId',
+    async ({ params, request }) => {
+      const statementId = params.statementId as string;
+      const lineId = params.lineId as string;
+      const body = (await request.json()) as Record<string, unknown>;
+
+      const lines = statementLinesByStatement[statementId] ?? [];
+      const index = lines.findIndex((l) => l.id === lineId || l._id === lineId);
+
+      if (index !== -1) {
+        lines[index] = { ...lines[index], ...body };
+        statementLinesByStatement[statementId] = lines;
+        return HttpResponse.json(lines[index]);
+      }
+
+      return new HttpResponse(null, { status: 404 });
+    },
+  ),
+
+  http.get('*/families/:familyId/csv-mapping-templates', ({ params }) => {
+    const familyId = params.familyId as string;
+    return HttpResponse.json(csvMappingTemplatesByFamily[familyId] ?? []);
   }),
 ];
